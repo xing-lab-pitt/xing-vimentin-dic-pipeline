@@ -15,3 +15,30 @@ This example comtains 4 notebooks
 - 2-Prepare-single-cell-images-for-am-training.ipynb: interactively picking single cells for traing icnn apoptosis weight. (Hint: you can modify this file for interactive picking cells for icnn seg weight file.)
 - 3-Retrain-apoptosis-icnn.ipynb: Training for the icnn_am weight.
 - 4-Pipeline run through.ipynb: a sample script for running all steps in the pipeline. 
+
+# Folder structure
+
+```
+A_A1_1/    # The /img folder, usually the image input, contains a single image time series.
+|   +-- xx.tif
+|   +-- xx.tif
+|
+A_A1_1_*_output/ #    The output/ folder.
++-- reg/    # edt prediction folder
+|   +-- xx.tif
+|   +-- xx.tif
+|  
++-- seg/    # segmentation mask folder
+|   +-- xx.png
+|   +-- xx.png
+|
++-- rgb_num/    # color coded image folder
+|   +-- xx.png
+|   +-- xx.png
+|  
++-- celltrack.db 
++-- am_record.csv
++-- mitosis_record.csv
++-- Per_Object_relink.csv
++-- traj_object_num.csv
+```
