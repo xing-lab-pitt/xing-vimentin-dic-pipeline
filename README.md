@@ -6,33 +6,34 @@ This repository includes all needed files for segment and tracing single cell.
 - To work with a example data set, you can start from the `/7-21-21-pipeline-testing` folder. 
 - To use this script as module, you can first add the folder path to your script, and then call each step as follows:
 
-      import sys
-      sys.path.insert(1, 'path/to/xing-vimentin-dic-pipeline/')
-      
-      import pipe_util2
-      import pipe_1_img_edt as edt1
-      import pipe_2_edt_watershed as ws2
-      import pipe_3_traj_reorganize_1st as tr1
-      import pipe_4_traj_reorganize_2nd as tr2
-      import pipe_5_traj_reorganize_3rd as tr3
-      import pipe_6_build_single_cell as p6
-      import pipe_7_cell_contours_calculation as p7
-      import pipe_8_haralick_calculation as p8
-      import pipe_9_morph_pca as p9
-      import pipe_10_haralick_pca as p10
-      import sbatch_jobs
-      
-      edt1.folder_edt_predict(img_path, output_path, weight, model_mode)
-      ws2.simple_edt_watershed(img_path, output_path, icnn_am_weights, icnn_seg_weights, small_obj_thres = 10)
-      tr1.traj_reconganize1(img_path, output_path, icnn_seg_weights)
-      tr2.traj_reconganize2(output_path)
-      tr3.traj_reconganize3(output_path)
-      p6.build_single_cell(output_path)
-      p7.cell_contours_calculation(output_path, mean_contour_path)
-      p8.single_folder_run(img_path, output_path)
-      p9.morph_pca(top_path)
-      p10.haralick_pca(top_path)
-      
+```python
+import sys
+sys.path.insert(1, 'path/to/xing-vimentin-dic-pipeline/')
+
+import pipe_util2
+import pipe_1_img_edt as edt1
+import pipe_2_edt_watershed as ws2
+import pipe_3_traj_reorganize_1st as tr1
+import pipe_4_traj_reorganize_2nd as tr2
+import pipe_5_traj_reorganize_3rd as tr3
+import pipe_6_build_single_cell as p6
+import pipe_7_cell_contours_calculation as p7
+import pipe_8_haralick_calculation as p8
+import pipe_9_morph_pca as p9
+import pipe_10_haralick_pca as p10
+import sbatch_jobs
+
+edt1.folder_edt_predict(img_path, output_path, weight, model_mode)
+ws2.simple_edt_watershed(img_path, output_path, icnn_am_weights, icnn_seg_weights, small_obj_thres = 10)
+tr1.traj_reconganize1(img_path, output_path, icnn_seg_weights)
+tr2.traj_reconganize2(output_path)
+tr3.traj_reconganize3(output_path)
+p6.build_single_cell(output_path)
+p7.cell_contours_calculation(output_path, mean_contour_path)
+p8.single_folder_run(img_path, output_path)
+p9.morph_pca(top_path)
+p10.haralick_pca(top_path)
+```
 
 # Module structure
 ### Folders
