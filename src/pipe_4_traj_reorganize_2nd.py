@@ -73,7 +73,6 @@ def traj_reconganize2(output_path):
     n_mitoses = len(m_dist)
 
     if n_mitoses > 0:
-
         # sort with the mother cell's img num
         order = np.argsort(mitoses[:, 0])
 
