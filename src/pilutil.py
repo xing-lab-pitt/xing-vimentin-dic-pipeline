@@ -23,9 +23,7 @@ import numpy
 import tempfile
 
 
-from numpy import (amin, amax, ravel, asarray, arange, ones, newaxis,
-
-                   transpose, iscomplexobj, uint8, issubdtype, array)
+from numpy import amin, amax, ravel, asarray, arange, ones, newaxis, transpose, iscomplexobj, uint8, issubdtype, array
 
 
 try:
@@ -39,19 +37,15 @@ except ImportError:
     import ImageFilter
 
 
-if not hasattr(Image, 'frombytes'):
+if not hasattr(Image, "frombytes"):
 
     Image.frombytes = Image.fromstring
 
 
-__all__ = ['fromimage', 'toimage', 'imsave', 'imread', 'bytescale',
-
-           'imrotate', 'imresize', 'imshow', 'imfilter']
+__all__ = ["fromimage", "toimage", "imsave", "imread", "bytescale", "imrotate", "imresize", "imshow", "imfilter"]
 
 
-@numpy.deprecate(message="`bytescale` is deprecated in SciPy 1.0.0, "
-
-                         "and will be removed in 1.2.0.")
+@numpy.deprecate(message="`bytescale` is deprecated in SciPy 1.0.0, " "and will be removed in 1.2.0.")
 def bytescale(data, cmin=None, cmax=None, high=255, low=0):
     """
 
@@ -188,11 +182,11 @@ def bytescale(data, cmin=None, cmax=None, high=255, low=0):
     return (bytedata.clip(low, high) + 0.5).astype(uint8)
 
 
-@numpy.deprecate(message="`imread` is deprecated in SciPy 1.0.0, "
-
-                         "and will be removed in 1.2.0.\n"
-
-                         "Use ``imageio.imread`` instead.")
+@numpy.deprecate(
+    message="`imread` is deprecated in SciPy 1.0.0, "
+    "and will be removed in 1.2.0.\n"
+    "Use ``imageio.imread`` instead."
+)
 def imread(name, flatten=False, mode=None):
     """
 
@@ -301,11 +295,11 @@ def imread(name, flatten=False, mode=None):
     return fromimage(im, flatten=flatten, mode=mode)
 
 
-@numpy.deprecate(message="`imsave` is deprecated in SciPy 1.0.0, "
-
-                         "and will be removed in 1.2.0.\n"
-
-                         "Use ``imageio.imwrite`` instead.")
+@numpy.deprecate(
+    message="`imsave` is deprecated in SciPy 1.0.0, "
+    "and will be removed in 1.2.0.\n"
+    "Use ``imageio.imwrite`` instead."
+)
 def imsave(name, arr, format=None):
     """
 
@@ -410,11 +404,11 @@ def imsave(name, arr, format=None):
     return
 
 
-@numpy.deprecate(message="`fromimage` is deprecated in SciPy 1.0.0. "
-
-                         "and will be removed in 1.2.0.\n"
-
-                         "Use ``np.asarray(im)`` instead.")
+@numpy.deprecate(
+    message="`fromimage` is deprecated in SciPy 1.0.0. "
+    "and will be removed in 1.2.0.\n"
+    "Use ``np.asarray(im)`` instead."
+)
 def fromimage(im, flatten=False, mode=None):
     """
 
@@ -472,7 +466,7 @@ def fromimage(im, flatten=False, mode=None):
 
             im = im.convert(mode)
 
-    elif im.mode == 'P':
+    elif im.mode == "P":
 
         # Mode 'P' means there is an indexed "palette".  If we leave the mode
 
@@ -482,19 +476,19 @@ def fromimage(im, flatten=False, mode=None):
 
         # containing the RGB or RGBA values.
 
-        if 'transparency' in im.info:
+        if "transparency" in im.info:
 
-            im = im.convert('RGBA')
+            im = im.convert("RGBA")
 
         else:
 
-            im = im.convert('RGB')
+            im = im.convert("RGB")
 
     if flatten:
 
-        im = im.convert('F')
+        im = im.convert("F")
 
-    elif im.mode == '1':
+    elif im.mode == "1":
 
         # Workaround for crash in PIL. When im is 1-bit, the call array(im)
 
@@ -508,7 +502,7 @@ def fromimage(im, flatten=False, mode=None):
 
         # This converts im from a 1-bit image to an 8-bit image.
 
-        im = im.convert('L')
+        im = im.convert("L")
 
     a = array(im)
 
@@ -518,14 +512,12 @@ def fromimage(im, flatten=False, mode=None):
 _errstr = "Mode is unknown or incompatible with input array shape."
 
 
-@numpy.deprecate(message="`toimage` is deprecated in SciPy 1.0.0, "
-
-                         "and will be removed in 1.2.0.\n"
-
-                 "Use Pillow's ``Image.fromarray`` directly instead.")
-def toimage(arr, high=255, low=0, cmin=None, cmax=None, pal=None,
-
-            mode=None, channel_axis=None):
+@numpy.deprecate(
+    message="`toimage` is deprecated in SciPy 1.0.0, "
+    "and will be removed in 1.2.0.\n"
+    "Use Pillow's ``Image.fromarray`` directly instead."
+)
+def toimage(arr, high=255, low=0, cmin=None, cmax=None, pal=None, mode=None, channel_axis=None):
     """Takes a numpy array and returns a PIL image.
 
 
@@ -592,21 +584,17 @@ def toimage(arr, high=255, low=0, cmin=None, cmax=None, pal=None,
 
     shape = list(data.shape)
 
-    valid = len(shape) == 2 or ((len(shape) == 3) and
-
-                                ((3 in shape) or (4 in shape)))
+    valid = len(shape) == 2 or ((len(shape) == 3) and ((3 in shape) or (4 in shape)))
 
     if not valid:
 
-        raise ValueError("'arr' does not have a suitable array shape for "
-
-                         "any mode.")
+        raise ValueError("'arr' does not have a suitable array shape for " "any mode.")
 
     if len(shape) == 2:
 
         shape = (shape[1], shape[0])  # columns show up first
 
-        if mode == 'F':
+        if mode == "F":
 
             data32 = data.astype(numpy.float32)
 
@@ -614,13 +602,11 @@ def toimage(arr, high=255, low=0, cmin=None, cmax=None, pal=None,
 
             return image
 
-        if mode in [None, 'L', 'P']:
+        if mode in [None, "L", "P"]:
 
-            bytedata = bytescale(data, high=high, low=low,
+            bytedata = bytescale(data, high=high, low=low, cmin=cmin, cmax=cmax)
 
-                                 cmin=cmin, cmax=cmax)
-
-            image = Image.frombytes('L', shape, bytedata.tostring())
+            image = Image.frombytes("L", shape, bytedata.tostring())
 
             if pal is not None:
 
@@ -628,21 +614,19 @@ def toimage(arr, high=255, low=0, cmin=None, cmax=None, pal=None,
 
                 # Becomes a mode='P' automagically.
 
-            elif mode == 'P':  # default gray-scale
+            elif mode == "P":  # default gray-scale
 
-                pal = (arange(0, 256, 1, dtype=uint8)[:, newaxis] *
-
-                       ones((3,), dtype=uint8)[newaxis, :])
+                pal = arange(0, 256, 1, dtype=uint8)[:, newaxis] * ones((3,), dtype=uint8)[newaxis, :]
 
                 image.putpalette(asarray(pal, dtype=uint8).tostring())
 
             return image
 
-        if mode == '1':  # high input gives threshold for 1
+        if mode == "1":  # high input gives threshold for 1
 
-            bytedata = (data > high)
+            bytedata = data > high
 
-            image = Image.frombytes('1', shape, bytedata.tostring())
+            image = Image.frombytes("1", shape, bytedata.tostring())
 
             return image
 
@@ -656,7 +640,7 @@ def toimage(arr, high=255, low=0, cmin=None, cmax=None, pal=None,
 
         data = (data * 1.0 - cmin) * (high - low) / (cmax - cmin) + low
 
-        if mode == 'I':
+        if mode == "I":
 
             data32 = data.astype(numpy.uint32)
 
@@ -674,7 +658,7 @@ def toimage(arr, high=255, low=0, cmin=None, cmax=None, pal=None,
 
     if channel_axis is None:
 
-        if (3 in shape):
+        if 3 in shape:
 
             ca = numpy.flatnonzero(asarray(shape) == 3)[0]
 
@@ -724,23 +708,23 @@ def toimage(arr, high=255, low=0, cmin=None, cmax=None, pal=None,
 
         if numch == 3:
 
-            mode = 'RGB'
+            mode = "RGB"
 
         else:
 
-            mode = 'RGBA'
+            mode = "RGBA"
 
-    if mode not in ['RGB', 'RGBA', 'YCbCr', 'CMYK']:
+    if mode not in ["RGB", "RGBA", "YCbCr", "CMYK"]:
 
         raise ValueError(_errstr)
 
-    if mode in ['RGB', 'YCbCr']:
+    if mode in ["RGB", "YCbCr"]:
 
         if numch != 3:
 
             raise ValueError("Invalid array shape for mode.")
 
-    if mode in ['RGBA', 'CMYK']:
+    if mode in ["RGBA", "CMYK"]:
 
         if numch != 4:
 
@@ -753,12 +737,12 @@ def toimage(arr, high=255, low=0, cmin=None, cmax=None, pal=None,
     return image
 
 
-@numpy.deprecate(message="`imrotate` is deprecated in SciPy 1.0.0, "
-
-                         "and will be removed in 1.2.0.\n"
-
-                         "Use ``skimage.transform.rotate`` instead.")
-def imrotate(arr, angle, interp='bilinear'):
+@numpy.deprecate(
+    message="`imrotate` is deprecated in SciPy 1.0.0, "
+    "and will be removed in 1.2.0.\n"
+    "Use ``skimage.transform.rotate`` instead."
+)
+def imrotate(arr, angle, interp="bilinear"):
     """
 
     Rotate an image counter-clockwise by angle degrees.
@@ -827,12 +811,7 @@ def imrotate(arr, angle, interp='bilinear'):
 
     arr = asarray(arr)
 
-    func = {
-        'nearest': 0,
-        'lanczos': 1,
-        'bilinear': 2,
-        'bicubic': 3,
-        'cubic': 3}
+    func = {"nearest": 0, "lanczos": 1, "bilinear": 2, "bicubic": 3, "cubic": 3}
 
     im = toimage(arr)
 
@@ -841,11 +820,11 @@ def imrotate(arr, angle, interp='bilinear'):
     return fromimage(im)
 
 
-@numpy.deprecate(message="`imshow` is deprecated in SciPy 1.0.0, "
-
-                         "and will be removed in 1.2.0.\n"
-
-                         "Use ``matplotlib.pyplot.imshow`` instead.")
+@numpy.deprecate(
+    message="`imshow` is deprecated in SciPy 1.0.0, "
+    "and will be removed in 1.2.0.\n"
+    "Use ``matplotlib.pyplot.imshow`` instead."
+)
 def imshow(arr):
     """
 
@@ -913,7 +892,7 @@ def imshow(arr):
 
     im = toimage(arr)
 
-    fnum, fname = tempfile.mkstemp('.png')
+    fnum, fname = tempfile.mkstemp(".png")
 
     try:
 
@@ -927,7 +906,7 @@ def imshow(arr):
 
     os.close(fnum)
 
-    cmd = os.environ.get('SCIPY_PIL_IMAGE_VIEWER', 'see')
+    cmd = os.environ.get("SCIPY_PIL_IMAGE_VIEWER", "see")
 
     status = os.system("%s %s" % (cmd, fname))
 
@@ -935,15 +914,15 @@ def imshow(arr):
 
     if status != 0:
 
-        raise RuntimeError('Could not execute image viewer.')
+        raise RuntimeError("Could not execute image viewer.")
 
 
-@numpy.deprecate(message="`imresize` is deprecated in SciPy 1.0.0, "
-
-                         "and will be removed in 1.2.0.\n"
-
-                         "Use ``skimage.transform.resize`` instead.")
-def imresize(arr, size, interp='bilinear', mode=None):
+@numpy.deprecate(
+    message="`imresize` is deprecated in SciPy 1.0.0, "
+    "and will be removed in 1.2.0.\n"
+    "Use ``skimage.transform.resize`` instead."
+)
+def imresize(arr, size, interp="bilinear", mode=None):
     """
 
     Resize an image.
@@ -1044,23 +1023,18 @@ def imresize(arr, size, interp='bilinear', mode=None):
 
         size = (size[1], size[0])
 
-    func = {
-        'nearest': 0,
-        'lanczos': 1,
-        'bilinear': 2,
-        'bicubic': 3,
-        'cubic': 3}
+    func = {"nearest": 0, "lanczos": 1, "bilinear": 2, "bicubic": 3, "cubic": 3}
 
     imnew = im.resize(size, resample=func[interp])
 
     return fromimage(imnew)
 
 
-@numpy.deprecate(message="`imfilter` is deprecated in SciPy 1.0.0, "
-
-                         "and will be removed in 1.2.0.\n"
-
-                         "Use Pillow filtering functionality directly.")
+@numpy.deprecate(
+    message="`imfilter` is deprecated in SciPy 1.0.0, "
+    "and will be removed in 1.2.0.\n"
+    "Use Pillow filtering functionality directly."
+)
 def imfilter(arr, ftype):
     """
 
@@ -1128,27 +1102,18 @@ def imfilter(arr, ftype):
 
     """
 
-    _tdict = {'blur': ImageFilter.BLUR,
-
-              'contour': ImageFilter.CONTOUR,
-
-              'detail': ImageFilter.DETAIL,
-
-              'edge_enhance': ImageFilter.EDGE_ENHANCE,
-
-              'edge_enhance_more': ImageFilter.EDGE_ENHANCE_MORE,
-
-              'emboss': ImageFilter.EMBOSS,
-
-              'find_edges': ImageFilter.FIND_EDGES,
-
-              'smooth': ImageFilter.SMOOTH,
-
-              'smooth_more': ImageFilter.SMOOTH_MORE,
-
-              'sharpen': ImageFilter.SHARPEN
-
-              }
+    _tdict = {
+        "blur": ImageFilter.BLUR,
+        "contour": ImageFilter.CONTOUR,
+        "detail": ImageFilter.DETAIL,
+        "edge_enhance": ImageFilter.EDGE_ENHANCE,
+        "edge_enhance_more": ImageFilter.EDGE_ENHANCE_MORE,
+        "emboss": ImageFilter.EMBOSS,
+        "find_edges": ImageFilter.FIND_EDGES,
+        "smooth": ImageFilter.SMOOTH,
+        "smooth_more": ImageFilter.SMOOTH_MORE,
+        "sharpen": ImageFilter.SHARPEN,
+    }
 
     im = toimage(arr)
 

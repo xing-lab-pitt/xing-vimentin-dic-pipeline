@@ -34,15 +34,15 @@ from cnn_prep_data import prep_fluor_data
 # In[2]:
 
 
-main_path = '/home/zoro/Desktop/experiment_data/2019-03-10_HK2_fucci/'
-input_path = main_path + 'cdt1/'
-output_path = main_path + 'cdt1_output/'
+main_path = "/home/zoro/Desktop/experiment_data/2019-03-10_HK2_fucci/"
+input_path = main_path + "cdt1/"
+output_path = main_path + "cdt1_output/"
 if not os.path.exists(output_path):
     os.makedirs(output_path)
 
 posi_end = 20
 
-weight_file = 'HK2_nuc.hdf5'
+weight_file = "HK2_nuc.hdf5"
 autoencoder = reg_seg()
 autoencoder.load_weights(weight_file)
 
@@ -51,9 +51,9 @@ autoencoder.load_weights(weight_file)
 
 
 for posi in range(1, posi_end + 1):
-    img_path = input_path + str(posi) + '/'
+    img_path = input_path + str(posi) + "/"
     img_list = sorted(listdir(img_path))
-    posi_path = output_path + str(posi) + '/reg/'
+    posi_path = output_path + str(posi) + "/reg/"
     if not os.path.exists(posi_path):
         os.makedirs(posi_path)
     for i in range(len(img_list)):
@@ -62,7 +62,7 @@ for posi in range(1, posi_end + 1):
         output = autoencoder.predict(predict_data, batch_size=1, verbose=0)
         # save image to the exat value
         img = Image.fromarray(output[0, :, :, 0])
-        img.save(posi_path + 'reg_' + img_list[i])
+        img.save(posi_path + "reg_" + img_list[i])
 
 
 # In[ ]:

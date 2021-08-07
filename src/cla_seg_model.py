@@ -1,4 +1,3 @@
-
 # coding: utf-8
 
 # In[18]:
@@ -16,13 +15,14 @@ from keras.layers import Input, Activation, Conv2D, MaxPooling2D, UpSampling2D, 
 
 
 def conv_block(input_tensor, kernel, filters):
-    x = Conv2D(filters, (kernel, kernel), padding='same')(input_tensor)
+    x = Conv2D(filters, (kernel, kernel), padding="same")(input_tensor)
     x = BatchNormalization()(x)
-    x = Activation('relu')(x)
+    x = Activation("relu")(x)
     return x
 
 
 # In[8]:
+
 
 def cla_seg(n_labels):
     kernel = 3
@@ -77,14 +77,11 @@ def cla_seg(n_labels):
 
     conv11 = conv_block(conv10, kernel=1, filters=n_labels)
     drop11 = Dropout(0.5)(conv11)
-    outputs = Activation('softmax')(conv11)
+    outputs = Activation("softmax")(conv11)
 
     autoencoder = Model(inputs=[inputs], outputs=[outputs])
     autoencoder.summary()
 
-    autoencoder.compile(
-        loss="categorical_crossentropy",
-        optimizer='adam',
-        metrics=["accuracy"])
+    autoencoder.compile(loss="categorical_crossentropy", optimizer="adam", metrics=["accuracy"])
 
     return autoencoder

@@ -34,7 +34,13 @@ import contour_class
 import utility_tools
 
 import image_warp
-from contour_tool import df_find_contour_points, find_contour_points, generate_contours, align_contour_to, align_contours
+from contour_tool import (
+    df_find_contour_points,
+    find_contour_points,
+    generate_contours,
+    align_contour_to,
+    align_contours,
+)
 import pipe_util2
 
 # In[2]:
@@ -52,7 +58,7 @@ import pipe_util2
 
 # do not use StandarScaler on cell contour points
 # ----------cal cell_contour pca coordinates-------------------
-def morph_pca(top_path, pattern="output" ):
+def morph_pca(top_path, pattern="output"):
     """
 
     :param top_path: string, including several output folders
@@ -63,22 +69,23 @@ def morph_pca(top_path, pattern="output" ):
     top_path = pipe_util2.folder_verify(top_path)
     output_path_list = pipe_util2.folder_file_num(top_path, pattern)
     i = 0
-    while i<len(output_path_list):
+    while i < len(output_path_list):
         output_path = output_path_list[i]
         output_path = pipe_util2.folder_verify(output_path)
         cells_path = output_path + "cells/"
 
-        with open(cells_path + 'cells', 'rb') as fp:
+        with open(cells_path + "cells", "rb") as fp:
             cells = pickle.load(fp)
 
-        data = np.array([single_cell.cell_contour.points for single_cell in cells if hasattr(
-            single_cell, 'cell_contour')])
+        data = np.array(
+            [single_cell.cell_contour.points for single_cell in cells if hasattr(single_cell, "cell_contour")]
+        )
 
         if all_data.size == 0:
             all_data = data
         else:
             all_data = np.vstack((all_data, data))
-        i = i+1
+        i = i + 1
 
     # print(all_data.shape)
     # mean = all_data.mean(axis = 0)
@@ -89,7 +96,7 @@ def morph_pca(top_path, pattern="output" ):
     X = X.astype(np.float)
     print(X.shape)
 
-    pca = decomposition.PCA(n_components=0.98, svd_solver='full')
+    pca = decomposition.PCA(n_components=0.98, svd_solver="full")
     Y = pca.fit_transform(X)
     print(pca.explained_variance_ratio_, sum(pca.explained_variance_ratio_))
 
@@ -100,23 +107,22 @@ def morph_pca(top_path, pattern="output" ):
     # sns.kdeplot(Y[:,0],Y[:,1],n_levels=100,shade=True)
     # plt.show()
 
-    with open(top_path + 'morph_pca', 'wb') as fp:
+    with open(top_path + "morph_pca", "wb") as fp:
         pickle.dump(pca, fp)
-
 
     # do not use StandarScaler on cell contour points
     # ----------cal cell_contour pca coordinates-------------------
     for output_path in output_path_list:
         output_path = pipe_util2.folder_verify(output_path)
-        cells_path = output_path+"cells/"
+        cells_path = output_path + "cells/"
 
-        with open(cells_path + 'fluor_cells', 'rb') as fp:
+        with open(cells_path + "fluor_cells", "rb") as fp:
             cells = pickle.load(fp)
         for i in range(len(cells)):
-            if hasattr(cells[i], 'cell_contour'):
+            if hasattr(cells[i], "cell_contour"):
                 data = np.expand_dims(cells[i].cell_contour.points, axis=0)
                 X, X_shape = utility_tools.flatten_data(data)
                 Y = pca.transform(X)[0]
                 cells[i].set_pca_cord(Y)
-        with open(cells_path + 'fluor_cells', 'wb') as fp:
+        with open(cells_path + "fluor_cells", "wb") as fp:
             pickle.dump(cells, fp)

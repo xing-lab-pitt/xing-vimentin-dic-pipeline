@@ -15,22 +15,20 @@ def find_contour_points(img_path, img_list, contour_value=0.5):
     #     obj_arr=[]
     contour_points_and_obj = []
     k = 0
-    while (k < len(img_list)):
-        img = numpy.array(imread(img_path + '/' + img_list[k]))
+    while k < len(img_list):
+        img = numpy.array(imread(img_path + "/" + img_list[k]))
         img = opening(img)
         # img=measure.label(img,connectivity=2)
         rps = measure.regionprops(img)
         r_labels = [r.label for r in rps]
         for label in r_labels:
-            single_obj_img = (img == label)
-#             print(label)
-#             plt.imshow(single_obj_img)
-#             plt.show()
+            single_obj_img = img == label
+            #             print(label)
+            #             plt.imshow(single_obj_img)
+            #             plt.show()
             single_contour = measure.find_contours(
-                single_obj_img,
-                level=contour_value,
-                fully_connected='low',
-                positive_orientation='low')
+                single_obj_img, level=contour_value, fully_connected="low", positive_orientation="low"
+            )
             # print(len(single_contour))
             max_len = 0
             i = 0
@@ -38,11 +36,10 @@ def find_contour_points(img_path, img_list, contour_value=0.5):
                 if len(single_contour[i]) >= max_len:
                     maj_i = i
                     max_len = len(single_contour[i])
-#             contour_points.append(single_contour[maj_i])#need append the element of in single_contour instead of the whole array
-#             obj_arr.append([k+1,label])
+            #             contour_points.append(single_contour[maj_i])#need append the element of in single_contour instead of the whole array
+            #             obj_arr.append([k+1,label])
 
-            contour_points_and_obj.append(
-                (single_contour[maj_i], [k + 1, label]))
+            contour_points_and_obj.append((single_contour[maj_i], [k + 1, label]))
         k += 1
     return contour_points_and_obj
 
@@ -52,21 +49,25 @@ def df_find_contour_points(df, img_path, img_list, contour_value=0.5):
     #     obj_arr=[]
     contour_points_and_obj = []
     k = 0
-    while (k < len(img_list)):
-        img = numpy.array(imread(img_path + '/' + img_list[k]))
+    while k < len(img_list):
+        img = numpy.array(imread(img_path + "/" + img_list[k]))
         img = opening(img)
         # img=measure.label(img,connectivity=2)
         rps = measure.regionprops(img)
         r_labels = [r.label for r in rps]
         for label in r_labels:
-            if numpy.asscalar(df.loc[(df['ImageNumber'] == k + 1) & (
-                    df['ObjectNumber'] == label), 'Cell_TrackObjects_Label'].values) != -1:
-                single_obj_img = (img == label)
+            if (
+                numpy.asscalar(
+                    df.loc[
+                        (df["ImageNumber"] == k + 1) & (df["ObjectNumber"] == label), "Cell_TrackObjects_Label"
+                    ].values
+                )
+                != -1
+            ):
+                single_obj_img = img == label
                 single_contour = measure.find_contours(
-                    single_obj_img,
-                    level=contour_value,
-                    fully_connected='low',
-                    positive_orientation='low')
+                    single_obj_img, level=contour_value, fully_connected="low", positive_orientation="low"
+                )
                 # print(len(single_contour))
                 max_len = 0
                 i = 0
@@ -74,20 +75,14 @@ def df_find_contour_points(df, img_path, img_list, contour_value=0.5):
                     if len(single_contour[i]) >= max_len:
                         maj_i = i
                         max_len = len(single_contour[i])
-#                 contour_points.append(single_contour[maj_i])#need append the element of in single_contour instead of the whole array
-#                 obj_arr.append([k+1,label])
-                contour_points_and_obj.append(
-                    (single_contour[maj_i], [k + 1, label]))
+                #                 contour_points.append(single_contour[maj_i])#need append the element of in single_contour instead of the whole array
+                #                 obj_arr.append([k+1,label])
+                contour_points_and_obj.append((single_contour[maj_i], [k + 1, label]))
         k += 1
     return contour_points_and_obj
 
 
-def generate_contours(
-        contour_points_and_obj,
-        closed_only=True,
-        min_area=None,
-        max_area=None,
-        axis_align=False):
+def generate_contours(contour_points_and_obj, closed_only=True, min_area=None, max_area=None, axis_align=False):
     """Find the contours at a given image intensity level from an image.
     If multiple contours are found, they are returned in order of increasing area.
 
@@ -100,15 +95,9 @@ def generate_contours(
     """
 
     if closed_only:
-        contour_points_and_obj = [
-            (p, obj) for p, obj in contour_points_and_obj if numpy.allclose(p[-1], p[0])]
+        contour_points_and_obj = [(p, obj) for p, obj in contour_points_and_obj if numpy.allclose(p[-1], p[0])]
 
-    contours_and_obj = [
-        (contour_class.Contour(
-            points=p,
-            units='pixels'),
-            obj) for p,
-        obj in contour_points_and_obj]
+    contours_and_obj = [(contour_class.Contour(points=p, units="pixels"), obj) for p, obj in contour_points_and_obj]
     areas_and_contours = []
     for c in contours_and_obj:
         area = c[0].signed_area()
@@ -119,11 +108,9 @@ def generate_contours(
             area = -area
         areas_and_contours.append((-area, c))
     if min_area is not None:
-        areas_and_contours = [(a, c)
-                              for a, c in areas_and_contours if a >= min_area]
+        areas_and_contours = [(a, c) for a, c in areas_and_contours if a >= min_area]
     if max_area is not None:
-        areas_and_contours = [(a, c)
-                              for a, c in areas_and_contours if a <= max_area]
+        areas_and_contours = [(a, c) for a, c in areas_and_contours if a <= max_area]
     if axis_align:
         for a, c in areas_and_contours:
             c[0].axis_align()
@@ -143,37 +130,31 @@ def _should_allow_reverse(contours, allow_reflection):
     # alignment process.
     if allow_reflection:
         return True
-    orientations = numpy.array(
-        [numpy.sign(contour.signed_area()) for contour in contours])
-    homogenous_orientations = numpy.alltrue(
-        orientations == -
-        1) or numpy.alltrue(
-        orientations == 1)
+    orientations = numpy.array([numpy.sign(contour.signed_area()) for contour in contours])
+    homogenous_orientations = numpy.alltrue(orientations == -1) or numpy.alltrue(orientations == 1)
     return not homogenous_orientations
 
 
 def _compatibility_check(contours):
     if not utility_tools.all_same_shape([c.points for c in contours]):
-        raise RuntimeError(
-            'All contours must have the same number of points in order to align them.')
-    if numpy.alltrue([isinstance(c, contour_class.ContourAndLandmarks)
-                      for c in contours]):
+        raise RuntimeError("All contours must have the same number of points in order to align them.")
+    if numpy.alltrue([isinstance(c, contour_class.ContourAndLandmarks) for c in contours]):
         # if they're all landmark'd contours
         all_landmarks = [c.landmarks for c in contours]
         if not utility_tools.all_same_shape(all_landmarks):
-            raise RuntimeError(
-                'If all contours have landmarks, they must all have the same number of landmarks.')
+            raise RuntimeError("If all contours have landmarks, they must all have the same number of landmarks.")
 
 
 def align_contour_to(
-        contour,
-        reference,
-        global_align=True,
-        align_steps=8,
-        allow_reflection=False,
-        allow_scaling=False,
-        weights=None,
-        quick=False):
+    contour,
+    reference,
+    global_align=True,
+    align_steps=8,
+    allow_reflection=False,
+    allow_scaling=False,
+    weights=None,
+    quick=False,
+):
     """Optimally align a contour to a reference contour. The input contour will be
     transformed IN PLACE to reflect this alignment.
 
@@ -202,8 +183,7 @@ def align_contour_to(
     which are used internally by this function, for more details.
     """
     _compatibility_check([contour, reference])
-    allow_reversed_orientation = _should_allow_reverse(
-        [contour], allow_reflection)
+    allow_reversed_orientation = _should_allow_reverse([contour], allow_reflection)
     allow_translation = True
     if global_align:
         # axis-align first, so that the align_steps correspond to similar
@@ -217,32 +197,30 @@ def align_contour_to(
             allow_scaling,
             allow_translation,
             allow_reversed_orientation,
-            quick)
+            quick,
+        )
     else:
-        distance = contour.local_best_alignment(
-            reference,
-            weights,
-            allow_reflection,
-            allow_scaling,
-            allow_translation)
+        distance = contour.local_best_alignment(reference, weights, allow_reflection, allow_scaling, allow_translation)
         if allow_reversed_orientation:
             rev = self.as_reversed_orientation()
             r_distance = rev.local_best_alignment(
-                reference, weights, allow_reflection, allow_scaling, allow_translation)
+                reference, weights, allow_reflection, allow_scaling, allow_translation
+            )
             if r_distance < distance:
                 contour.__init__(other=rev)
 
 
 def align_contours(
-        contours,
-        align_steps=8,
-        allow_reflection=False,
-        allow_scaling=False,
-        weights=None,
-        max_iters=10,
-        min_rms_change=None,
-        quick=False,
-        iteration_callback=None):
+    contours,
+    align_steps=8,
+    allow_reflection=False,
+    allow_scaling=False,
+    weights=None,
+    max_iters=10,
+    min_rms_change=None,
+    quick=False,
+    iteration_callback=None,
+):
     """Mutually align a set of contours to their mean in an expectation-maximization
     fashion. The input contous will be transformed IN PLACE to reflect this alignment.
 
@@ -285,8 +263,7 @@ def align_contours(
     """
 
     _compatibility_check(contours)
-    allow_reversed_orientation = _should_allow_reverse(
-        contours, allow_reflection)
+    allow_reversed_orientation = _should_allow_reverse(contours, allow_reflection)
     allow_translation = True
     # roughly align the contours and make the point orderings correspond so that
     # the initial mean will be at all reasonable.
@@ -297,7 +274,7 @@ def align_contours(
     if min_rms_change is None:
         # set the min RMSD to 0.01 of the largest dimension of the mean shape.
         min_rms_change = 0.01 * mean.size().max()
-    min_ms_change = min_rms_change**2
+    min_ms_change = min_rms_change ** 2
     changed = 1
     iters = 0
     while changed != 0 and iters < max_iters:
@@ -312,8 +289,9 @@ def align_contours(
                 allow_scaling,
                 allow_translation,
                 allow_reversed_orientation,
-                quick)
-            ms_change = ((contour.points - original_points)**2).mean()
+                quick,
+            )
+            ms_change = ((contour.points - original_points) ** 2).mean()
             if ms_change > min_ms_change:
                 changed += 1
             if iteration_callback is not None:
@@ -356,21 +334,13 @@ def transform_image_to_contour(contour, image_array, size=None):
     # not row-vectors (what the contour uses).
     transform = contour.to_world_transform[:2, :2].transpose()
     offset = contour.to_world_transform[2, :2]
-    transformed = ndimage.affine_transform(
-        image_array, transform, offset, size, order=1)
+    transformed = ndimage.affine_transform(image_array, transform, offset, size, order=1)
     return transformed.astype(image_array.dtype)
 
 
 def get_image_swath(
-        contour,
-        image_array,
-        begin,
-        end,
-        offset,
-        depth,
-        l_samples=None,
-        d_samples=None,
-        image_type='original'):
+    contour, image_array, begin, end, offset, depth, l_samples=None, d_samples=None, image_type="original"
+):
     """Warp an image region into a rectangular "swath".
 
     One dimension of the warped region is defined by a contour, from contour point
@@ -413,24 +383,13 @@ def get_image_swath(
         l_points = numpy.linspace(begin, end, l_samples, endpoint=True)
         l_points %= l
         inward_normals = contour.inward_normals(l_points)
-        offsets = numpy.linspace(
-            offset,
-            offset + depth,
-            d_samples,
-            endpoint=True)
-        return numpy.multiply.outer(
-            offsets, inward_normals) + contour.interpolate_points(l_points)
-    return _map_contour_coords_to_image(
-        contour, image_array, position_getter, image_type)
+        offsets = numpy.linspace(offset, offset + depth, d_samples, endpoint=True)
+        return numpy.multiply.outer(offsets, inward_normals) + contour.interpolate_points(l_points)
+
+    return _map_contour_coords_to_image(contour, image_array, position_getter, image_type)
 
 
-def get_rectangle_axis_swath(
-        contour,
-        image_array,
-        depth,
-        l_samples=None,
-        d_samples=None,
-        image_type='original'):
+def get_rectangle_axis_swath(contour, image_array, depth, l_samples=None, d_samples=None, image_type="original"):
     """Warp a region around the contour's central axis into a rectangular swath.
 
     One dimension of the warped region is defined by the contour's central
@@ -455,24 +414,15 @@ def get_rectangle_axis_swath(
         l_samples = len(contour.central_axis)
 
     def position_getter(contour):
-        l_points = numpy.linspace(
-            0, len(contour.central_axis), l_samples, endpoint=True)
+        l_points = numpy.linspace(0, len(contour.central_axis), l_samples, endpoint=True)
         inward_normals = contour.axis_normals()
         offsets = numpy.linspace(-depth, depth, d_samples, endpoint=True)
-        return numpy.multiply.outer(
-            offsets, inward_normals) + contour.interpolate_axis_points(l_points)
-    return _map_contour_coords_to_image(
-        contour, image_array, position_getter, image_type)
+        return numpy.multiply.outer(offsets, inward_normals) + contour.interpolate_axis_points(l_points)
+
+    return _map_contour_coords_to_image(contour, image_array, position_getter, image_type)
 
 
-def get_axis_swath(
-        contour,
-        image_array,
-        d_samples,
-        begin=None,
-        end=None,
-        l_samples=None,
-        image_type='original'):
+def get_axis_swath(contour, image_array, d_samples, begin=None, end=None, l_samples=None, image_type="original"):
     """Warp a central-axis contour into a rectangular swath.
 
     One dimension of the warped region is defined by the contour's central
@@ -506,31 +456,21 @@ def get_axis_swath(
         bottom_params = fitpack.splev(l_points, bottom_spline) % c_points
         contour_spline, uout = contour.to_spline()
         top_points = numpy.transpose(fitpack.splev(top_params, contour_spline))
-        bottom_points = numpy.transpose(
-            fitpack.splev(bottom_params, contour_spline))
+        bottom_points = numpy.transpose(fitpack.splev(bottom_params, contour_spline))
         mesh_points = numpy.empty((d_samples, l_samples, 2))
         interp_points = numpy.linspace(0, 1, d_samples)
-        for i, ((tx, ty), (bx, by)) in enumerate(
-                zip(top_points, bottom_points)):
-            mesh_points[:, i, 0] = numpy.interp(
-                interp_points, [0, 1], [tx, bx])
-            mesh_points[:, i, 1] = numpy.interp(
-                interp_points, [0, 1], [ty, by])
+        for i, ((tx, ty), (bx, by)) in enumerate(zip(top_points, bottom_points)):
+            mesh_points[:, i, 0] = numpy.interp(interp_points, [0, 1], [tx, bx])
+            mesh_points[:, i, 1] = numpy.interp(interp_points, [0, 1], [ty, by])
         return mesh_points
-    return _map_contour_coords_to_image(
-        contour, image_array, position_getter, image_type)
+
+    return _map_contour_coords_to_image(contour, image_array, position_getter, image_type)
 
 
-def _map_contour_coords_to_image(
-        contour,
-        image_array,
-        position_getter,
-        image_type):
-    if image_type not in ('original', 'aligned'):
-        raise RuntimeError(
-            "Image type %s is invalid. Must be 'original' or 'aligned'." %
-            image_type)
-    if image_type == 'aligned':
+def _map_contour_coords_to_image(contour, image_array, position_getter, image_type):
+    if image_type not in ("original", "aligned"):
+        raise RuntimeError("Image type %s is invalid. Must be 'original' or 'aligned'." % image_type)
+    if image_type == "aligned":
         # we need to assume that the contour is centered on the origin, because
         # later we'll be scaling the points, and we don't want to deal with
         # the fact that the contour translation would be scaled too, if it's not
@@ -538,7 +478,7 @@ def _map_contour_coords_to_image(
         contour = contour.as_recentered_bounds()
     positions = position_getter(contour)
     # now transform the positions
-    if image_type == 'original':
+    if image_type == "original":
         # find the locations of the points on the original image
         transform = contour.to_world_transform
     else:
@@ -550,34 +490,24 @@ def _map_contour_coords_to_image(
     positions = utility_tools.homogenous_transform_points(positions, transform)
     positions = positions.reshape(shape)
     positions = positions.transpose((2, 1, 0))
-    mapped = ndimage.map_coordinates(
-        image_array,
-        positions,
-        output=float,
-        cval=numpy.nan,
-        order=1)
+    mapped = ndimage.map_coordinates(image_array, positions, output=float, cval=numpy.nan, order=1)
     return numpy.ma.array(mapped, mask=numpy.isnan(mapped))
 
 
 def _get_descale_transform(contour, size, descale_only=True):
     """Get the transform that centers the contour's bounding box on an image with
-     a given size, after descaling the contour to be in pixel units."""
+    a given size, after descaling the contour to be in pixel units."""
     new_bounds_center = numpy.asarray(size, dtype=float) / 2
     old_bounds_center = contour.bounds_center()
     rotate_reflect, scale_shear, world_translation = utility_tools.decompose_homogenous_transform(
-        contour.to_world_transform)
+        contour.to_world_transform
+    )
     old_bounds_center = numpy.dot([old_bounds_center], scale_shear)[0]
     translation = new_bounds_center - old_bounds_center
-    return utility_tools.make_homogenous_transform(
-        transform=scale_shear, translation=translation)
+    return utility_tools.make_homogenous_transform(transform=scale_shear, translation=translation)
 
 
-def add_image_landmarks(
-        contour,
-        image_array,
-        landmark_ranges,
-        image_type='original',
-        mask=True):
+def add_image_landmarks(contour, image_array, landmark_ranges, image_type="original", mask=True):
     """Add landmarks to a contour (creating a ContourAndLandmarks object).
 
     The landmarks are defined from pixel intensities in an image: the 'landmark_ranges'
@@ -597,17 +527,14 @@ def add_image_landmarks(
     (but no other geometric transforms).
     """
     image_array = numpy.asarray(image_array, dtype=float)
-    if image_type not in ('original', 'aligned'):
-        raise RuntimeError(
-            "Image type %s is invalid. Must be 'original' or 'aligned'." %
-            image_type)
-    if image_type == 'original' and mask:
+    if image_type not in ("original", "aligned"):
+        raise RuntimeError("Image type %s is invalid. Must be 'original' or 'aligned'." % image_type)
+    if image_type == "original" and mask:
         # extract only the image region that we need to consider
-        image_array = transform_image_to_contour(
-            contour, image_array, mask=False)
+        image_array = transform_image_to_contour(contour, image_array, mask=False)
         # now the image_array is aligned to the contour
-        image_type = 'aligned'
-    if image_type == 'original':
+        image_type = "aligned"
+    if image_type == "original":
         to_image_transform = contour.to_world_transform
     else:
         # we're just interested in the transform that maps the contour to the middle
@@ -620,10 +547,9 @@ def add_image_landmarks(
         # for the landmarks
         transformed_contour = contour.as_transformed(to_image_transform)
         domain = numpy.array([[0, 0], image_array.shape])
-        image_mask = get_binary_mask(
-            transformed_contour, image_array.shape, domain)
+        image_mask = get_binary_mask(transformed_contour, image_array.shape, domain)
         nan_mask = numpy.where(image_mask, 1, numpy.nan)
-        err = numpy.seterr(invalid='ignore')
+        err = numpy.seterr(invalid="ignore")
         image_array *= nan_mask
         numpy.seterr(**err)
     landmarks = []
@@ -633,40 +559,38 @@ def add_image_landmarks(
         # is true
         fudge = 1e-5
         indices = numpy.transpose(
-            numpy.nonzero(
-                numpy.logical_and(
-                    image_array >= (
-                        low - fudge),
-                    image_array <= (
-                        high + fudge))))
+            numpy.nonzero(numpy.logical_and(image_array >= (low - fudge), image_array <= (high + fudge)))
+        )
         if len(indices) == 0:
             if low == high:
                 raise RuntimeError(
-                    'No pixels at intensity value %d found for contour %s.' %
-                    (low, contour.simple_name()))
+                    "No pixels at intensity value %d found for contour %s." % (low, contour.simple_name())
+                )
             else:
                 raise RuntimeError(
-                    'No pixels within intensity range [%d,%d] found for contour %s.' %
-                    (low, high, contour.simple_name()))
+                    "No pixels within intensity range [%d,%d] found for contour %s."
+                    % (low, high, contour.simple_name())
+                )
         landmarks.append(indices.mean(axis=0))
-    landmarks = utility_tools.homogenous_transform_points(
-        landmarks, to_contour_transform)
+    landmarks = utility_tools.homogenous_transform_points(landmarks, to_contour_transform)
     if isinstance(contour, contour_class.ContourAndLandmarks):
         landmarks = numpy.concatenate(contour.landmarks, landmarks)
     landmark_contour = contour_class.ContourAndLandmarks(
-        other=contour, landmarks=landmarks, weights=numpy.ones(len(contour.points) + len(landmarks)))
+        other=contour, landmarks=landmarks, weights=numpy.ones(len(contour.points) + len(landmarks))
+    )
     return landmark_contour
 
 
 def warp_images(
-        from_contour,
-        to_contour,
-        image_arrays,
-        output_region=None,
-        from_type='original',
-        to_type='original',
-        interpolation_order=1,
-        approximate_grid=1):
+    from_contour,
+    to_contour,
+    image_arrays,
+    output_region=None,
+    from_type="original",
+    to_type="original",
+    interpolation_order=1,
+    approximate_grid=1,
+):
     """Define a thin-plate-spline warping transform that warps from the points of
     from_contour to the points of to_contour (and their landmarks, if they have any),
     and then warp the given images by that transform. In general, 'from_contour'
@@ -703,33 +627,21 @@ def warp_images(
     _compatibility_check([from_contour, to_contour])
     image_arrays = [numpy.asarray(image_array) for image_array in image_arrays]
     if not utility_tools.all_same_shape(image_arrays):
-        raise ValueError(
-            'Input images for warp_images must all be the same size.')
-    if from_type not in (
-        'original',
-        'aligned') or to_type not in (
-        'original',
-            'aligned'):
-        raise RuntimeError(
-            "Image from_type or to_type %s is invalid. Must be 'original' or 'aligned'." %
-            image_type)
+        raise ValueError("Input images for warp_images must all be the same size.")
+    if from_type not in ("original", "aligned") or to_type not in ("original", "aligned"):
+        raise RuntimeError("Image from_type or to_type %s is invalid. Must be 'original' or 'aligned'." % image_type)
     if output_region is None:
-        output_region = [
-            0,
-            0,
-            image_arrays[0].shape[0],
-            image_arrays[0].shape[1]]
-    if to_type == 'original':
+        output_region = [0, 0, image_arrays[0].shape[0], image_arrays[0].shape[1]]
+    if to_type == "original":
         # put the to_contour in world units
         to_contour = to_contour.as_world()
     else:
         # center the to_contour bounding box in the middle of the output images, and
         # descale it to be in pixel units
         to_contour = to_contour.as_descaled()
-        center = numpy.array(
-            [output_region[:2], output_region[2:]], dtype=float).ptp(axis=0) / 2
+        center = numpy.array([output_region[:2], output_region[2:]], dtype=float).ptp(axis=0) / 2
         to_contour.recenter_bounds(center)
-    if from_type == 'original':
+    if from_type == "original":
         # put the from_contour in world units
         from_contour = from_contour.as_world()
     else:
@@ -738,19 +650,13 @@ def warp_images(
         from_contour = from_contour.as_descaled()
         center = numpy.array(image_arrays[0].shape, dtype=float) / 2
         from_contour.recenter_bounds(center)
-    if isinstance(
-            from_contour,
-            contour_class.ContourAndLandmarks) and isinstance(
-            to_contour,
-            contour_class.ContourAndLandmarks):
+    if isinstance(from_contour, contour_class.ContourAndLandmarks) and isinstance(
+        to_contour, contour_class.ContourAndLandmarks
+    ):
         # in case the contours have landmarks, ask them to pack the landmarks into
         # their points list
         from_contour._pack_landmarks_into_points()
         to_contour._pack_landmarks_into_points()
     return image_warp.warp_images(
-        from_contour.points,
-        to_contour.points,
-        image_arrays,
-        output_region,
-        interpolation_order,
-        approximate_grid)
+        from_contour.points, to_contour.points, image_arrays, output_region, interpolation_order, approximate_grid
+    )

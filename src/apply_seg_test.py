@@ -37,7 +37,7 @@ from reg_seg_lin_model import reg_seg_lin
 # In[8]:
 
 
-weight_file = 'A549_cellbody_mwp_ep100.hdf5'
+weight_file = "A549_cellbody_mwp_ep100.hdf5"
 n_labels = 2
 autoencoder = reg_seg_lin()  # cla_seg(n_labels)
 autoencoder.load_weights(weight_file)
@@ -49,22 +49,19 @@ autoencoder.load_weights(weight_file)
 def color_num(labels):
     label_rgb = label2rgb(labels, bg_label=0)
     img_rgb = toimage(label_rgb)
-    base = img_rgb.convert('RGBA')
+    base = img_rgb.convert("RGBA")
     # make a blank image for the text, initialized to transparent text color
-    txt = Image.new('RGBA', base.size, (255, 255, 255, 0))
+    txt = Image.new("RGBA", base.size, (255, 255, 255, 0))
     # get a font
     # fnt = ImageFont.truetype('Pillow/Tests/fonts/FreeMono.ttf', 60)#specify
     # the path of font file
-    fnt = ImageFont.truetype('arial.ttf', 40)
+    fnt = ImageFont.truetype("arial.ttf", 40)
     # get a drawing context
     d = ImageDraw.Draw(txt)
     for region in regionprops(labels):
         cx = int(region.centroid[1])
         cy = int(region.centroid[0])
-        d.text(
-            (cx, cy), str(
-                labels[cy][cx]), font=fnt, fill=(
-                255, 255, 255, 255))
+        d.text((cx, cy), str(labels[cy][cx]), font=fnt, fill=(255, 255, 255, 255))
     out = Image.alpha_composite(base, txt)
     return out
 
@@ -75,10 +72,9 @@ def color_num(labels):
 def prep_data(img_path, img_list, img_num):
 
     img = imread(img_path + img_list[img_num - 1])
-#         plt.imshow(img)
-#         plt.show()
-    img = (img - np.amin(img)) * 1.0 / (np.amax(img) -
-                                        np.amin(img))  # img*1.0 transform array to double
+    #         plt.imshow(img)
+    #         plt.show()
+    img = (img - np.amin(img)) * 1.0 / (np.amax(img) - np.amin(img))  # img*1.0 transform array to double
 
     img = img * 1.0 / np.median(img)
 
@@ -101,7 +97,7 @@ def hmax_watershed(img, h_thres, small_obj_thres, mask_thres=0):
     labels = remove_small_objects(labels, small_obj_thres)
 
     labels = label(labels, connectivity=2)
-    plt.title('labels')
+    plt.title("labels")
     plt.imshow(labels)
     plt.show()
     print(np.amax(labels))
@@ -111,14 +107,14 @@ def hmax_watershed(img, h_thres, small_obj_thres, mask_thres=0):
 # In[12]:
 
 
-main_path = '/home/zoro/Desktop/experiment_data/2019-10-12_A549_vim_dtt10um_tgf4ng/'
-img_path = main_path + 'test_img/'
+main_path = "/home/zoro/Desktop/experiment_data/2019-10-12_A549_vim_dtt10um_tgf4ng/"
+img_path = main_path + "test_img/"
 img_list = sorted(listdir(img_path))
-output_path = main_path + 'output/'
+output_path = main_path + "output/"
 if not os.path.exists(output_path):
     os.makedirs(output_path)
 
-reg_path = output_path + '/reg/'
+reg_path = output_path + "/reg/"
 if not os.path.exists(reg_path):
     os.makedirs(reg_path)
 
@@ -130,7 +126,7 @@ for img_num in range(1, len(img_list) + 1):
     plt.imshow(im)
     plt.show()
     img = Image.fromarray(im)
-    img.save(reg_path + 'reg_' + img_list[img_num - 1])
+    img.save(reg_path + "reg_" + img_list[img_num - 1])
 
 
 # In[13]:
@@ -142,31 +138,27 @@ mask_thres = 0
 reg_img_list = sorted(listdir(reg_path))
 
 
-seg_path = output_path + 'seg/'
+seg_path = output_path + "seg/"
 if not os.path.exists(seg_path):
     os.makedirs(seg_path)
 
-rgb_num_path = output_path + 'rgb_num/'
+rgb_num_path = output_path + "rgb_num/"
 if not os.path.exists(rgb_num_path):
     os.makedirs(rgb_num_path)
 
 for i in range(len(reg_img_list)):
     img = imread(img_path + img_list[i])
     reg_img = imread(reg_path + reg_img_list[i])
-    img_name = img_list[i][0:len(img_list[i]) - 4]
+    img_name = img_list[i][0 : len(img_list[i]) - 4]
     reg_img = -reg_img * (reg_img < -0.05)
-    seg = hmax_watershed(
-        reg_img,
-        h_thres=h_thres,
-        small_obj_thres=small_obj_thres,
-        mask_thres=0)
+    seg = hmax_watershed(reg_img, h_thres=h_thres, small_obj_thres=small_obj_thres, mask_thres=0)
 
     # should use np.uint32,could be save correctly
-    img_seg = Image.fromarray(seg.astype(np.uint32), 'I')
-    img_seg.save(seg_path + 'seg_' + img_name + '.png')
+    img_seg = Image.fromarray(seg.astype(np.uint32), "I")
+    img_seg.save(seg_path + "seg_" + img_name + ".png")
 
     rgb_num = color_num(seg)
-    rgb_num.save(rgb_num_path + 'rgb_' + img_name + '.png')
+    rgb_num.save(rgb_num_path + "rgb_" + img_name + ".png")
 
 
 # In[14]:
@@ -181,12 +173,10 @@ def find_contours_labelimg(seg_img, contour_value):
     # print(r_labels)
     contours = []
     for label in r_labels:
-        single_obj_seg_img = (seg_img == label)
+        single_obj_seg_img = seg_img == label
         single_contour = find_contours(
-            single_obj_seg_img,
-            level=contour_value,
-            fully_connected='low',
-            positive_orientation='low')
+            single_obj_seg_img, level=contour_value, fully_connected="low", positive_orientation="low"
+        )
         # print(len(single_contour))
         max_len = 0
         for i in range(len(single_contour)):
@@ -207,12 +197,12 @@ fig, ax = plt.subplots(figsize=(10, 10))
 ax.imshow(img)
 plt.show()
 fig, ax = plt.subplots(figsize=(10, 10))
-ax.imshow(img, interpolation='nearest', cmap=plt.cm.gray)
+ax.imshow(img, interpolation="nearest", cmap=plt.cm.gray)
 
 for n, contour in enumerate(contours):
     ax.plot(contour[:, 1], contour[:, 0], linewidth=2)
 
-ax.axis('image')
+ax.axis("image")
 plt.show()
 
 
