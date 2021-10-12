@@ -13,12 +13,17 @@ Img_str='a549_vim_rfp_2ng_24hr_091721_T01_XY1_';
 
 %% for tiles
 experiment='a549_vim_rfp_control_091621/';
+Img_str=strcat(erase(experiment,'/'),'_T01_XY1');
+video_name='a549_vim_rfp_control_XY1_091621.avi';
+crop_file=strcat(erase(experiment,'/'),'_crop_file.txt');
 tile='tile1';
-Img_str='a549_vim_rfp_control_091621_T04_XY1';
+
+
 
 dir_path=strcat('/home/dap182/cluster/xing/image_analysis/image_data/40x_large_calcein_time_lapse_training_datset/tiles/',experiment);
 seg_path=strcat('/home/dap182/cluster/xing/image_analysis/image_data/40x_large_calcein_time_lapse_training_datset/crops/',experiment);
-video_path=strcat('/home/dap182/cluster/xing/image_analysis/image_data/40x_large_calcein_time_lapse_training_datset/videos/',experiment,'a549_vim_rfp_control_XY1_091621.avi');
+crop_path=strcat('/home/dap182/cluster/xing/image_analysis/image_data/40x_large_calcein_time_lapse_training_datset/crops/',experiment',crop_file);
+video_path=strcat('/home/dap182/cluster/xing/image_analysis/image_data/40x_large_calcein_time_lapse_training_datset/videos/',experiment,video_name);
 
 
 dic=imread(strcat(dir_path,Img_str,'_C1_',tile,'.tif'));
