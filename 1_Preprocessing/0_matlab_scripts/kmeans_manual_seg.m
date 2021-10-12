@@ -1,27 +1,34 @@
 %dir_path='/Volumes/Fusion0_dat/dante_weikang_imaging_data/a549_vim_rfp_5_calcein/';
 % channel_str = 'FITC';
-channel_str = 'TRITC';
+%channel_str = 'TRITC';
 % dir_path = '/Volumes/Fusion0_dat/dante_weikang_imaging_data/rpe_pcna_p21_72hr_time_lapse'
-dir_path = '/Volumes/Fusion0_dat/dante_weikang_imaging_data/test_fiji_output/singleTiffs'
+%dir_path = '/Volumes/Fusion0_dat/dante_weikang_imaging_data/test_fiji_output/singleTiffs'
 % seg_path='/Volumes/Fusion0_dat/dante_weikang_imaging_data/a549_vim_rfp_5_calcein/segs';
 % seg_path = '/Volumes/Fusion0_dat/dante_weikang_imaging_data/rpe_pcna_p21_72hr_time_lapse/TRITC_segs'
 % seg_path = strcat('/Volumes/Fusion0_dat/dante_weikang_imaging_data/rpe_pcna_p21_72hr_time_lapse/', channel_str, '_segs')
-seg_path = strcat('/Volumes/Fusion0_dat/dante_weikang_imaging_data/test_fiji_output/singleTiffs/', channel_str, '_segs')
-mkdir(seg_path);
+%seg_path = strcat('/Volumes/Fusion0_dat/dante_weikang_imaging_data/test_fiji_output/singleTiffs/', channel_str, '_segs')
+%mkdir(seg_path);
 % pos='16';
 % Img_str=strcat('hk2_calcein_trainxy',pos);
 % Img=imread(strcat(dir_path,'/hk2_calcein_trainxy',pos,'c3.tif'));
 % I=imread(strcat(dir_path,'/hk2_calcein_trainxy',pos,'c2.tif'));
 % Img_str='rpe_pcna_p21_72hr_time_lapse_T050_XY3_'; % legacy: note the ending underscore
-Img_str = 'test_rpe-corrected0008'
-Img=imread(strcat(dir_path,'/',Img_str, '.tif'));
-I=imread(strcat(dir_path,'/',Img_str, '.tif'));
+%Img_str = 'test_rpe-corrected0008'
+%Img=imread(strcat(dir_path,'/',Img_str, '.tif'));
+%I=imread(strcat(dir_path,'/',Img_str, '.tif'));
 
 % For non background ver.
-% Img=imread(strcat(dir_path,'/',Img_str, channel_str, '.tif'));
+% Img=imread(strcat(dir_path,'/',Img_str, channel_str, '.tif'))
 % I=imread(strcat(dir_path,'/',Img_str, channel_str, '.tif'));
 % Img=imread(strcat(dir_path,'/',Img_str,'TRITC.tif'));
 % I=imread(strcat(dir_path,'/',Img_str,'TRITC.tif'));
+%% for tiles
+experiment='a549_vim_rfp_control_091621/';
+tile='tile0';
+dir_path=strcat('/net/capricorn/home/xing/dap182/xing/image_analysis/image_data/40x_large_calcein_time_lapse_training_datset/tiles/',experiment);
+seg_path=strcat('/net/capricorn/home/xing/dap182/xing/image_analysis/image_data/40x_large_calcein_time_lapse_training_datset/crops/',experiment);
+Img_str='a549_vim_rfp_control_091621_T04_XY1_C1';
+Img=imread(strcat(dir_path,Img_str,'_',tile,'.tif'));
 
 %% for debug
 % Img = eye(200);
