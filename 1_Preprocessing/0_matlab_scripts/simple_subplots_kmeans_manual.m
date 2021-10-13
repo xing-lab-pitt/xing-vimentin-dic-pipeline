@@ -1,27 +1,28 @@
 %dir_path='/home/dante/programs/dvim/user_data/projects/dry/1_dry_project/data/40x/a549_vim_rfp_5mM_calcein_40x/tiled_3x3_tifs';
 
-seg_path='/home/dap182/cluster/xing/image_analysis/image_data/40x_large_calcein_time_lapse_training_datset/seg/a549_vim_rfp_2ng_24hr_091721';
+%seg_path='/home/dap182/cluster/xing/image_analysis/image_data/40x_large_calcein_time_lapse_training_datset/seg/a549_vim_rfp_2ng_24hr_091721';
 
-dir_path='/home/dap182/cluster/xing/image_analysis/image_data/40x_large_calcein_time_lapse_training_datset/tifs/a549_vim_rfp_2ng_24hr_091721/';
+%dir_path='/home/dap182/cluster/xing/image_analysis/image_data/40x_large_calcein_time_lapse_training_datset/tifs/a549_vim_rfp_2ng_24hr_091721/';
 
-video_path='/home/dap182/cluster/xing/image_analysis/image_data/40x_large_calcein_time_lapse_training_datset/videos/a549_vim_rfp_2ng_24hr_091721/a549_vim_rfp_2ng_24hr_XY1_091721.avi';
+%video_path='/home/dap182/cluster/xing/image_analysis/image_data/40x_large_calcein_time_lapse_training_datset/videos/a549_vim_rfp_2ng_24hr_091721/a549_vim_rfp_2ng_24hr_XY1_091721.avi';
 
 %crop_file='/home/dap182/cluster/xing/image_analysis/image_data/40x_large_calcein_time_lapse_training_datset/crops/a549_vim_rfp_2ng_24hr_091721/crop.txt';
 
-crop_file='crop.txt';
-Img_str='a549_vim_rfp_2ng_24hr_091721_T01_XY1_';
+%crop_file='crop.txt';
+%Img_str='a549_vim_rfp_2ng_24hr_091721_T01_XY1_';
 
 %% for tiles
 experiment='a549_vim_rfp_control_091621/';
 Img_str=strcat(erase(experiment,'/'),'_T01_XY1');
 video_name='a549_vim_rfp_control_XY1_091621.avi';
 crop_file=strcat(erase(experiment,'/'),'_crop_file.txt');
-tile='tile1';
+%tiles index starts with 0
+tile='tile0';
 
 
 
 dir_path=strcat('/home/dap182/cluster/xing/image_analysis/image_data/40x_large_calcein_time_lapse_training_datset/tiles/',experiment);
-seg_path=strcat('/home/dap182/cluster/xing/image_analysis/image_data/40x_large_calcein_time_lapse_training_datset/crops/',experiment);
+seg_path=strcat('/home/dap182/cluster/xing/image_analysis/image_data/40x_large_calcein_time_lapse_training_datset/seg/',experiment);
 crop_path=strcat('/home/dap182/cluster/xing/image_analysis/image_data/40x_large_calcein_time_lapse_training_datset/crops/',experiment',crop_file);
 video_path=strcat('/home/dap182/cluster/xing/image_analysis/image_data/40x_large_calcein_time_lapse_training_datset/videos/',experiment,video_name);
 
@@ -205,11 +206,14 @@ crop_site=0;
             break;
         end
         
-        disp(prod(size(pick_data(:,:,1))))
+        %disp(prod(size(pick_data(:,:,1))))
             
-        disp((length(dic)*0.9)^2)
-            
-            
+        %disp((length(dic)*0.9)^2)
+        
+        %disp(prod(size(pick_data(:,1,1))))
+        
+        %disp(prod(size(pick_data(1,:,1))))
+        
         if prod(size(pick_data(:,:,1))) > (length(dic)*0.9)^2
             
             %disp(strcat('pick_data',size(pick_data(:,:,1))))
@@ -220,35 +224,77 @@ crop_site=0;
             close all
             return
         end
+        
+        if (prod(size(pick_data(:,1,1)))>360) && (prod(size(pick_data(1,:,1)))>360)
+            show_boundary = imoverlay(Img0,Cell_bianyuan,'green');
+            imshow(show_boundary, 'InitialMagnification','fit');
             
-        crop_site=crop_site+1;
-        crop_seg_image=imcrop(seg_mask,rect);
+            crop_site=crop_site+1;
+            crop_seg_image=imcrop(seg_mask,rect);
+
+            %[crop_seg_image, nb_cell] = relabel_image(crop_seg_image);
+            imwrite(uint16(crop_seg_image),strcat(seg_path,'/seg_',Img_str,'_',tile,'_cr',num2str(crop_site),'.png'));
+
+            crop_phase=imcrop(dic,rect);
+            imwrite(crop_phase,strcat(seg_path,'/crop_',Img_str,'_',tile,'_cr',num2str(crop_site),'.png'));
+
+            crop_fluor=imcrop(calcein,rect);
+            imwrite(crop_fluor,strcat(seg_path,'/fluor_',Img_str,'_',tile,'_cr',num2str(crop_site),'.png'));
+
+            cell_boundary= boundarymask(crop_seg_image);
+            imwrite(uint16(cell_boundary),strcat(seg_path,'/boundary_',Img_str,'_',tile,'_cr',num2str(crop_site),'.png'));
+
+            Seg_bin=crop_seg_image>0;
+            imwrite(uint16(Seg_bin),strcat(seg_path,'/colony_',Img_str,'_',tile,'_cr',num2str(crop_site),'.png'));
+
+            cell_interior=Seg_bin&~cell_boundary;
+            imwrite(uint16(cell_interior),strcat(seg_path,'/interior_',Img_str,'_',tile,'_cr',num2str(crop_site),'.png'));
+
+            BW_dist=bwdist(~cell_interior);
+            imwrite(uint16(BW_dist),strcat(seg_path,'/bwdist_',Img_str,'_',tile,'_cr',num2str(crop_site),'.png'));
+
+            BIB_3class=2*double(cell_boundary)+double(cell_interior);
+            imwrite(uint16(BIB_3class),strcat(seg_path,'/BIB_',Img_str,'_',tile,'_cr',num2str(crop_site),'.png'));
+
+            crop_list{end+1}=rect;
+            
+        else 
+            show_boundary = imoverlay(Img0,Cell_bianyuan,'red');
+            imshow(show_boundary, 'InitialMagnification','fit');
+            continue
+        end
+
+            
         
-        %[crop_seg_image, nb_cell] = relabel_image(crop_seg_image);
-        imwrite(uint16(crop_seg_image),strcat(seg_path,'/seg_',Img_str,'_',tile,'_cr',num2str(crop_site),'.png'));
-        
-        crop_phase=imcrop(dic,rect);
-        imwrite(crop_phase,strcat(seg_path,'/crop_',Img_str,'_',tile,'_cr',num2str(crop_site),'.png'));
-        
-        crop_fluor=imcrop(calcein,rect);
-        imwrite(crop_fluor,strcat(seg_path,'/fluor_',Img_str,'_',tile,'_cr',num2str(crop_site),'.png'));
-        
-        cell_boundary= boundarymask(crop_seg_image);
-        imwrite(uint16(cell_boundary),strcat(seg_path,'/boundary_',Img_str,'_',tile,'_cr',num2str(crop_site),'.png'));
-        
-        Seg_bin=crop_seg_image>0;
-        imwrite(uint16(Seg_bin),strcat(seg_path,'/colony_',Img_str,'_',tile,'_cr',num2str(crop_site),'.png'));
-        
-        cell_interior=Seg_bin&~cell_boundary;
-        imwrite(uint16(cell_interior),strcat(seg_path,'/interior_',Img_str,'_',tile,'_cr',num2str(crop_site),'.png'));
-        
-        BW_dist=bwdist(~cell_interior);
-        imwrite(uint16(BW_dist),strcat(seg_path,'/bwdist_',Img_str,'_',tile,'_cr',num2str(crop_site),'.png'));
-        
-        BIB_3class=2*double(cell_boundary)+double(cell_interior);
-        imwrite(uint16(BIB_3class),strcat(seg_path,'/BIB_',Img_str,'_',tile,'_cr',num2str(crop_site),'.png'));
-        
-        crop_list{end+1}=rect;
+            
+%         crop_site=crop_site+1;
+%         crop_seg_image=imcrop(seg_mask,rect);
+%         
+%         %[crop_seg_image, nb_cell] = relabel_image(crop_seg_image);
+%         imwrite(uint16(crop_seg_image),strcat(seg_path,'/seg_',Img_str,'_',tile,'_cr',num2str(crop_site),'.png'));
+%         
+%         crop_phase=imcrop(dic,rect);
+%         imwrite(crop_phase,strcat(seg_path,'/crop_',Img_str,'_',tile,'_cr',num2str(crop_site),'.png'));
+%         
+%         crop_fluor=imcrop(calcein,rect);
+%         imwrite(crop_fluor,strcat(seg_path,'/fluor_',Img_str,'_',tile,'_cr',num2str(crop_site),'.png'));
+%         
+%         cell_boundary= boundarymask(crop_seg_image);
+%         imwrite(uint16(cell_boundary),strcat(seg_path,'/boundary_',Img_str,'_',tile,'_cr',num2str(crop_site),'.png'));
+%         
+%         Seg_bin=crop_seg_image>0;
+%         imwrite(uint16(Seg_bin),strcat(seg_path,'/colony_',Img_str,'_',tile,'_cr',num2str(crop_site),'.png'));
+%         
+%         cell_interior=Seg_bin&~cell_boundary;
+%         imwrite(uint16(cell_interior),strcat(seg_path,'/interior_',Img_str,'_',tile,'_cr',num2str(crop_site),'.png'));
+%         
+%         BW_dist=bwdist(~cell_interior);
+%         imwrite(uint16(BW_dist),strcat(seg_path,'/bwdist_',Img_str,'_',tile,'_cr',num2str(crop_site),'.png'));
+%         
+%         BIB_3class=2*double(cell_boundary)+double(cell_interior);
+%         imwrite(uint16(BIB_3class),strcat(seg_path,'/BIB_',Img_str,'_',tile,'_cr',num2str(crop_site),'.png'));
+%         
+%         crop_list{end+1}=rect;
     end
      
 %theoretically, there should be a script that deletes all crops if I mess
