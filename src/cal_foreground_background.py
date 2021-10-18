@@ -38,10 +38,10 @@ from skimage.filters import gaussian
 # In[38]:
 
 
-main_path = '/home/zoro/Desktop/experiment_data/2019-05-17_A549_vim/'
+main_path = "/home/zoro/Desktop/experiment_data/2019-05-17_A549_vim/"
 
-fluor_path = main_path + '/vimentin/'
-fluor_output_path = main_path + 'output/'
+fluor_path = main_path + "/vimentin/"
+fluor_output_path = main_path + "output/"
 
 posi_end = 20
 fluor_step = 12
@@ -61,8 +61,8 @@ tot_bg_mask = (tot_bg > 0).astype(np.float64)
 
 for posi in range(1, posi_end + 1):
     print(posi)
-    fluor_img_path = fluor_path + str(posi) + '/'
-    fluor_seg_path = fluor_output_path + str(posi) + '/seg/'
+    fluor_img_path = fluor_path + str(posi) + "/"
+    fluor_seg_path = fluor_output_path + str(posi) + "/seg/"
     fluor_img_list = sorted(listdir(fluor_img_path))
     fluor_seg_list = sorted(listdir(fluor_seg_path))
 
@@ -141,7 +141,7 @@ ctrl_y = np.array(ctrl_y)
 ctrl_z = np.array(ctrl_z)
 
 fig = plt.figure()
-ax = fig.gca(projection='3d')
+ax = fig.gca(projection="3d")
 surf = ax.scatter(ctrl_x, ctrl_y, ctrl_z)
 plt.show()
 
@@ -154,15 +154,14 @@ ly = np.linspace(0, n_col, ny)
 tck = bisplrep(ctrl_x, ctrl_y, ctrl_z, s=1e10)
 znew = bisplev(lx, ly, tck)
 fig = plt.figure()
-ax = fig.gca(projection='3d')
+ax = fig.gca(projection="3d")
 x, y = np.meshgrid(lx, ly)
-surf = ax.plot_surface(x, y, znew, cmap=cm.coolwarm,
-                       linewidth=0, antialiased=False)
+surf = ax.plot_surface(x, y, znew, cmap=cm.coolwarm, linewidth=0, antialiased=False)
 plt.show()
 
 plt.imshow(znew)
 plt.show()
-np.save(main_path + 'foreground_vimentin_smooth.npy', znew)
+np.save(main_path + "foreground_vimentin_smooth.npy", znew)
 
 
 fg_offset = znew - np.amin(znew)  # np.amax(znew)-znew#
@@ -171,9 +170,8 @@ plt.show()
 
 
 fig = plt.figure()
-ax = fig.gca(projection='3d')
-surf = ax.plot_surface(x, y, fg_offset, cmap=cm.coolwarm,
-                       linewidth=0, antialiased=False)
+ax = fig.gca(projection="3d")
+surf = ax.plot_surface(x, y, fg_offset, cmap=cm.coolwarm, linewidth=0, antialiased=False)
 plt.show()
 
 
@@ -201,7 +199,7 @@ ctrl_y = np.array(ctrl_y)
 ctrl_z = np.array(ctrl_z)
 
 fig = plt.figure()
-ax = fig.gca(projection='3d')
+ax = fig.gca(projection="3d")
 surf = ax.scatter(ctrl_x, ctrl_y, ctrl_z)
 plt.show()
 
@@ -214,16 +212,15 @@ ly = np.linspace(0, n_col, ny)
 tck = bisplrep(ctrl_x, ctrl_y, ctrl_z, s=1e10)
 znew = bisplev(lx, ly, tck)
 fig = plt.figure()
-ax = fig.gca(projection='3d')
+ax = fig.gca(projection="3d")
 x, y = np.meshgrid(lx, ly)
-surf = ax.plot_surface(x, y, znew, cmap=cm.coolwarm,
-                       linewidth=0, antialiased=False)
+surf = ax.plot_surface(x, y, znew, cmap=cm.coolwarm, linewidth=0, antialiased=False)
 plt.show()
 
 plt.imshow(znew)
 plt.show()
 
-np.save(main_path + 'background_vimentin_smooth.npy', znew)
+np.save(main_path + "background_vimentin_smooth.npy", znew)
 
 
 bg_offset = znew - np.amin(znew)  # np.amax(znew)-znew#
@@ -231,9 +228,8 @@ plt.imshow(bg_offset)
 plt.show()
 
 fig = plt.figure()
-ax = fig.gca(projection='3d')
-surf = ax.plot_surface(x, y, bg_offset, cmap=cm.coolwarm,
-                       linewidth=0, antialiased=False)
+ax = fig.gca(projection="3d")
+surf = ax.plot_surface(x, y, bg_offset, cmap=cm.coolwarm, linewidth=0, antialiased=False)
 plt.show()
 
 
@@ -243,8 +239,8 @@ plt.show()
 # In[46]:
 
 
-np.save(main_path + 'background_offset_vimentin', bg_offset)
-np.save(main_path + 'foreground_offset_vimentin', fg_offset)
+np.save(main_path + "background_offset_vimentin", bg_offset)
+np.save(main_path + "foreground_offset_vimentin", fg_offset)
 
 
 # In[ ]:

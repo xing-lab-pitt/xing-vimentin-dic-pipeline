@@ -26,9 +26,9 @@ from pilutil import toimage
 # In[2]:
 
 
-main_path = '/home/zoro/Desktop/experiment_data/2019-03-10_HK2_fucci/'
-input_path = main_path + 'cdt1/'
-output_path = main_path + 'cdt1_output/'
+main_path = "/home/zoro/Desktop/experiment_data/2019-03-10_HK2_fucci/"
+input_path = main_path + "cdt1/"
+output_path = main_path + "cdt1_output/"
 
 posi_end = 20
 
@@ -47,20 +47,17 @@ mask_thres = 0
 def color_num(labels):
     label_rgb = label2rgb(labels, bg_label=0)
     img_rgb = toimage(label_rgb)
-    base = img_rgb.convert('RGBA')
+    base = img_rgb.convert("RGBA")
     # make a blank image for the text, initialized to transparent text color
-    txt = Image.new('RGBA', base.size, (255, 255, 255, 0))
+    txt = Image.new("RGBA", base.size, (255, 255, 255, 0))
     # get a font
-    fnt = ImageFont.truetype('arial.ttf', 40)
+    fnt = ImageFont.truetype("arial.ttf", 40)
     # get a drawing context
     d = ImageDraw.Draw(txt)
     for region in regionprops(labels):
         cx = int(region.centroid[1])
         cy = int(region.centroid[0])
-        d.text(
-            (cx, cy), str(
-                labels[cy][cx]), font=fnt, fill=(
-                255, 255, 255, 255))
+        d.text((cx, cy), str(labels[cy][cx]), font=fnt, fill=(255, 255, 255, 255))
     out = Image.alpha_composite(base, txt)
     return out
 
@@ -69,17 +66,17 @@ def color_num(labels):
 
 
 for posi in range(1, posi_end + 1):
-    img_path = input_path + str(posi) + '/'
+    img_path = input_path + str(posi) + "/"
     ori_img_list = sorted(listdir(img_path))
 
-    reg_path = output_path + str(posi) + '/reg/'
+    reg_path = output_path + str(posi) + "/reg/"
     reg_img_list = sorted(listdir(reg_path))
 
-    seg_path = output_path + str(posi) + '/seg/'
+    seg_path = output_path + str(posi) + "/seg/"
     if not os.path.exists(seg_path):
         os.makedirs(seg_path)
 
-    rgb_num_path = output_path + str(posi) + '/rgb_num/'
+    rgb_num_path = output_path + str(posi) + "/rgb_num/"
     if not os.path.exists(rgb_num_path):
         os.makedirs(rgb_num_path)
 
@@ -89,30 +86,28 @@ for posi in range(1, posi_end + 1):
 
         reg_img = imread(reg_path + reg_img_list[i])
 
-        img_name = ori_img_list[i][0:len(ori_img_list[i]) - 4]
+        img_name = ori_img_list[i][0 : len(ori_img_list[i]) - 4]
 
-#         img_h=reg_img.shape[0]
-#         img_w=reg_img.shape[1]
-#         reg_img=np.reshape(reg_img,(img_h,img_w))
+        #         img_h=reg_img.shape[0]
+        #         img_w=reg_img.shape[1]
+        #         reg_img=np.reshape(reg_img,(img_h,img_w))
 
-
-#         ws_marker=np.zeros((img_h,img_w))
+        #         ws_marker=np.zeros((img_h,img_w))
         local_hmax = h_maxima(reg_img, h_thres_1st)
         local_hmax_label = label(local_hmax, connectivity=1)
-#         j=0
-#         local_hmx=[]
-#         local_hmy=[]
-#         for region in regionprops(local_hmax_label):
-#             cx=int(region.centroid[0])
-#             local_hmx.append(cx)
-#             cy=int(region.centroid[1])
-#             local_hmy.append(cy)
-#             j+=1
-#             ws_marker[cx][cy]=int(j)
+        #         j=0
+        #         local_hmx=[]
+        #         local_hmy=[]
+        #         for region in regionprops(local_hmax_label):
+        #             cx=int(region.centroid[0])
+        #             local_hmx.append(cx)
+        #             cy=int(region.centroid[1])
+        #             local_hmy.append(cy)
+        #             j+=1
+        #             ws_marker[cx][cy]=int(j)
 
         # print np.amax(ws_marker)
-        labels = watershed(-reg_img, local_hmax_label,
-                           mask=reg_img > mask_thres)
+        labels = watershed(-reg_img, local_hmax_label, mask=reg_img > mask_thres)
         labels = remove_small_objects(labels, small_obj_thres)
         labels = clear_border(labels)
 
@@ -120,11 +115,11 @@ for posi in range(1, posi_end + 1):
         print(np.amax(labels))
 
         rgb_num = color_num(labels)
-        rgb_num.save(rgb_num_path + 'rgb_' + img_name + '.png')
+        rgb_num.save(rgb_num_path + "rgb_" + img_name + ".png")
 
         # should use np.uint32,could be save correctly
-        img_seg = Image.fromarray(labels.astype(np.uint32), 'I')
-        img_seg.save(seg_path + 'seg_' + img_name + '.png')
+        img_seg = Image.fromarray(labels.astype(np.uint32), "I")
+        img_seg.save(seg_path + "seg_" + img_name + ".png")
 
 
 # In[ ]:

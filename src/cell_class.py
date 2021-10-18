@@ -6,6 +6,7 @@ class single_cell(object):
     def __init__(self, img_num, obj_num):
         self.img_num = img_num
         self.obj_num = obj_num
+
     # features
 
     def set_cell_features(self, feaure_name, feature_value):
@@ -19,8 +20,7 @@ class single_cell(object):
 
     def set_size_variation(self, variation_value):
         self.size_variation = variation_value
-        self.rel_size_variation = variation_value / \
-            self.cell_features['Cell_AreaShape_Area']
+        self.rel_size_variation = variation_value / self.cell_features["Cell_AreaShape_Area"]
 
     def set_xy_variation(self, xy_variation):
         self.xy_variation = xy_variation
@@ -56,11 +56,7 @@ class single_cell(object):
     #     self.scale_pca_cord=scale_pca_cord
 
     # neighbor
-    def set_neighbor_info(
-            self,
-            img_border_flag,
-            nonfree_border_ratio,
-            neighbor_list):
+    def set_neighbor_info(self, img_border_flag, nonfree_border_ratio, neighbor_list):
         self.img_border_flag = img_border_flag
         self.nonfree_border_ratio = nonfree_border_ratio
         self.neighbor_list = neighbor_list
@@ -73,12 +69,7 @@ class single_cell(object):
         self.nuc_ratio = nc_ratio
         self.nuc_intensity = nuc_intensity
 
-    def set_nuc_contour(
-            self,
-            nuc_contour,
-            nuc_center_r,
-            nuc_center_theta,
-            nuc_cell_axis_angle):
+    def set_nuc_contour(self, nuc_contour, nuc_center_r, nuc_center_theta, nuc_cell_axis_angle):
         self.nuc_contour = nuc_contour
         self.nuc_center_r = nuc_center_r
         self.nuc_center_theta = nuc_center_theta
@@ -116,8 +107,8 @@ class fluor_single_cell(ConverterMixin, single_cell):
         super(fluor_single_cell, self).__init__(img_num, obj_num)
 
     def set_fluor_features(self, fluor_name, feature_list, feature_values):
-        exec('self.' + fluor_name + '_feature_list=feature_list')
-        exec('self.' + fluor_name + '_feature_values=feature_values')
+        exec("self." + fluor_name + "_feature_list=feature_list")
+        exec("self." + fluor_name + "_feature_values=feature_values")
 
     def set_fluor_pca_cord(self, fluor_feature_name, fluor_pca_cord):
-        exec('self.' + fluor_feature_name + '_pca_cord=fluor_pca_cord')
+        exec("self." + fluor_feature_name + "_pca_cord=fluor_pca_cord")

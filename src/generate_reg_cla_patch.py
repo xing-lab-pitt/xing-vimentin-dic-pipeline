@@ -15,7 +15,7 @@ from PIL import Image as PImage
 from pilutil import toimage
 import scipy.misc
 
-#from scipy.misc import imread
+# from scipy.misc import imread
 import glob
 import random
 from scipy.ndimage.morphology import distance_transform_edt
@@ -33,7 +33,7 @@ test_patch_count = 0
 # In[3]:
 
 
-main_path = './A549_cellbody_emt_label/seg/'
+main_path = "./A549_cellbody_emt_label/seg/"
 label_path = main_path
 # image_num=6# the specific image that you want to deal with specificly,
 # use this with for ti in range(image_num,image_num+1)
@@ -82,11 +82,10 @@ def cal_weights_map(Interior):
 
         edt = edt1 + np.amax(edt2, axis=0)
 
-        bnd_weights = np.exp(-(edt / sigma)**gamma) * (seg == 0)
+        bnd_weights = np.exp(-((edt / sigma) ** gamma)) * (seg == 0)
         bnd_weights[bnd_weights < w_thres] = 0
 
-        norm_bnd_weights = bnd_weights / \
-            (max(np.amax(bnd_weights), 1 / wv) + 1e-7)
+        norm_bnd_weights = bnd_weights / (max(np.amax(bnd_weights), 1 / wv) + 1e-7)
         bnd_weights = bnd_weights * wv  # np.median(bnd_weights[bnd_weights>0])
 
         gt = distance_transform_edt(Interior)
@@ -98,19 +97,10 @@ def cal_weights_map(Interior):
         median_weights_map = bnd_weights - median_edt
         norm_weights_map = norm_bnd_weights - norm_edt
     else:
-        median_weights_map, norm_weights_map = np.zeros(
-            Interior.shape), np.zeros(Interior.shape)
+        median_weights_map, norm_weights_map = np.zeros(Interior.shape), np.zeros(Interior.shape)
 
-    median_wp = toimage(
-        median_weights_map,
-        high=np.max(median_weights_map),
-        low=np.min(median_weights_map),
-        mode='F')
-    norm_wp = toimage(
-        norm_weights_map,
-        high=np.max(norm_weights_map),
-        low=np.min(norm_weights_map),
-        mode='F')
+    median_wp = toimage(median_weights_map, high=np.max(median_weights_map), low=np.min(median_weights_map), mode="F")
+    norm_wp = toimage(norm_weights_map, high=np.max(norm_weights_map), low=np.min(norm_weights_map), mode="F")
     return median_wp, norm_wp
 
 
@@ -120,22 +110,22 @@ def cal_weights_map(Interior):
 # generate regression and mask train_test data
 
 
-train_img_path = main_path + 'train/Img/'
+train_img_path = main_path + "train/Img/"
 if not os.path.exists(train_img_path):
     os.makedirs(train_img_path)
-train_reg_path = main_path + 'train/Bwdist/'
+train_reg_path = main_path + "train/Bwdist/"
 if not os.path.exists(train_reg_path):
     os.makedirs(train_reg_path)
-train_mask_path = main_path + 'train/Mask/'
+train_mask_path = main_path + "train/Mask/"
 if not os.path.exists(train_mask_path):
     os.makedirs(train_mask_path)
-train_BIB_path = main_path + 'train/BIB/'
+train_BIB_path = main_path + "train/BIB/"
 if not os.path.exists(train_BIB_path):
     os.makedirs(train_BIB_path)
-train_interior_path = main_path + 'train/Interior/'
+train_interior_path = main_path + "train/Interior/"
 if not os.path.exists(train_interior_path):
     os.makedirs(train_interior_path)
-train_boundary_path = main_path + 'train/Boundary/'
+train_boundary_path = main_path + "train/Boundary/"
 if not os.path.exists(train_boundary_path):
     os.makedirs(train_boundary_path)
 
@@ -143,7 +133,7 @@ if not os.path.exists(train_boundary_path):
 # if not os.path.exists(train_mwp_path):
 #     os.makedirs(train_mwp_path)
 
-train_nwp_path = main_path + 'train/Norm_wp/'
+train_nwp_path = main_path + "train/Norm_wp/"
 if not os.path.exists(train_nwp_path):
     os.makedirs(train_nwp_path)
 
@@ -172,65 +162,38 @@ for ti in range(len(Img_str)):
     if ti < test_start or ti > test_end:
         # -------------------------------generate train patch
 
-        train_patch = round((img_w * 1.0 / train_patch_w)
-                            * (img_h * 1.0 / train_patch_h) * crop_copy)
+        train_patch = round((img_w * 1.0 / train_patch_w) * (img_h * 1.0 / train_patch_h) * crop_copy)
 
         print(train_patch)
-        while (i < train_patch):
+        while i < train_patch:
 
             xmin = round(random.uniform(0, 1) * (img_w - train_patch_w))
             ymin = round(random.uniform(0, 1) * (img_h - train_patch_h))
             rect = [xmin, ymin, xmin + train_patch_w, ymin + train_patch_h]
             print(np.amax(np.asarray(Interior.crop(rect))))
-#             if np.amax(np.asarray(Interior.crop(rect)))>0:
+            #             if np.amax(np.asarray(Interior.crop(rect)))>0:
             train_patch_count += 1
 
             crop_Img = Img.crop(rect)
             # crop_Img_str=Img_str[ti].replace(ori_path,'')
-            crop_Img.save(
-                train_img_path +
-                's' +
-                str(train_patch_count) +
-                '.tif')
+            crop_Img.save(train_img_path + "s" + str(train_patch_count) + ".tif")
 
             crop_Interior = Interior.crop(rect)
-            crop_Interior.save(
-                train_interior_path +
-                's' +
-                str(train_patch_count) +
-                '.png')
+            crop_Interior.save(train_interior_path + "s" + str(train_patch_count) + ".png")
 
-
-#                 crop_Bwdist=Bwdist.crop(rect)
+            #                 crop_Bwdist=Bwdist.crop(rect)
             crop_Bwdist = distance_transform_edt(crop_Interior)
-            crop_Bwdist = toimage(
-                crop_Bwdist,
-                high=np.max(crop_Bwdist),
-                low=np.min(crop_Bwdist),
-                mode='F')
-            crop_Bwdist.save(
-                train_reg_path +
-                's' +
-                str(train_patch_count) +
-                '.tif')
+            crop_Bwdist = toimage(crop_Bwdist, high=np.max(crop_Bwdist), low=np.min(crop_Bwdist), mode="F")
+            crop_Bwdist.save(train_reg_path + "s" + str(train_patch_count) + ".tif")
 
             crop_Boundary = Boundary.crop(rect)
-            crop_Boundary.save(
-                train_boundary_path +
-                's' +
-                str(train_patch_count) +
-                '.png')
+            crop_Boundary.save(train_boundary_path + "s" + str(train_patch_count) + ".png")
 
             crop_BIB = BIB.crop(rect)
-            crop_BIB.save(
-                train_BIB_path +
-                's' +
-                str(train_patch_count) +
-                '.png')
+            crop_BIB.save(train_BIB_path + "s" + str(train_patch_count) + ".png")
 
-
-#             crop_Median_wp,crop_Norm_wp=cal_weights_map(crop_Interior)
-#             crop_Median_wp.save(train_mwp_path+'s'+str(train_patch_count)+'.tif')
+            #             crop_Median_wp,crop_Norm_wp=cal_weights_map(crop_Interior)
+            #             crop_Median_wp.save(train_mwp_path+'s'+str(train_patch_count)+'.tif')
             # crop_Norm_wp=Norm_wp.crop(rect)
             # crop_Norm_wp.save(train_nwp_path+'s'+str(train_patch_count)+'.tif')
 

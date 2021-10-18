@@ -15,7 +15,8 @@ from skimage.color import label2rgb
 import os
 from os import listdir
 from PIL import Image, ImageDraw, ImageFont
-#from track_module import color_label_LAP,color_label_overlap
+
+# from track_module import color_label_LAP,color_label_overlap
 import sqlite3
 
 
@@ -26,17 +27,17 @@ def color_label_LAP(labels, df, img_num, path_output, img_name):
     label_rgb = label2rgb(labels, bg_label=0)
     # print(label_rgb.shape)
     img_rgb = scipy.misc.toimage(label_rgb)
-    base = img_rgb.convert('RGBA')
+    base = img_rgb.convert("RGBA")
     # img_rgb=Image.fromarray(label_rgb,'RGB')
-    #base = img_rgb.convert('RGBA')
+    # base = img_rgb.convert('RGBA')
     # make a blank image for the text, initialized to transparent text color
-    txt = Image.new('RGBA', base.size, (255, 255, 255, 0))
+    txt = Image.new("RGBA", base.size, (255, 255, 255, 0))
     # get a font
     fnt = ImageFont.truetype("arial.ttf", 60)
     # get a drawing context
     d = ImageDraw.Draw(txt)
     # print(img_num)
-    all_idx = df[df['ImageNumber'] == img_num].index.tolist()
+    all_idx = df[df["ImageNumber"] == img_num].index.tolist()
     # print(all_idx)
     obj_num = 0
     for region in regionprops(labels):
@@ -45,22 +46,21 @@ def color_label_LAP(labels, df, img_num, path_output, img_name):
         cy = int(region.centroid[0])
         idx = all_idx[obj_num]
 
-        num_label = int(df.loc[idx]['Cell_TrackObjects_Label'])
+        num_label = int(df.loc[idx]["Cell_TrackObjects_Label"])
         # print(num_label)
-        d.text((cx, cy), str(num_label), font=fnt, fill=(
-            255, 255, 255, 255))  # str(labels[cy][cx])
+        d.text((cx, cy), str(num_label), font=fnt, fill=(255, 255, 255, 255))  # str(labels[cy][cx])
         obj_num += 1
     out = Image.alpha_composite(base, txt)
     # out.show()
-    out.save(path_output + '/' + img_name + '.png', "PNG")
+    out.save(path_output + "/" + img_name + ".png", "PNG")
 
 
 # In[4]:
 
 
-main_path = '/home/zoro/Desktop/experiment_data/2019-03-22_a549_tgf4ng_2d/'
-input_path = main_path + 'img/'
-output_path = main_path + 'output/'
+main_path = "/home/zoro/Desktop/experiment_data/2019-03-22_a549_tgf4ng_2d/"
+input_path = main_path + "img/"
+output_path = main_path + "output/"
 
 posi_end = 2
 
@@ -71,25 +71,25 @@ posi_end = 2
 
 for posi in range(2, posi_end + 1):
 
-    dir_path = output_path + str(posi) + '/'
+    dir_path = output_path + str(posi) + "/"
 
-    seg_path = dir_path + 'seg/'
+    seg_path = dir_path + "seg/"
     seg_img_list = sorted(listdir(seg_path))
 
-    traj_label_path = dir_path + 'traj_label/'
+    traj_label_path = dir_path + "traj_label/"
     if not os.path.exists(traj_label_path):
         os.makedirs(traj_label_path)
 
-    df = pd.read_csv(dir_path + '/Per_Object_relink_' + str(posi) + '.csv')
-#     df=pd.read_csv(dir_path + '/Per_Object_mitosis.csv')
-#     df=pd.read_csv(dir_path + '/Per_Object_modify.csv')
-    t_span = max(df['ImageNumber'])
+    df = pd.read_csv(dir_path + "/Per_Object_relink_" + str(posi) + ".csv")
+    #     df=pd.read_csv(dir_path + '/Per_Object_mitosis.csv')
+    #     df=pd.read_csv(dir_path + '/Per_Object_modify.csv')
+    t_span = max(df["ImageNumber"])
 
     for i in range(len(seg_img_list)):
         img_num = i + 1
-        seg = imread(seg_path + '/' + seg_img_list[i])
+        seg = imread(seg_path + "/" + seg_img_list[i])
         img_name = seg_img_list[i][4:-4]
-#         print(img_name)
+        #         print(img_name)
         color_label_LAP(seg, df, img_num, traj_label_path, img_name)
 
 

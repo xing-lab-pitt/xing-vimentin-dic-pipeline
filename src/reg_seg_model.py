@@ -10,13 +10,14 @@ from keras.layers import Input, Activation, Conv2D, MaxPooling2D, UpSampling2D, 
 
 
 def conv_block(input_tensor, kernel, filters):
-    x = Conv2D(filters, (kernel, kernel), padding='same')(input_tensor)
+    x = Conv2D(filters, (kernel, kernel), padding="same")(input_tensor)
     x = BatchNormalization()(x)
-    x = Activation('relu')(x)
+    x = Activation("relu")(x)
     return x
 
 
 # In[8]:
+
 
 def reg_seg():
     kernel = 3
@@ -71,16 +72,11 @@ def reg_seg():
 
     conv11 = conv_block(conv10, kernel=1, filters=1)
     drop11 = Dropout(0.5)(conv11)
-    outputs = Activation('relu')(drop11)
+    outputs = Activation("relu")(drop11)
 
     autoencoder = Model(inputs=[inputs], outputs=[outputs])
     # autoencoder.summary()
 
-    autoencoder.compile(
-        loss="mean_squared_error",
-        optimizer='adam',
-        metrics=[
-            'mae',
-            'acc'])
+    autoencoder.compile(loss="mean_squared_error", optimizer="adam", metrics=["mae", "acc"])
 
     return autoencoder
