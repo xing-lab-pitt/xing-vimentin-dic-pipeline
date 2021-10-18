@@ -5,11 +5,12 @@ This repository is a Xing lab tool at PITT for analyzing imaging data. [adding c
 
 ## Dev Codebase Contribution Process
 - Follow feature-staging-main review process
-  - especially when database updated and mappers are re-gened
-- CamelCase in general
-- Try to enhance unit test converage
-- At least 1 integration test for each new controller
-- At least 1 test for services
+    - create a specific branch for new feature
+    - implement and test on your branch
+    - create pull request
+    - discuss with lab members and merge into the main branch
+- Follow python [google code style](https://google.github.io/styleguide/pyguide.html)
+
 
 ## Install Precommit Hook  
 **You would like to ensure that the code changes you push have good code style**  
