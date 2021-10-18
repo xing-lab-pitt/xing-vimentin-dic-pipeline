@@ -1,11 +1,65 @@
 # xing-vimentin-dic-pipeline
 
-This repository is a python version for the image analysis pipeline. [adding citation?]
+This repository is a Xing lab tool at PITT for analyzing imaging data. [adding citation?]
+
+
+## Dev Codebase Contribution Process
+- Follow feature-staging-main review process
+  - especially when database updated and mappers are re-gened
+- CamelCase in general
+- Try to enhance unit test converage
+- At least 1 integration test for each new controller
+- At least 1 test for services
+
+## Install Precommit Hook  
+**You would like to ensure that the code changes you push have good code style**  
+**This step enables pre-commit to check and auto-format your style before every git commit locally via commandline.**
+### Install (once)  
+`pip install pre-commit`  
+`pre-commit install`  
+### format all code (rare usage)  
+`pre-commit run --all`  
+Now everytime you run `git commit -m msg`, pre-commit will check your changes.
+
+
+# Module structure
+## Directories
+
+
+### Notebooks
+- **0_Enviroment_setup**: Step 1, setting up pipeline environment
+- **1_preprocessing**: Step 2, files for generating training data and train for segmentation edt weight. 
+- **2_ICNN_interactive_training**: Notebooks with interactive cell picker. (only have the apoptosis/mitosis version for now.)
+- **2_ICNN_training_notebooks**: Notebooks with code for icnn_am and icnn_seg training. (heritage.)
+- **Other1_Image_folders_processing**: includes notebook assisting migrate imgs with a pattern, and interactively look at images as video for each folder.
+    - 1_img_file_to_folders.ipynb: assisting migrate imgs with a pattern
+    - 2-img-folder-remove.ipynb: for a given folder list (each folder contains images from one time series), browse the video for the folder.  
+- **Other2_Various**:
+    - cell_track_HK2_5min_interval.cpproj: the pipeline file for cellprofiler
+    - pipe_meancontour_and_pca_modes.ipynb: calculating mean contour for single cells, this is needed for step 7 (pipe_7_cell_contours_calculation.py)
+- **7-21-21-pipeline-testing**: example folder, contains necessary files for go through the pipeline. 
+
+# Usage  
+## Image Data Annotation  
+Use image-annotation-tools to label images as required. Detailed descriptions are in the corresponding subfolders.  
+  
+## Create conda virtual environment for python
+
+First you may want to set up a python virtual environment for the pipeline.
+
+Go to the 0_Environment_setup folder, and type following code:
+
+`conda env create -f tf1.yaml`
+
+This create an environment from an environment.yml file. The first line of the yml file sets the new environment's name, here we call it 'tf1'.
+
 
 This repository includes all needed files for segment and tracing single cell. 
 - To work with a example data set, you can start from the `/7-21-21-pipeline-testing` folder. 
 - To use this script as module, you can first add the folder path to your script, and then call each step as follows:
 
+
+## Huijing's Notebook Example
 ```python
 import sys
 sys.path.insert(1, 'path/to/xing-vimentin-dic-pipeline/')
@@ -35,42 +89,16 @@ p9.morph_pca(top_path)
 p10.haralick_pca(top_path)
 ```
 
-# Module structure
-### Folders
 
-- **0_Enviroment_setup**: Step 1, setting up pipeline environment
-- **1_preprocessing**: Step 2, files for generating training data and train for segmentation edt weight. 
-- **2_ICNN_interactive_training**: Notebooks with interactive cell picker. (only have the apoptosis/mitosis version for now.)
-- **2_ICNN_training_notebooks**: Notebooks with code for icnn_am and icnn_seg training. (heritage.)
-- **Other1_Image_folders_processing**: includes notebook assisting migrate imgs with a pattern, and interactively look at images as video for each folder.
-    - 1_img_file_to_folders.ipynb: assisting migrate imgs with a pattern
-    - 2-img-folder-remove.ipynb: for a given folder list (each folder contains images from one time series), browse the video for the folder.  
-- **Other2_Various**:
-    - cell_track_HK2_5min_interval.cpproj: the pipeline file for cellprofiler
-    - pipe_meancontour_and_pca_modes.ipynb: calculating mean contour for single cells, this is needed for step 7 (pipe_7_cell_contours_calculation.py)
-- **7-21-21-pipeline-testing**: example folder, contains necessary files for go through the pipeline. 
-
-# Usage  
-
-#### 0-Create conda virtual environment for python
-
-First you may want to set up a python virtual environment for the pipeline.
-
-Go to the 0_Environment_setup folder, and type following code:
-
-`conda env create -f tf1.yaml`
-
-This create an environment from an environment.yml file. The first line of the yml file sets the new environment's name, here we call it 'tf1'.
-
-#### 1-Preprocessing
+## 1-Preprocessing
 
 The preprocessing step creates a trained neural network for recognizing a pixel that belong to cell segments, and generate a weight file (.hdf5) that is reusable for further image analysis steps.
 
-##### 0.1-Prepare training date
+### 0.1-Prepare training date
 - Export image data into single .tif files.
 - Base on availability of the fuorescent channel, use matlab scripts in the /matlab_scripts folder. This step we manually generate cell segment images.
 - Randomely crop the cell segment images to a predefined shape (320*320 as default) with modifying generate_reg_cla_patch.py. This step generating training images.
 - Training CNN to generate weight file with train_reg_seg_augment.ipynb.
 
-#### Image Analysis pipeline
+## Image Analysis pipeline
 All steps are integrated in "run_all.sh", please read the instructions in this file first. Several model files including reg_seg model for step1, icnn models for step2 and step3 are not uploaded due to github file size limitation.
