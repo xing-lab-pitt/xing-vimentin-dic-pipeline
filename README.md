@@ -59,6 +59,9 @@ This repository includes all needed files for segment and tracing single cell.
 - To work with a example data set, you can start from the `/7-21-21-pipeline-testing` folder. 
 - To use this script as module, you can first add the folder path to your script, and then call each step as follows:
 
+#### Note:
+- The key package for this environment is to have TF version = 1.5, with curresponding Keras version. 
+- TF 1.5 works only with lower h5py version <3. Thus if you have a higher version of h5py, you may want to downgrade it to 2.10 use following `conda install -c conda-forge h5py=2.10`.
 
 ## Huijing's Notebook Example
 ```python
