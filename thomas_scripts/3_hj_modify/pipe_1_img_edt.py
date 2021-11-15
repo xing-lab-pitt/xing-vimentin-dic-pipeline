@@ -1,3 +1,10 @@
+'''
+predicts regression edt images (probability maps)
+requires trained regression segmentation weights
+run on cluster with run_pipe_0-x.sh
+to test locally replace sys.argv variables accordingly
+'''
+
 from PIL import Image
 from os import listdir
 import glob
