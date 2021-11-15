@@ -1,12 +1,10 @@
-"""
-we could use a  technique that could segment all the possible cells in the prediction of distance transform.  
-when small cells are  recognized, other small pieces and noise would also be identified.
-This will lead to over-segmentation.
-Here we utilize the over-segmentation to segment the mitosis and apoptosis cells. 
-Then, we extract the small cells that below size threshold. And use an identification CNN  to identify them,
-only the apoptosis and mitosis cells are kept. 
-After correctly segment these cells, we remove these cells from the prediction of distance transform. 
-"""
+'''
+watershed regression edt images for segmentation, outputs segmented masks
+outputs am_record.csv, contains image number, cell object number labeling, and its am (apoptosis/mitosis) laebing for every single cell in every frame
+requires trained icnn apoptosis/mitosis weights & under/over segmentation weights
+run on cluster with run_pipe_0-x.sh
+to test locally replace sys.argv variables accordingly
+'''
 
 import numpy as np
 from skimage.segmentation import watershed, clear_border
