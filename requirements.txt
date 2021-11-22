@@ -1,0 +1,11 @@
+nd2reader
+scikit-image
+numpy
+matplotlib
+sklearn
+pypng
+opencv-python
+pandas
+keras==2.3.1
+Augmentor
+tensorflow-gpu
