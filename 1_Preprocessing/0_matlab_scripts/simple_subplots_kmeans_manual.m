@@ -7,12 +7,22 @@
 %This is where you will actually crop out the cells that will be used for
 %the training data. You will now crop out images of cells that only contain
 %segmented cells. It is okay to have cells that are not completely in the
-%crop as well. For the moment, the crops chould be at least 360x360 pixels
+%crop as well. 
+
+%The kmeans segmenting can be redone if it does not look well by making a
+%crop that is less than 90% of one tile and it will recalculate this. if
+%you want to exit out of the tile entirely then you make a crop very very
+%small. if you are okay with the kmeans segmenting then you draw a crop
+%bigger than 80% of a single image (this pop up should contain 2 images)
+
+%For the moment, the crops chould be at least 360x360 pixels
 %to be used in our pipeline. If a crop is done that is smaller than that
 %than we the outline for all the segmented cells will change from green to
 %red. This means that the crop was not saved and you should redo it. Afer
 %you crop a section and the cell segmentations remain green, that means it
-%was successful . If you mess up the crops and you want to redo the image
+%was successful . 
+
+%If you mess up the crops and you want to redo the image
 %entirely then you can make a crop that is >80% of the image area and this
 %will delete all crops made from that image as well as not save the crops
 %to the crop file (this will be used to compare background corrected images
@@ -34,7 +44,7 @@
 % experiment a549_vim_rfp_pcna_2ng_24hr_091721/ XY1
 % experiment a549_vim_rfp_pcna_4ng_48hr_091821/ XY1 
 
-experiment='a549_vim_rfp_pcna_4ng_48hr_091821/';
+experiment='a549_vim_rfp_pcna_gfp_g418_control_high_121521/';
 position='XY2';
 tile='tile5';
 time_point='T01';
@@ -43,15 +53,15 @@ filename=erase(experiment,'/');
 file_name_split=strsplit(filename,'_');
 
 Img_str=strcat(filename,'_',time_point,'_',position);
-video_name=char(strcat(strjoin(file_name_split(1:length(file_name_split)-1),'_'),'_',position,'_',file_name_split(end),'.avi'));
-crop_file=strcat(filename,'_crop_file.txt');
+%video_name=char(strcat(strjoin(file_name_split(1:length(file_name_split)-1),'_'),'_',position,'_',file_name_split(end),'.avi'));
+%crop_file=strcat(filename,'_crop_file.txt');
 %tiles index starts with 0 and goes to 8 
 
 
-dir_path=strcat('/home/dap182/cluster/data/image_data/40x_large_calcein_time_lapse_training_datset/tiles/',experiment);
-seg_path=strcat('/home/dap182/cluster/data/image_data/40x_large_calcein_time_lapse_training_datset/seg/',experiment);
-crop_path=strcat('/home/dap182/cluster/data/image_data/40x_large_calcein_time_lapse_training_datset/crops/',experiment,crop_file);
-video_path=strcat('/home/dap182/cluster/data/image_data/40x_large_calcein_time_lapse_training_datset/videos/',experiment,video_name);
+dir_path=strcat('/home/dante/cluster/data/image_data/40x_large_calcein_time_lapse_training_datset/tiles/',experiment);
+seg_path=strcat('/home/dante/cluster/data/image_data/40x_large_calcein_time_lapse_training_datset/seg/',filename);
+%crop_path=strcat('/home/dante/cluster/data/image_data/40x_large_calcein_time_lapse_training_datset/crops/',experiment,crop_file);
+%video_path=strcat('/home/dante/cluster/data/image_data/40x_large_calcein_time_lapse_training_datset/videos/',experiment,video_name);
 
 
 dic=imread(strcat(dir_path,Img_str,'_C1_',tile,'.tif'));
@@ -272,12 +282,15 @@ crop_site=0;
         
         %disp(prod(size(pick_data(1,:,1))))
         
+        %if crop is >80% close all windows and delete all segmentations 
         if prod(size(pick_data(:,:,1))) > (length(dic)*0.9)^2
             
             %disp(strcat('pick_data',size(pick_data(:,:,1))))
             
             %disp(strcat('threshold',length(dic*0.9)^2))
             
+            %deletes all crops in the file that matches the regular
+            %expression that includes the tile and the image string 
             delete(strcat(seg_path,'*',Img_str,'_',tile,'*'))
             close all
             %close(vid)
@@ -317,7 +330,7 @@ crop_site=0;
             BIB_3class=2*double(cell_boundary)+double(cell_interior);
             imwrite(uint16(BIB_3class),strcat(seg_path,'/BIB_',Img_str,'_',tile,'_cr',num2str(crop_site),'.png'));
 
-            crop_list{end+1}=rect;
+            %crop_list{end+1}=rect;
             
         else 
             show_boundary = imoverlay(Img0,Cell_bianyuan,'red');
@@ -330,24 +343,26 @@ close all
 %close(vid)
 %theoretically, there should be a script that deletes all crops if I mess
 %up 
-if prod(size(crop_list))~=0
+%
+%if prod(size(crop_list))~=0
 
-    if ~isfile(crop_path)
-        fileID=fopen(crop_path,'a');
-        fprintf(fileID,'file_name\trealtive_crops\n');
-    else
-        fileID=fopen(crop_path,'a');
-    end
+%    if ~isfile(crop_path)
+%        fileID=fopen(crop_path,'a');
+%        fprintf(fileID,'file_name\trealtive_crops\n');
+%    else
+%        fileID=fopen(crop_path,'a');
+%    end
     
-    fprintf(fileID,'%s\t',strcat(dir_path,Img_str,'_C1_',tile,'.tif'));
+%    fprintf(fileID,'%s\t',strcat(dir_path,Img_str,'_C1_',tile,'.tif'));
     %fprintf(fileID,'[%f,%f,%f,%f]\t[',rectout);
-    fprintf(fileID,'\t[');
-    for i= 1:length(crop_list)
-        fprintf(fileID,'[%f,%f,%f,%f]',crop_list{i});
-    end
-    fprintf(fileID,']\n');
-    fclose(fileID);
-end
+%    fprintf(fileID,'\t[');
+%    for i= 1:length(crop_list)
+%        fprintf(fileID,'[%f,%f,%f,%f]',crop_list{i});
+%    end
+%    fprintf(fileID,']\n');
+%    fclose(fileID);
+%end
+%%%
 
 function h = subplottight(n,m,i)
     [c,r] = ind2sub([m n], i);
