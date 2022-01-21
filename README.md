@@ -1,12 +1,12 @@
 # xing-vimentin-dic-pipeline
 
 This repository is a Xing lab tool at PITT for analyzing imaging data. [adding citation?]
-
+Hello
 
 ## Dev Codebase Contribution Process
 - Follow feature-staging-main review process
     - create a specific branch for new feature
-    - implement and test on your branch
+    - implement and test on your own branch
     - create pull request
     - discuss with lab members and merge into the main branch
 - Follow python [google code style](https://google.github.io/styleguide/pyguide.html)
