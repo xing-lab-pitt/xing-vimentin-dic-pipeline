@@ -1,0 +1,228 @@
+/net/capricorn/home/xing/weikang/anaconda3/envs/cellprofiler/lib/python2.7/site-packages/cellprofiler/utilities/hdf5_dict.py:527: FutureWarning: Conversion of the second argument of issubdtype from `int` to `np.signedinteger` is deprecated. In future, it will be treated as `np.int64 == np.dtype(int).type`.
+  np.issubdtype(hdf5_type, int) or
+/net/capricorn/home/xing/weikang/anaconda3/envs/cellprofiler/lib/python2.7/site-packages/cellprofiler/utilities/hdf5_dict.py:529: FutureWarning: Conversion of the second argument of issubdtype from `float` to `np.floating` is deprecated. In future, it will be treated as `np.float64 == np.dtype(float).type`.
+  hdf5_type_is_float = np.issubdtype(hdf5_type, float)
+Times reported are CPU and Wall-clock times for each module
+Sun Jul 25 18:34:04 2021: Image # 1, module Images # 1: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:04 2021: Image # 1, module Metadata # 2: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:04 2021: Image # 1, module NamesAndTypes # 3: CPU_time = 1.61 secs, Wall_time = 0.63 secs
+Sun Jul 25 18:34:05 2021: Image # 1, module Groups # 4: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+/net/capricorn/home/xing/weikang/anaconda3/envs/cellprofiler/lib/python2.7/site-packages/centrosome/cpmorphology.py:2530: FutureWarning: Using a non-tuple sequence for multidimensional indexing is deprecated; use `arr[tuple(seq)]` instead of `arr[seq]`. In the future this will be interpreted as an array index, `arr[np.array(seq)]`, which will result either in an error or a different result.
+  I00[slice_00] = labels
+/net/capricorn/home/xing/weikang/anaconda3/envs/cellprofiler/lib/python2.7/site-packages/centrosome/cpmorphology.py:2531: FutureWarning: Using a non-tuple sequence for multidimensional indexing is deprecated; use `arr[tuple(seq)]` instead of `arr[seq]`. In the future this will be interpreted as an array index, `arr[np.array(seq)]`, which will result either in an error or a different result.
+  I01[slice_01] = labels
+/net/capricorn/home/xing/weikang/anaconda3/envs/cellprofiler/lib/python2.7/site-packages/centrosome/cpmorphology.py:2532: FutureWarning: Using a non-tuple sequence for multidimensional indexing is deprecated; use `arr[tuple(seq)]` instead of `arr[seq]`. In the future this will be interpreted as an array index, `arr[np.array(seq)]`, which will result either in an error or a different result.
+  I10[slice_10] = labels
+/net/capricorn/home/xing/weikang/anaconda3/envs/cellprofiler/lib/python2.7/site-packages/centrosome/cpmorphology.py:2533: FutureWarning: Using a non-tuple sequence for multidimensional indexing is deprecated; use `arr[tuple(seq)]` instead of `arr[seq]`. In the future this will be interpreted as an array index, `arr[np.array(seq)]`, which will result either in an error or a different result.
+  I11[slice_11] = labels
+/net/capricorn/home/xing/weikang/anaconda3/envs/cellprofiler/lib/python2.7/site-packages/centrosome/cpmorphology.py:2555: FutureWarning: Using a non-tuple sequence for multidimensional indexing is deprecated; use `arr[tuple(seq)]` instead of `arr[seq]`. In the future this will be interpreted as an array index, `arr[np.array(seq)]`, which will result either in an error or a different result.
+  Q1_condition[slice_00] += (NE01_00 & NE01_10 & NE01_11)[slice_01]
+/net/capricorn/home/xing/weikang/anaconda3/envs/cellprofiler/lib/python2.7/site-packages/centrosome/cpmorphology.py:2558: FutureWarning: Using a non-tuple sequence for multidimensional indexing is deprecated; use `arr[tuple(seq)]` instead of `arr[seq]`. In the future this will be interpreted as an array index, `arr[np.array(seq)]`, which will result either in an error or a different result.
+  Q1_condition[slice_00] += (NE10_00 & NE10_01 & NE10_11)[slice_10]
+/net/capricorn/home/xing/weikang/anaconda3/envs/cellprofiler/lib/python2.7/site-packages/centrosome/cpmorphology.py:2561: FutureWarning: Using a non-tuple sequence for multidimensional indexing is deprecated; use `arr[tuple(seq)]` instead of `arr[seq]`. In the future this will be interpreted as an array index, `arr[np.array(seq)]`, which will result either in an error or a different result.
+  Q1_condition[slice_00] += (NE11_00 & NE11_01 & NE11_10)[slice_11]
+/net/capricorn/home/xing/weikang/anaconda3/envs/cellprofiler/lib/python2.7/site-packages/centrosome/cpmorphology.py:2569: FutureWarning: Using a non-tuple sequence for multidimensional indexing is deprecated; use `arr[tuple(seq)]` instead of `arr[seq]`. In the future this will be interpreted as an array index, `arr[np.array(seq)]`, which will result either in an error or a different result.
+  Q3_condition[slice_00] += (NE11_00 & EQ11_10 & EQ11_01)[slice_11]
+/net/capricorn/home/xing/weikang/anaconda3/envs/cellprofiler/lib/python2.7/site-packages/centrosome/cpmorphology.py:2582: FutureWarning: Using a non-tuple sequence for multidimensional indexing is deprecated; use `arr[tuple(seq)]` instead of `arr[seq]`. In the future this will be interpreted as an array index, `arr[np.array(seq)]`, which will result either in an error or a different result.
+  QD_condition[slice_00] += (NE01_00 & NE01_11 & EQ01_10)[slice_01]
+Sun Jul 25 18:34:05 2021: Image # 1, module MeasureObjectSizeShape # 5: CPU_time = 0.51 secs, Wall_time = 0.25 secs
+Sun Jul 25 18:34:05 2021: Image # 1, module TrackObjects # 6: CPU_time = 0.12 secs, Wall_time = 0.12 secs
+/net/capricorn/home/xing/weikang/anaconda3/envs/cellprofiler/lib/python2.7/site-packages/cellprofiler/measurement.py:1296: RuntimeWarning: Mean of empty slice.
+  mean = values.mean() if values is not None else np.NaN
+Sun Jul 25 18:34:05 2021: Image # 1, module ExportToDatabase # 8: CPU_time = 0.05 secs, Wall_time = 0.05 secs
+Sun Jul 25 18:34:05 2021: Image # 2, module Images # 1: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:05 2021: Image # 2, module Metadata # 2: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:05 2021: Image # 2, module NamesAndTypes # 3: CPU_time = 0.75 secs, Wall_time = 0.29 secs
+Sun Jul 25 18:34:06 2021: Image # 2, module Groups # 4: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:06 2021: Image # 2, module MeasureObjectSizeShape # 5: CPU_time = 0.28 secs, Wall_time = 0.27 secs
+Sun Jul 25 18:34:06 2021: Image # 2, module TrackObjects # 6: CPU_time = 0.14 secs, Wall_time = 0.15 secs
+Sun Jul 25 18:34:06 2021: Image # 2, module ExportToDatabase # 8: CPU_time = 0.05 secs, Wall_time = 0.05 secs
+Sun Jul 25 18:34:06 2021: Image # 3, module Images # 1: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:06 2021: Image # 3, module Metadata # 2: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:06 2021: Image # 3, module NamesAndTypes # 3: CPU_time = 0.60 secs, Wall_time = 0.28 secs
+Sun Jul 25 18:34:06 2021: Image # 3, module Groups # 4: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:06 2021: Image # 3, module MeasureObjectSizeShape # 5: CPU_time = 0.25 secs, Wall_time = 0.24 secs
+Sun Jul 25 18:34:07 2021: Image # 3, module TrackObjects # 6: CPU_time = 0.10 secs, Wall_time = 0.10 secs
+Sun Jul 25 18:34:07 2021: Image # 3, module ExportToDatabase # 8: CPU_time = 0.04 secs, Wall_time = 0.05 secs
+Sun Jul 25 18:34:07 2021: Image # 4, module Images # 1: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:07 2021: Image # 4, module Metadata # 2: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:07 2021: Image # 4, module NamesAndTypes # 3: CPU_time = 0.53 secs, Wall_time = 0.26 secs
+Sun Jul 25 18:34:07 2021: Image # 4, module Groups # 4: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:07 2021: Image # 4, module MeasureObjectSizeShape # 5: CPU_time = 0.43 secs, Wall_time = 0.23 secs
+Sun Jul 25 18:34:07 2021: Image # 4, module TrackObjects # 6: CPU_time = 0.10 secs, Wall_time = 0.11 secs
+Sun Jul 25 18:34:07 2021: Image # 4, module ExportToDatabase # 8: CPU_time = 0.04 secs, Wall_time = 0.05 secs
+Sun Jul 25 18:34:07 2021: Image # 5, module Images # 1: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:07 2021: Image # 5, module Metadata # 2: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:07 2021: Image # 5, module NamesAndTypes # 3: CPU_time = 0.43 secs, Wall_time = 0.26 secs
+Sun Jul 25 18:34:08 2021: Image # 5, module Groups # 4: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:08 2021: Image # 5, module MeasureObjectSizeShape # 5: CPU_time = 0.24 secs, Wall_time = 0.24 secs
+Sun Jul 25 18:34:08 2021: Image # 5, module TrackObjects # 6: CPU_time = 0.11 secs, Wall_time = 0.11 secs
+Sun Jul 25 18:34:08 2021: Image # 5, module ExportToDatabase # 8: CPU_time = 0.05 secs, Wall_time = 0.05 secs
+Sun Jul 25 18:34:08 2021: Image # 6, module Images # 1: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:08 2021: Image # 6, module Metadata # 2: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:08 2021: Image # 6, module NamesAndTypes # 3: CPU_time = 0.58 secs, Wall_time = 0.29 secs
+Sun Jul 25 18:34:08 2021: Image # 6, module Groups # 4: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:08 2021: Image # 6, module MeasureObjectSizeShape # 5: CPU_time = 0.28 secs, Wall_time = 0.28 secs
+Sun Jul 25 18:34:09 2021: Image # 6, module TrackObjects # 6: CPU_time = 0.09 secs, Wall_time = 0.09 secs
+Sun Jul 25 18:34:09 2021: Image # 6, module ExportToDatabase # 8: CPU_time = 0.04 secs, Wall_time = 0.05 secs
+Sun Jul 25 18:34:09 2021: Image # 7, module Images # 1: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:09 2021: Image # 7, module Metadata # 2: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:09 2021: Image # 7, module NamesAndTypes # 3: CPU_time = 0.50 secs, Wall_time = 0.28 secs
+Sun Jul 25 18:34:09 2021: Image # 7, module Groups # 4: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:09 2021: Image # 7, module MeasureObjectSizeShape # 5: CPU_time = 0.29 secs, Wall_time = 0.25 secs
+Sun Jul 25 18:34:09 2021: Image # 7, module TrackObjects # 6: CPU_time = 0.10 secs, Wall_time = 0.09 secs
+Sun Jul 25 18:34:09 2021: Image # 7, module ExportToDatabase # 8: CPU_time = 0.04 secs, Wall_time = 0.05 secs
+Sun Jul 25 18:34:09 2021: Image # 8, module Images # 1: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:09 2021: Image # 8, module Metadata # 2: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:09 2021: Image # 8, module NamesAndTypes # 3: CPU_time = 0.59 secs, Wall_time = 0.27 secs
+Sun Jul 25 18:34:10 2021: Image # 8, module Groups # 4: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:10 2021: Image # 8, module MeasureObjectSizeShape # 5: CPU_time = 0.56 secs, Wall_time = 0.28 secs
+Sun Jul 25 18:34:10 2021: Image # 8, module TrackObjects # 6: CPU_time = 0.10 secs, Wall_time = 0.09 secs
+Sun Jul 25 18:34:10 2021: Image # 8, module ExportToDatabase # 8: CPU_time = 0.04 secs, Wall_time = 0.05 secs
+Sun Jul 25 18:34:10 2021: Image # 9, module Images # 1: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:10 2021: Image # 9, module Metadata # 2: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:10 2021: Image # 9, module NamesAndTypes # 3: CPU_time = 0.58 secs, Wall_time = 0.26 secs
+Sun Jul 25 18:34:10 2021: Image # 9, module Groups # 4: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:10 2021: Image # 9, module MeasureObjectSizeShape # 5: CPU_time = 0.42 secs, Wall_time = 0.29 secs
+Sun Jul 25 18:34:11 2021: Image # 9, module TrackObjects # 6: CPU_time = 0.10 secs, Wall_time = 0.10 secs
+Sun Jul 25 18:34:11 2021: Image # 9, module ExportToDatabase # 8: CPU_time = 0.05 secs, Wall_time = 0.05 secs
+Sun Jul 25 18:34:11 2021: Image # 10, module Images # 1: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:11 2021: Image # 10, module Metadata # 2: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:11 2021: Image # 10, module NamesAndTypes # 3: CPU_time = 0.59 secs, Wall_time = 0.27 secs
+Sun Jul 25 18:34:11 2021: Image # 10, module Groups # 4: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:11 2021: Image # 10, module MeasureObjectSizeShape # 5: CPU_time = 0.40 secs, Wall_time = 0.29 secs
+Sun Jul 25 18:34:11 2021: Image # 10, module TrackObjects # 6: CPU_time = 0.09 secs, Wall_time = 0.09 secs
+Sun Jul 25 18:34:12 2021: Image # 10, module ExportToDatabase # 8: CPU_time = 0.04 secs, Wall_time = 0.05 secs
+Sun Jul 25 18:34:12 2021: Image # 11, module Images # 1: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:12 2021: Image # 11, module Metadata # 2: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:12 2021: Image # 11, module NamesAndTypes # 3: CPU_time = 0.60 secs, Wall_time = 0.28 secs
+Sun Jul 25 18:34:12 2021: Image # 11, module Groups # 4: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:12 2021: Image # 11, module MeasureObjectSizeShape # 5: CPU_time = 0.38 secs, Wall_time = 0.26 secs
+Sun Jul 25 18:34:12 2021: Image # 11, module TrackObjects # 6: CPU_time = 0.09 secs, Wall_time = 0.09 secs
+Sun Jul 25 18:34:12 2021: Image # 11, module ExportToDatabase # 8: CPU_time = 0.04 secs, Wall_time = 0.05 secs
+Sun Jul 25 18:34:12 2021: Image # 12, module Images # 1: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:12 2021: Image # 12, module Metadata # 2: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:12 2021: Image # 12, module NamesAndTypes # 3: CPU_time = 0.86 secs, Wall_time = 0.27 secs
+Sun Jul 25 18:34:13 2021: Image # 12, module Groups # 4: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:13 2021: Image # 12, module MeasureObjectSizeShape # 5: CPU_time = 0.60 secs, Wall_time = 0.29 secs
+Sun Jul 25 18:34:13 2021: Image # 12, module TrackObjects # 6: CPU_time = 0.09 secs, Wall_time = 0.09 secs
+Sun Jul 25 18:34:13 2021: Image # 12, module ExportToDatabase # 8: CPU_time = 0.05 secs, Wall_time = 0.05 secs
+Sun Jul 25 18:34:13 2021: Image # 13, module Images # 1: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:13 2021: Image # 13, module Metadata # 2: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:13 2021: Image # 13, module NamesAndTypes # 3: CPU_time = 0.74 secs, Wall_time = 0.27 secs
+Sun Jul 25 18:34:13 2021: Image # 13, module Groups # 4: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:13 2021: Image # 13, module MeasureObjectSizeShape # 5: CPU_time = 0.37 secs, Wall_time = 0.32 secs
+Sun Jul 25 18:34:14 2021: Image # 13, module TrackObjects # 6: CPU_time = 0.10 secs, Wall_time = 0.11 secs
+Sun Jul 25 18:34:14 2021: Image # 13, module ExportToDatabase # 8: CPU_time = 0.04 secs, Wall_time = 0.05 secs
+Sun Jul 25 18:34:14 2021: Image # 14, module Images # 1: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:14 2021: Image # 14, module Metadata # 2: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:14 2021: Image # 14, module NamesAndTypes # 3: CPU_time = 0.59 secs, Wall_time = 0.28 secs
+Sun Jul 25 18:34:14 2021: Image # 14, module Groups # 4: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:14 2021: Image # 14, module MeasureObjectSizeShape # 5: CPU_time = 0.33 secs, Wall_time = 0.32 secs
+Sun Jul 25 18:34:14 2021: Image # 14, module TrackObjects # 6: CPU_time = 0.09 secs, Wall_time = 0.09 secs
+Sun Jul 25 18:34:14 2021: Image # 14, module ExportToDatabase # 8: CPU_time = 0.05 secs, Wall_time = 0.05 secs
+Sun Jul 25 18:34:15 2021: Image # 15, module Images # 1: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:15 2021: Image # 15, module Metadata # 2: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:15 2021: Image # 15, module NamesAndTypes # 3: CPU_time = 0.51 secs, Wall_time = 0.27 secs
+Sun Jul 25 18:34:15 2021: Image # 15, module Groups # 4: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:15 2021: Image # 15, module MeasureObjectSizeShape # 5: CPU_time = 0.17 secs, Wall_time = 0.17 secs
+Sun Jul 25 18:34:15 2021: Image # 15, module TrackObjects # 6: CPU_time = 0.09 secs, Wall_time = 0.09 secs
+Sun Jul 25 18:34:15 2021: Image # 15, module ExportToDatabase # 8: CPU_time = 0.05 secs, Wall_time = 0.05 secs
+Sun Jul 25 18:34:15 2021: Image # 16, module Images # 1: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:15 2021: Image # 16, module Metadata # 2: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:15 2021: Image # 16, module NamesAndTypes # 3: CPU_time = 0.51 secs, Wall_time = 0.28 secs
+Sun Jul 25 18:34:15 2021: Image # 16, module Groups # 4: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:15 2021: Image # 16, module MeasureObjectSizeShape # 5: CPU_time = 0.28 secs, Wall_time = 0.29 secs
+Sun Jul 25 18:34:16 2021: Image # 16, module TrackObjects # 6: CPU_time = 0.09 secs, Wall_time = 0.09 secs
+Sun Jul 25 18:34:16 2021: Image # 16, module ExportToDatabase # 8: CPU_time = 0.04 secs, Wall_time = 0.05 secs
+Sun Jul 25 18:34:16 2021: Image # 17, module Images # 1: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:16 2021: Image # 17, module Metadata # 2: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:16 2021: Image # 17, module NamesAndTypes # 3: CPU_time = 0.53 secs, Wall_time = 0.26 secs
+Sun Jul 25 18:34:16 2021: Image # 17, module Groups # 4: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:16 2021: Image # 17, module MeasureObjectSizeShape # 5: CPU_time = 0.31 secs, Wall_time = 0.31 secs
+Sun Jul 25 18:34:16 2021: Image # 17, module TrackObjects # 6: CPU_time = 0.10 secs, Wall_time = 0.11 secs
+Sun Jul 25 18:34:17 2021: Image # 17, module ExportToDatabase # 8: CPU_time = 0.05 secs, Wall_time = 0.05 secs
+Sun Jul 25 18:34:17 2021: Image # 18, module Images # 1: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:17 2021: Image # 18, module Metadata # 2: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:17 2021: Image # 18, module NamesAndTypes # 3: CPU_time = 0.46 secs, Wall_time = 0.29 secs
+Sun Jul 25 18:34:17 2021: Image # 18, module Groups # 4: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:17 2021: Image # 18, module MeasureObjectSizeShape # 5: CPU_time = 0.28 secs, Wall_time = 0.27 secs
+Sun Jul 25 18:34:17 2021: Image # 18, module TrackObjects # 6: CPU_time = 0.09 secs, Wall_time = 0.10 secs
+Sun Jul 25 18:34:17 2021: Image # 18, module ExportToDatabase # 8: CPU_time = 0.05 secs, Wall_time = 0.06 secs
+Sun Jul 25 18:34:17 2021: Image # 19, module Images # 1: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:17 2021: Image # 19, module Metadata # 2: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:17 2021: Image # 19, module NamesAndTypes # 3: CPU_time = 0.41 secs, Wall_time = 0.28 secs
+Sun Jul 25 18:34:18 2021: Image # 19, module Groups # 4: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:18 2021: Image # 19, module MeasureObjectSizeShape # 5: CPU_time = 0.26 secs, Wall_time = 0.26 secs
+Sun Jul 25 18:34:18 2021: Image # 19, module TrackObjects # 6: CPU_time = 0.10 secs, Wall_time = 0.09 secs
+Sun Jul 25 18:34:18 2021: Image # 19, module ExportToDatabase # 8: CPU_time = 0.04 secs, Wall_time = 0.05 secs
+Sun Jul 25 18:34:18 2021: Image # 20, module Images # 1: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:18 2021: Image # 20, module Metadata # 2: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:18 2021: Image # 20, module NamesAndTypes # 3: CPU_time = 0.39 secs, Wall_time = 0.28 secs
+Sun Jul 25 18:34:18 2021: Image # 20, module Groups # 4: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:18 2021: Image # 20, module MeasureObjectSizeShape # 5: CPU_time = 0.25 secs, Wall_time = 0.26 secs
+Sun Jul 25 18:34:19 2021: Image # 20, module TrackObjects # 6: CPU_time = 0.09 secs, Wall_time = 0.09 secs
+Sun Jul 25 18:34:19 2021: Image # 20, module ExportToDatabase # 8: CPU_time = 0.04 secs, Wall_time = 0.05 secs
+Sun Jul 25 18:34:19 2021: Image # 21, module Images # 1: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:19 2021: Image # 21, module Metadata # 2: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:19 2021: Image # 21, module NamesAndTypes # 3: CPU_time = 0.39 secs, Wall_time = 0.27 secs
+Sun Jul 25 18:34:19 2021: Image # 21, module Groups # 4: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:19 2021: Image # 21, module MeasureObjectSizeShape # 5: CPU_time = 0.28 secs, Wall_time = 0.26 secs
+Sun Jul 25 18:34:19 2021: Image # 21, module TrackObjects # 6: CPU_time = 0.09 secs, Wall_time = 0.09 secs
+Sun Jul 25 18:34:19 2021: Image # 21, module ExportToDatabase # 8: CPU_time = 0.04 secs, Wall_time = 0.07 secs
+Sun Jul 25 18:34:19 2021: Image # 22, module Images # 1: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:19 2021: Image # 22, module Metadata # 2: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:19 2021: Image # 22, module NamesAndTypes # 3: CPU_time = 0.54 secs, Wall_time = 0.28 secs
+Sun Jul 25 18:34:20 2021: Image # 22, module Groups # 4: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:20 2021: Image # 22, module MeasureObjectSizeShape # 5: CPU_time = 0.24 secs, Wall_time = 0.24 secs
+Sun Jul 25 18:34:20 2021: Image # 22, module TrackObjects # 6: CPU_time = 0.11 secs, Wall_time = 0.11 secs
+Sun Jul 25 18:34:20 2021: Image # 22, module ExportToDatabase # 8: CPU_time = 0.05 secs, Wall_time = 0.05 secs
+Sun Jul 25 18:34:20 2021: Image # 23, module Images # 1: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:20 2021: Image # 23, module Metadata # 2: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:20 2021: Image # 23, module NamesAndTypes # 3: CPU_time = 0.48 secs, Wall_time = 0.28 secs
+Sun Jul 25 18:34:20 2021: Image # 23, module Groups # 4: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:20 2021: Image # 23, module MeasureObjectSizeShape # 5: CPU_time = 0.26 secs, Wall_time = 0.25 secs
+Sun Jul 25 18:34:21 2021: Image # 23, module TrackObjects # 6: CPU_time = 0.09 secs, Wall_time = 0.09 secs
+Sun Jul 25 18:34:21 2021: Image # 23, module ExportToDatabase # 8: CPU_time = 0.04 secs, Wall_time = 0.05 secs
+Sun Jul 25 18:34:21 2021: Image # 24, module Images # 1: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:21 2021: Image # 24, module Metadata # 2: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:21 2021: Image # 24, module NamesAndTypes # 3: CPU_time = 0.40 secs, Wall_time = 0.26 secs
+Sun Jul 25 18:34:21 2021: Image # 24, module Groups # 4: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:21 2021: Image # 24, module MeasureObjectSizeShape # 5: CPU_time = 0.25 secs, Wall_time = 0.24 secs
+Sun Jul 25 18:34:21 2021: Image # 24, module TrackObjects # 6: CPU_time = 0.12 secs, Wall_time = 0.12 secs
+Sun Jul 25 18:34:21 2021: Image # 24, module ExportToDatabase # 8: CPU_time = 0.05 secs, Wall_time = 0.05 secs
+Sun Jul 25 18:34:22 2021: Image # 25, module Images # 1: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:22 2021: Image # 25, module Metadata # 2: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:22 2021: Image # 25, module NamesAndTypes # 3: CPU_time = 0.46 secs, Wall_time = 0.24 secs
+Sun Jul 25 18:34:22 2021: Image # 25, module Groups # 4: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:22 2021: Image # 25, module MeasureObjectSizeShape # 5: CPU_time = 0.16 secs, Wall_time = 0.16 secs
+Sun Jul 25 18:34:22 2021: Image # 25, module TrackObjects # 6: CPU_time = 0.09 secs, Wall_time = 0.09 secs
+Sun Jul 25 18:34:22 2021: Image # 25, module ExportToDatabase # 8: CPU_time = 0.04 secs, Wall_time = 0.05 secs
+Sun Jul 25 18:34:22 2021: Image # 26, module Images # 1: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:22 2021: Image # 26, module Metadata # 2: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:22 2021: Image # 26, module NamesAndTypes # 3: CPU_time = 0.40 secs, Wall_time = 0.28 secs
+Sun Jul 25 18:34:22 2021: Image # 26, module Groups # 4: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:22 2021: Image # 26, module MeasureObjectSizeShape # 5: CPU_time = 0.24 secs, Wall_time = 0.24 secs
+Sun Jul 25 18:34:23 2021: Image # 26, module TrackObjects # 6: CPU_time = 0.10 secs, Wall_time = 0.09 secs
+Sun Jul 25 18:34:23 2021: Image # 26, module ExportToDatabase # 8: CPU_time = 0.04 secs, Wall_time = 0.05 secs
+Sun Jul 25 18:34:23 2021: Image # 27, module Images # 1: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:23 2021: Image # 27, module Metadata # 2: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:23 2021: Image # 27, module NamesAndTypes # 3: CPU_time = 0.42 secs, Wall_time = 0.26 secs
+Sun Jul 25 18:34:23 2021: Image # 27, module Groups # 4: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:23 2021: Image # 27, module MeasureObjectSizeShape # 5: CPU_time = 0.25 secs, Wall_time = 0.24 secs
+Sun Jul 25 18:34:23 2021: Image # 27, module TrackObjects # 6: CPU_time = 0.10 secs, Wall_time = 0.10 secs
+Sun Jul 25 18:34:23 2021: Image # 27, module ExportToDatabase # 8: CPU_time = 0.05 secs, Wall_time = 0.05 secs
+Sun Jul 25 18:34:23 2021: Image # 28, module Images # 1: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:23 2021: Image # 28, module Metadata # 2: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:23 2021: Image # 28, module NamesAndTypes # 3: CPU_time = 0.42 secs, Wall_time = 0.27 secs
+Sun Jul 25 18:34:24 2021: Image # 28, module Groups # 4: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:24 2021: Image # 28, module MeasureObjectSizeShape # 5: CPU_time = 0.26 secs, Wall_time = 0.26 secs
+Sun Jul 25 18:34:24 2021: Image # 28, module TrackObjects # 6: CPU_time = 0.10 secs, Wall_time = 0.09 secs
+Sun Jul 25 18:34:24 2021: Image # 28, module ExportToDatabase # 8: CPU_time = 0.04 secs, Wall_time = 0.05 secs
+Sun Jul 25 18:34:24 2021: Image # 29, module Images # 1: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:24 2021: Image # 29, module Metadata # 2: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:24 2021: Image # 29, module NamesAndTypes # 3: CPU_time = 0.40 secs, Wall_time = 0.27 secs
+Sun Jul 25 18:34:24 2021: Image # 29, module Groups # 4: CPU_time = 0.00 secs, Wall_time = 0.00 secs
+Sun Jul 25 18:34:24 2021: Image # 29, module MeasureObjectSizeShape # 5: CPU_time = 0.25 secs, Wall_time = 0.26 secs
+Sun Jul 25 18:34:25 2021: Image # 29, module TrackObjects # 6: CPU_time = 0.10 secs, Wall_time = 0.09 secs
+Sun Jul 25 18:34:25 2021: Image # 29, module ExportToDatabase # 8: CPU_time = 0.04 secs, Wall_time = 0.05 secs
