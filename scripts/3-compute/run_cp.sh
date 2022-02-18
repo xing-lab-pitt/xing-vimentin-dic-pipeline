@@ -22,15 +22,14 @@
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 #!/bin/bash
-
 job_outdir_path=$1
-script_dir=$2
-cellprof=$3
+tools_dir=$2
 
-source activate $cellprof
+eval "$(conda shell.bash hook)"
+module load anaconda/3-cluster
+source activate cp4
 
-${cellprof}/bin/python \
-	${script_dir}/CellProfiler.py -c -r -i \
+cellprofiler -c -r -i \
 	${job_outdir_path}/seg/ -o \
 	$job_outdir_path -p \
-	${script_dir}/cell_track_HK2_5min_interval.cpproj
+	${tools_dir}/cell_track_HK2_5min_interval.cppipe

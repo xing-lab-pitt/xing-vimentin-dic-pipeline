@@ -5,13 +5,13 @@
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 # job name
-#SBATCH --job-name=mbell-53deb5_run_all_12
+#SBATCH --job-name=icnn_am_train
 
 #SBATCH --gres=gpu:1
-#SBATCH --exclude=g019
+#SBATCH --exclude=g019,g102,g104,g122,g012,g013
 #SBATCH --cpus-per-task=16
 
-#SBATCH --mem=32G
+#SBATCH --mem=40G
 
 # partition (queue) declaration
 #SBATCH --partition=dept_gpu
@@ -51,12 +51,11 @@ mkdir /scr/$job_dir
 cd /scr/$job_dir
 
 # define paths & files
-script_dir=/net/capricorn/home/xing/tch42/Projects/A549_144hr/scripts/2_icnn_train
-tools_dir=/net/capricorn/home/xing/tch42/Projects/A549_144hr/scripts/memes
-dat_dir=/net/capricorn/home/xing/tch42/Projects/A549_144hr/data
-train_path=${dat_dir}/train/icnn_seg
-train_path_sup=${dat_dir}/wwk_z_train_subset/icnn_seg
-wts_path=${dat_dir}/wts
+script_dir=/net/capricorn/home/xing/tch42/projects/a549_40x/scripts/2_icnn_train
+tools_dir=/net/capricorn/home/xing/tch42/projects/a549_40x/scripts/memes
+dat_dir=/net/capricorn/home/xing/tch42/projects/a549_40x/data
+train_path=${dat_dir}/train/icnn_am/mixer
+wts_path=${dat_dir}/wts/icnn_am
 
 # initialize
 rsync -ra ${script_dir}/* .
@@ -66,11 +65,10 @@ module load cuda/11.1
 eval "$(conda shell.bash hook)"
 source activate tf1
 
+# icnn_am_train
+wts_file=icnn_am_dc_wwk_datcomb_next-gen.hdf5
 obj_h=128
 obj_w=128
-
-# icnn_am_train
-wts_file_am=icnn_seg_gen_on_comb_on_alph_15E-4_run_1-10-11-21.hdf5
-nb_class_am=3
-train_mode=seg
-python icnn_train_dat_comb.py $train_path $train_path_sup $wts_path $wts_file_am $obj_h $obj_w $nb_class_am $train_mode
+nb_class=3
+train_mode=am
+python icnn_train_dat_comb.py $train_path $wts_path $wts_file $obj_h $obj_w $nb_class $train_mode

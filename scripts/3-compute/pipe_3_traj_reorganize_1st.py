@@ -31,36 +31,7 @@ from datetime import datetime
 
 from scipy.optimize import linear_sum_assignment
 import sqlite3
-from track_module import (
-    compute_overlap_matrix,
-    compute_overlap_pair,
-    compute_overlap_single,
-    generate_traj_seri,
-    relabel_traj,
-    record_traj_start_end,
-    judge_mol_type,
-    search_false_link,
-    judge_border,
-    find_border_obj,
-    break_link,
-    connect_link,
-    false_seg_mark,
-    judge_traj_am,
-    judge_apoptosis_tracklet,
-    traj_start_end_info,
-    am_obj_info,
-    compute_specific_overlap,
-    compute_cost,
-    calculate_area_penalty,
-    find_am_sisters,
-    cal_cell_fusion,
-    cal_cell_split,
-    find_mitosis_pairs_to_break,
-    find_fuse_pairs_to_break,
-    find_split_pairs_to_break,
-    judge_fuse_type,
-    judge_split_type,
-)
+from track_module import compute_overlap_matrix, compute_overlap_pair, compute_overlap_single, generate_traj_seri, relabel_traj, record_traj_start_end, judge_mol_type, search_false_link, judge_border, find_border_obj, break_link, connect_link, false_seg_mark, judge_traj_am, judge_apoptosis_tracklet, traj_start_end_info, am_obj_info, compute_specific_overlap, compute_cost, calculate_area_penalty, find_am_sisters, cal_cell_fusion, cal_cell_split, find_mitosis_pairs_to_break, find_fuse_pairs_to_break, find_split_pairs_to_break, judge_fuse_type, judge_split_type
 from cnn_prep_data import generate_single_cell_img_edt
 import glob
 import pipe_util2
@@ -90,16 +61,16 @@ traj_len_thres = 6  # for judging single cell, if trajectory length is larger th
 
 
 def icnn_seg_load_weight(icnn_seg_weights):
-    obj_h = 128
-    obj_w = 128
-    input_shape = (obj_h, obj_w, 1)
-    nb_class = 3
-    icnn_seg = res_model(input_shape, nb_class)
+    obj_h=128
+    obj_w=128
+    input_shape=(obj_h,obj_w,1)
+    nb_class=3
+    icnn_seg=res_model(input_shape,nb_class)
     icnn_seg.load_weights(icnn_seg_weights)
     return icnn_seg
 
 
-def traj_reconganize1(img_path, output_path, icnn_seg_weights, DIC_chan_label, obj_h=128, obj_w=128):
+def traj_reconganize1(img_path, output_path, icnn_seg_weights, DIC_chan_label, obj_h = 128, obj_w = 128):
 
     """
 
@@ -107,9 +78,9 @@ def traj_reconganize1(img_path, output_path, icnn_seg_weights, DIC_chan_label, o
     :param output_path: the _output folder.
     :return: generating several files under the _output folder
     """
-
+    
     icnn = icnn_seg_load_weight(icnn_seg_weights)
-
+    
     # preparing paths
     print("processing %s" % (img_path), flush=True)
     img_path = pipe_util2.folder_verify(img_path)
@@ -117,19 +88,19 @@ def traj_reconganize1(img_path, output_path, icnn_seg_weights, DIC_chan_label, o
     for i in range(len(img_list)):
         img_list[i] = os.path.basename(img_list[i])
 
-    seg_path = pipe_util2.folder_verify(output_path) + "seg/"
+    seg_path = pipe_util2.folder_verify(output_path) + 'seg/'
     seg_img_list = sorted(listdir(seg_path))
 
     dir_path = pipe_util2.folder_verify(output_path)
-    #     df = pd.read_csv(dir_path + 'Per_Object.csv')
-    #     relation_df=pd.read_csv(dir_path + 'Per_Relationships.csv')
+#     df = pd.read_csv(dir_path + 'Per_Object.csv')
+#     relation_df=pd.read_csv(dir_path + 'Per_Relationships.csv')
 
     # reading cell_track.db and am_record.csv
-    conn = sqlite3.connect(dir_path + "cell_track.db")
-    df = pd.read_sql_query("SELECT * FROM Per_Object", conn)
-    relation_df = pd.read_sql_query("SELECT * FROM Per_Relationships", conn)
-    am_record = pd.read_csv(dir_path + "am_record.csv")
-    t_span = max(df["ImageNumber"])
+    conn = sqlite3.connect(dir_path + 'cell_track.db')
+    df = pd.read_sql_query('SELECT * FROM Per_Object', conn)
+    relation_df = pd.read_sql_query('SELECT * FROM Per_Relationships', conn)
+    am_record = pd.read_csv(dir_path + 'am_record.csv')
+    t_span = max(df['ImageNumber'])
 
     # ---------------------------------------
     pipe_util2.print_time()
@@ -137,30 +108,30 @@ def traj_reconganize1(img_path, output_path, icnn_seg_weights, DIC_chan_label, o
     df = relabel_traj(df)
     traj_start, traj_end = record_traj_start_end(df)
     # ---------------------------------------
-    # hj_util.print_time()
+    #hj_util.print_time()
 
     # find candidate mitosis pairs from apoptosis and mitosis cells
     am_arr, am_xy, am_area = am_obj_info(am_record, df)
 
     # ---------------------------------------
-    # hj_util.print_time()
+    #hj_util.print_time()
 
     # F is a n by 5 matrix
     # including obj_x, obj_y, img_num, obj_num, area
     F = np.column_stack((am_xy, am_arr, np.expand_dims(am_area[:], axis=1)))
 
     # ---------------------------------------
-    # hj_util.print_time()
+    #hj_util.print_time()
 
-    candi_am_sisters = find_am_sisters(F, mitosis_max_distance=mitosis_max_dist, size_simi_thres=simi_thres).tolist()
+    candi_am_sisters = find_am_sisters(F,
+                                       mitosis_max_distance=mitosis_max_dist,
+                                       size_simi_thres=simi_thres).tolist()
     # ---------------------------------------
-    # hj_util.print_time()
+    #hj_util.print_time()
 
     # find fuse and split segmentation, border obj and false link
     prefuse_cells = []
-    prefuse_group = (
-        []
-    )  # each element is a list include all prefuse cells in a fuse event, corresponding to postfuse_cells
+    prefuse_group = []  # each element is a list include all prefuse cells in a fuse event, corresponding to postfuse_cells
     postfuse_cells = []  # include: img_num,obj_num
 
     presplit_cells = []  # include: img_num,obj_num
@@ -179,42 +150,55 @@ def traj_reconganize1(img_path, output_path, icnn_seg_weights, DIC_chan_label, o
             break
         img_num_1 = img_num
         img_num_2 = img_num + 1
-        frame_overlap = compute_overlap_matrix(seg_path, seg_img_list, img_num_1, img_num_2)
-        # print(frame_overlap)
+        frame_overlap = compute_overlap_matrix(
+            seg_path, seg_img_list, img_num_1, img_num_2)
+        #print(frame_overlap)
 
         # -----------find false link with max_overlap relation-----
-        target_idx_list = df[df["ImageNumber"] == img_num_2].index.tolist()
+        target_idx_list = df[df['ImageNumber'] == img_num_2].index.tolist()
         for target_idx in target_idx_list:
-            if df.iloc[target_idx]["Cell_TrackObjects_ParentImageNumber"] == img_num_1:
-                target_o_n = int(df.iloc[target_idx]["ObjectNumber"])
-                source_o_n = int(df.iloc[target_idx]["Cell_TrackObjects_ParentObjectNumber"])
-                # print(source_o_n)
-                rel_flag = judge_mol_type(frame_overlap, source_o_n, target_o_n)
+            if df.iloc[target_idx]['Cell_TrackObjects_ParentImageNumber'] == img_num_1:
+                target_o_n = int(df.iloc[target_idx]['ObjectNumber'])
+                source_o_n = int(
+                    df.iloc[target_idx]['Cell_TrackObjects_ParentObjectNumber'])
+                #print(source_o_n)
+                rel_flag = judge_mol_type(
+                    frame_overlap, source_o_n, target_o_n)
                 false_pair = search_false_link(
-                    df, relation_df, frame_overlap, img_num_1, source_o_n, img_num_2, target_o_n, rel_flag
-                )
+                    df,
+                    relation_df,
+                    frame_overlap,
+                    img_num_1,
+                    source_o_n,
+                    img_num_2,
+                    target_o_n,
+                    rel_flag)
 
                 if len(false_pair) > 0:
                     false_link.append(false_pair)
 
-        # ----------------find split and merge------------------------------------
-        area_arr = df.loc[(df["ImageNumber"] == img_num_1), "Cell_AreaShape_Area"].values
-        area_arr_R = df.loc[(df["ImageNumber"] == img_num_2), "Cell_AreaShape_Area"].values  # area array in img2
+    # ----------------find split and merge------------------------------------
+        area_arr = df.loc[(df['ImageNumber'] == img_num_1),
+                          'Cell_AreaShape_Area'].values
+        area_arr_R = df.loc[(df['ImageNumber'] == img_num_2),
+                            'Cell_AreaShape_Area'].values  # area array in img2
 
         nb_cell_1 = frame_overlap.shape[0]
         nb_cell_2 = frame_overlap.shape[1]
 
-        postf_cells, pref_group = cal_cell_fusion(frame_overlap, img_num_1, img_num_2, nb_cell_1, nb_cell_2)
+        postf_cells, pref_group = cal_cell_fusion(
+            frame_overlap, img_num_1, img_num_2, nb_cell_1, nb_cell_2)
 
-        pres_cells, posts_group = cal_cell_split(frame_overlap, img_num_1, img_num_2, nb_cell_1, nb_cell_2)
+        pres_cells, posts_group = cal_cell_split(
+            frame_overlap, img_num_1, img_num_2, nb_cell_1, nb_cell_2)
 
         postfuse_cells.extend(postf_cells)
         prefuse_group.extend(pref_group)
         presplit_cells.extend(pres_cells)
         postsplit_group.extend(posts_group)
 
-    np.save(dir_path + "border_obj.npy", np.array(border_obj))
-    np.save(dir_path + "false_link.npy", np.array(false_link))
+    np.save(dir_path + 'border_obj.npy', np.array(border_obj))
+    np.save(dir_path + 'false_link.npy', np.array(false_link))
 
     # break false link and relabel traj
     df, relation_df = break_link(df, relation_df, false_link)
@@ -223,34 +207,39 @@ def traj_reconganize1(img_path, output_path, icnn_seg_weights, DIC_chan_label, o
     traj_start, traj_end = record_traj_start_end(df)
 
     # find mitosis_pairs_to_break,fuse_pairs_to_break,split_pairs_to break
-    candi_am_sisters, mitosis_pairs_to_break = find_mitosis_pairs_to_break(relation_df, candi_am_sisters, false_link)
+    candi_am_sisters, mitosis_pairs_to_break = find_mitosis_pairs_to_break(
+        relation_df, candi_am_sisters, false_link)
 
     postfuse_cells, prefuse_group, fuse_pairs, fuse_pairs_to_break = find_fuse_pairs_to_break(
-        relation_df, postfuse_cells, prefuse_group, false_link, border_obj
-    )
+        relation_df, postfuse_cells, prefuse_group, false_link, border_obj)
 
     presplit_cells, postsplit_group, split_pairs, split_pairs_to_break = find_split_pairs_to_break(
-        relation_df, presplit_cells, postsplit_group, false_link, border_obj
-    )
+        relation_df, presplit_cells, postsplit_group, false_link, border_obj)
 
     for f_g in prefuse_group:
         prefuse_cells.extend(f_g)
     for s_g in postsplit_group:
         postsplit_cells.extend(s_g)
 
-    np.save(dir_path + "prefuse_cells.npy", np.array(prefuse_cells))
-    np.save(dir_path + "postfuse_cells.npy", np.array(postfuse_cells))
-    np.save(dir_path + "fuse_pairs.npy", np.array(fuse_pairs))
-    np.save(dir_path + "fuse_pairs_to_break.npy", np.array(fuse_pairs_to_break))
+    np.save(dir_path + 'prefuse_cells.npy', np.array(prefuse_cells))
+    np.save(dir_path + 'postfuse_cells.npy', np.array(postfuse_cells))
+    np.save(dir_path + 'fuse_pairs.npy', np.array(fuse_pairs))
+    np.save(
+        dir_path +
+        'fuse_pairs_to_break.npy',
+        np.array(fuse_pairs_to_break))
 
-    np.save(dir_path + "presplit_cells.npy", np.array(presplit_cells))
-    np.save(dir_path + "postsplit_cells.npy", np.array(postsplit_cells))
-    np.save(dir_path + "split_pairs.npy", np.array(split_pairs))
-    np.save(dir_path + "split_pairs_to_break.npy", np.array(split_pairs_to_break))
+    np.save(dir_path + 'presplit_cells.npy', np.array(presplit_cells))
+    np.save(dir_path + 'postsplit_cells.npy', np.array(postsplit_cells))
+    np.save(dir_path + 'split_pairs.npy', np.array(split_pairs))
+    np.save(
+        dir_path +
+        'split_pairs_to_break.npy',
+        np.array(split_pairs_to_break))
 
-    with open(dir_path + "prefuse_group", "wb") as fp:
+    with open(dir_path + 'prefuse_group', 'wb') as fp:
         pickle.dump(prefuse_group, fp)
-    with open(dir_path + "postsplit_group", "wb") as fp:
+    with open(dir_path + 'postsplit_group', 'wb') as fp:
         pickle.dump(postsplit_group, fp)
 
     # break pairs to break
@@ -266,8 +255,12 @@ def traj_reconganize1(img_path, output_path, icnn_seg_weights, DIC_chan_label, o
 
     df, relation_df = break_link(df, relation_df, pairs_to_break)
     df = relabel_traj(df)
-    df.to_csv(dir_path + "Per_Object_break.csv", index=False, encoding="utf-8")
-    relation_df.to_csv(dir_path + "Per_Relationships_break.csv", index=False, encoding="utf-8")
+    df.to_csv(dir_path + 'Per_Object_break.csv', index=False, encoding='utf-8')
+    relation_df.to_csv(
+        dir_path +
+        'Per_Relationships_break.csv',
+        index=False,
+        encoding='utf-8')
     traj_start, traj_end = record_traj_start_end(df)
 
     # judge fuse,split type and find candi_mitosis
@@ -287,25 +280,43 @@ def traj_reconganize1(img_path, output_path, icnn_seg_weights, DIC_chan_label, o
     for i in range(len(postfuse_cells)):
         fc_cell = postfuse_cells[i]
         fc_i_n, fc_o_n = fc_cell[0], fc_cell[1]
-        fc_img = generate_single_cell_img_edt(img_path, seg_path, img_list, seg_img_list, obj_h, obj_w, fc_i_n, fc_o_n)
+        fc_img = generate_single_cell_img_edt(
+            img_path,
+            seg_path,
+            img_list,
+            seg_img_list,
+            obj_h,
+            obj_w,
+            fc_i_n,
+            fc_o_n)
         fc_prob = icnn.predict(fc_img)[0]
-        fc_am_flag = judge_traj_am(df, am_record, fc_i_n, fc_o_n, judge_later=True, t_range=t_search_range)
+        fc_am_flag = judge_traj_am(
+            df,
+            am_record,
+            fc_i_n,
+            fc_o_n,
+            judge_later=True,
+            t_range=t_search_range)
 
         fp_group = prefuse_group[i]
         fp_group_prob = []
         fp_group_am_flag = []
         for [fp_i_n, fp_o_n] in fp_group:
             fp_img = generate_single_cell_img_edt(
-                img_path, seg_path, img_list, seg_img_list, obj_h, obj_w, fp_i_n, fp_o_n
-            )
+                img_path, seg_path, img_list, seg_img_list, obj_h, obj_w, fp_i_n, fp_o_n)
             fp_prob = icnn.predict(fp_img)[0]
             fp_group_prob.append(fp_prob.tolist())
-            fp_am_flag = judge_traj_am(df, am_record, fp_i_n, fp_o_n, judge_later=False, t_range=t_search_range)
+            fp_am_flag = judge_traj_am(
+                df,
+                am_record,
+                fp_i_n,
+                fp_o_n,
+                judge_later=False,
+                t_range=t_search_range)
             fp_group_am_flag.append(fp_am_flag)
 
         f_label, m_fc_label, m_fp_group_label, m_fp_group, m_fp_group_xy, fc_type, fp_group_type = judge_fuse_type(
-            df, am_record, fc_cell, fp_group, fc_prob, fp_group_prob, tracklet_len_thres=traj_len_thres
-        )
+            df, am_record, fc_cell, fp_group, fc_prob, fp_group_prob, tracklet_len_thres=traj_len_thres)
         false_traj_label.extend(f_label)
 
         if len(m_fc_label) > 0:
@@ -317,10 +328,17 @@ def traj_reconganize1(img_path, output_path, icnn_seg_weights, DIC_chan_label, o
     for i in range(len(presplit_cells)):
         sp_cell = presplit_cells[i]
         sp_i_n, sp_o_n = sp_cell[0], sp_cell[1]
-        sp_label = np.asscalar(
-            df.loc[(df["ImageNumber"] == sp_i_n) & (df["ObjectNumber"] == sp_o_n), "Cell_TrackObjects_Label"].values
-        )
-        sp_img = generate_single_cell_img_edt(img_path, seg_path, img_list, seg_img_list, obj_h, obj_w, sp_i_n, sp_o_n)
+        sp_label = np.asscalar(df.loc[(df['ImageNumber'] == sp_i_n) & (
+            df['ObjectNumber'] == sp_o_n), 'Cell_TrackObjects_Label'].values)
+        sp_img = generate_single_cell_img_edt(
+            img_path,
+            seg_path,
+            img_list,
+            seg_img_list,
+            obj_h,
+            obj_w,
+            sp_i_n,
+            sp_o_n)
         sp_prob = icnn.predict(sp_img)[0]
 
         mitosis_fuse_flag = 0
@@ -337,19 +355,10 @@ def traj_reconganize1(img_path, output_path, icnn_seg_weights, DIC_chan_label, o
 
             sc_group_xy = []
             for [sc_i_n, sc_o_n] in sc_group:
-                sc_label = np.asscalar(
-                    df.loc[
-                        (df["ImageNumber"] == sc_i_n) & (df["ObjectNumber"] == sc_o_n), "Cell_TrackObjects_Label"
-                    ].values
-                )
-                sc_group_xy.append(
-                    df.loc[
-                        (df["ImageNumber"] == sc_i_n) & (df["ObjectNumber"] == sc_o_n),
-                        ["Cell_AreaShape_Center_X", "Cell_AreaShape_Center_Y"],
-                    ]
-                    .values[0]
-                    .tolist()
-                )
+                sc_label = np.asscalar(df.loc[(df['ImageNumber'] == sc_i_n) & (
+                    df['ObjectNumber'] == sc_o_n), 'Cell_TrackObjects_Label'].values)
+                sc_group_xy.append(df.loc[(df['ImageNumber'] == sc_i_n) & (df['ObjectNumber'] == sc_o_n), [
+                                   'Cell_AreaShape_Center_X', 'Cell_AreaShape_Center_Y']].values[0].tolist())
                 mitosis_fuse_sc_label.append(sc_label)
 
             d_matrix = np.zeros((2, 2))
@@ -365,23 +374,19 @@ def traj_reconganize1(img_path, output_path, icnn_seg_weights, DIC_chan_label, o
                         candi_mitosis_fp_group[ind][r][0],
                         candi_mitosis_fp_group[ind][r][1],
                         sc_group[c][0],
-                        sc_group[c][1],
-                    ]
-                )
+                        sc_group[c][1]])
 
         else:
             sc_group_prob = []
 
             for [sc_i_n, sc_o_n] in sc_group:
                 sc_img = generate_single_cell_img_edt(
-                    img_path, seg_path, img_list, seg_img_list, obj_h, obj_w, sc_i_n, sc_o_n
-                )
+                    img_path, seg_path, img_list, seg_img_list, obj_h, obj_w, sc_i_n, sc_o_n)
                 sc_prob = icnn.predict(sc_img)[0]
                 sc_group_prob.append(sc_prob.tolist())
 
             candi_mitosis_flag, f_label, cm_label, fm_obj, sp_type, sc_group_type = judge_split_type(
-                df, am_record, sp_cell, sc_group, sp_prob, sc_group_prob, tracklet_len_thres=traj_len_thres
-            )
+                df, am_record, sp_cell, sc_group, sp_prob, sc_group_prob, tracklet_len_thres=traj_len_thres)
 
             if candi_mitosis_flag == 0:
                 if len(f_label) > 0:
@@ -392,25 +397,27 @@ def traj_reconganize1(img_path, output_path, icnn_seg_weights, DIC_chan_label, o
                 if len(fm_obj) > 0:
                     false_mitosis_obj.extend(fm_obj)
 
-    with open(dir_path + "false_traj_label", "wb") as fp:
+    with open(dir_path + 'false_traj_label', 'wb') as fp:
         pickle.dump(false_traj_label, fp)
-    with open(dir_path + "candi_mitosis_label", "wb") as fp:
+    with open(dir_path + 'candi_mitosis_label', 'wb') as fp:
         pickle.dump(candi_mitosis_label, fp)
-    with open(dir_path + "false_mitosis_obj", "wb") as fp:
+    with open(dir_path + 'false_mitosis_obj', 'wb') as fp:
         pickle.dump(false_mitosis_obj, fp)
 
     for tlabel in false_traj_label:
-        if (
-            tlabel not in candi_mitosis_label
-            and tlabel not in mitosis_fuse_fp_label
-            and tlabel not in mitosis_fuse_sc_label
-        ):
-            df.loc[df["Cell_TrackObjects_Label"] == tlabel, "Cell_TrackObjects_Label"] = -1
+        if tlabel not in candi_mitosis_label and tlabel not in mitosis_fuse_fp_label and tlabel not in mitosis_fuse_sc_label:
+            df.loc[df['Cell_TrackObjects_Label'] ==
+                   tlabel, 'Cell_TrackObjects_Label'] = -1
 
     df, relation_df = connect_link(df, relation_df, mitosis_fuse_link_pairs)
     df = relabel_traj(df)
-    df.to_csv(dir_path + "Per_Object_modify.csv", index=False, encoding="utf-8")
+    df.to_csv(
+        dir_path +
+        'Per_Object_modify.csv',
+        index=False,
+        encoding='utf-8')
     traj_start, traj_end = record_traj_start_end(df)
+
 
 
 # -------------judge fuse type-----------

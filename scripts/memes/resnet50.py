@@ -21,7 +21,6 @@ from keras.layers import GlobalMaxPooling2D
 from keras.layers import BatchNormalization
 from keras.models import Model
 from keras import backend as K
-from keras.engine.topology import get_source_inputs
 from keras.utils import layer_utils
 from keras.utils.data_utils import get_file
 from keras.preprocessing.image import ImageDataGenerator, array_to_img, img_to_array, load_img

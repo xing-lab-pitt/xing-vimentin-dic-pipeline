@@ -10,7 +10,8 @@ import skimage.io
 import skimage.transform
 import scipy.stats
 import PIL
-from skimage.restoration import denoise_wavelet, estimate_sigma, denoise_nl_means, denoise_bilateral
+from skimage.restoration import (denoise_wavelet, estimate_sigma,
+                                 denoise_nl_means, denoise_bilateral)
 import png
 import gc
 import shutil
@@ -21,18 +22,18 @@ import pandas as pd
 import math
 from skimage.io import imread
 
-mask_cast_type = ">i4"
-mask_mode = "L"
+mask_cast_type = '>i4'
+mask_mode = 'L'
 
 # location of processed info
 # center info will be saved to figure_dir
-center_filename = "centers_data.csv"
-crop_filename = "crop_data.csv"
+center_filename = 'centers_data.csv'
+crop_filename = 'crop_data.csv'
 # figure_dir = './figures/test_max_projection_only'
 # crop_dir = './figures/crops_max_projection_info_with_masks'
-figure_dir = "./figures/test_crop_new"
-crop_dir = "./figures/crops_info_with_masks"
-mask_folder_name = "masks"  # name of mask folder in crop_dir
+figure_dir = './figures/test_crop_new'
+crop_dir = './figures/crops_info_with_masks'
+mask_folder_name = 'masks'  # name of mask folder in crop_dir
 
 # if we only want to generate crop but not to find all signal candidates
 gen_crop_only = False
@@ -84,15 +85,15 @@ def read_nd2_specific(path, c, t, z):
 
 
 def read_nd2_along_z(path, c, t):
-    """
+    '''
     :param path:
     :param c:
     :param t:
     :return: x x y x z
-    """
+    '''
     images = ND2Reader(path)
-    channel_num = len(images.metadata["channels"])
-    z_levels = images.metadata["z_levels"]
+    channel_num = len(images.metadata['channels'])
+    z_levels = images.metadata['z_levels']
     count = 0
     total = len(z_levels)
     res_images = []
@@ -108,17 +109,17 @@ def read_nd2_along_z(path, c, t):
 
 
 def read_nd2(path, z_limit=None, t_limit=None):
-    """
+    '''
     returns images: T x Z x C x X x Y
-    """
+    '''
     images = ND2Reader(path)
-    print("pixel type:", images.pixel_type)
+    print('pixel type:', images.pixel_type)
     # for key in images.metadata:
     #     print(key, images.metadata[key])
     print(images.sizes)
-    z_levels = images.metadata["z_levels"]
-    frames = images.metadata["frames"]
-    channel_num = len(images.metadata["channels"])
+    z_levels = images.metadata['z_levels']
+    frames = images.metadata['frames']
+    channel_num = len(images.metadata['channels'])
     count = 0
     data = []
     total = len(z_levels) * len(frames) * channel_num
@@ -140,8 +141,8 @@ def read_nd2(path, z_limit=None, t_limit=None):
                 data[t][z].append(image)
                 count += 1
                 if count % 10 == 0:
-                    print("%d/%d images loaded" % (count, total))
-    print(count, "images loaded")
+                    print('%d/%d images loaded' % (count, total))
+    print(count, 'images loaded')
     res = np.array(data)
     return res
 
@@ -152,14 +153,14 @@ def make_dir(path, abort=True):
     Input       - (String) path.
     """
     if os.path.exists(path):
-        print(path + " : exists")
+        print(path + ' : exists')
         if abort:
             exit(0)
         elif os.path.isdir(path):
-            print(path + " : is a directory, continue using the old one")
+            print(path + ' : is a directory, continue using the old one')
             return False
         else:
-            print(path + " : is not a directory, creating one")
+            print(path + ' : is not a directory, creating one')
             os.makedirs(path)
             return True
     else:
@@ -167,7 +168,12 @@ def make_dir(path, abort=True):
         return True
 
 
-def load_images_from_dirs(dirs, ext="tif", limit=float("inf"), limit_per_dir=float("inf"), return_filename=False):
+def load_images_from_dirs(
+        dirs,
+        ext='tif',
+        limit=float('inf'),
+        limit_per_dir=float('inf'),
+        return_filename=False):
     """
     Description - Read all files with desired extention in a folder list
     Input       - (list of string) list of folder res_paths
@@ -179,9 +185,9 @@ def load_images_from_dirs(dirs, ext="tif", limit=float("inf"), limit_per_dir=flo
 
     """
     if not limit:
-        limit = float("inf")
+        limit = float('inf')
     if not limit_per_dir:
-        limit_per_dir = float("inf")
+        limit_per_dir = float('inf')
     files = []
     filenames = []
     count = 0
@@ -189,7 +195,7 @@ def load_images_from_dirs(dirs, ext="tif", limit=float("inf"), limit_per_dir=flo
     for d in dirs:
         for f in os.listdir(d):
             if f.endswith(ext):
-                total += 1  # total - total number of the desired file in the folders
+                total += 1    # total - total number of the desired file in the folders
     for d in dirs:
         count_per_dir = 0
         for f in os.listdir(d):
@@ -202,14 +208,14 @@ def load_images_from_dirs(dirs, ext="tif", limit=float("inf"), limit_per_dir=flo
                 files.append(image)
                 count += 1
                 count_per_dir += 1
-                print("reading %d/%d images" % (count, total))
+                print('reading %d/%d images' % (count, total))
                 if count >= limit:
                     if return_filename:
                         return files, filenames
                     else:
                         return files
                 if count_per_dir >= limit_per_dir:
-                    print("skip remaining images in %s" % d)
+                    print('skip remaining images in %s' % d)
                     break
 
     if return_filename:
@@ -218,7 +224,7 @@ def load_images_from_dirs(dirs, ext="tif", limit=float("inf"), limit_per_dir=flo
         return files
 
 
-def load_nd2_path_from_dirs(dirs, ext="nd2", limit=float("inf")):
+def load_nd2_path_from_dirs(dirs, ext='nd2', limit=float('inf')):
     res_paths = []
     count = 0
     for d in dirs:
@@ -231,7 +237,6 @@ def load_nd2_path_from_dirs(dirs, ext="nd2", limit=float("inf")):
                     return res_paths
     return res_paths
 
-
 # def show_image_distribution(image):
 
 
@@ -242,7 +247,7 @@ def normalize(vec):
 def print_np_vec(v):
     for i in range(len(v)):
         for j in range(len(v[i])):
-            print(v[i][j], end=", ")
+            print(v[i][j], end=', ')
         print()
 
 
@@ -271,21 +276,20 @@ def count_image_gaussian_quantile(image, q=0.99):
 
 
 stats_header = [
-    "center intensity",
-    "group size",
-    "background average",
-    "background pixel number",
-    "background_bounding_x",
-    "background_bounding_y",
-    "background_bounding_z",
-    "box_x_min",
-    "box_x_max",
-    "box_y_min",
-    "box_y_max",
-    "box_z_min",
-    "box_z_max",
-    "crop_id",
-]
+    'center intensity',
+    'group size',
+    'background average',
+    'background pixel number',
+    'background_bounding_x',
+    'background_bounding_y',
+    'background_bounding_z',
+    'box_x_min',
+    'box_x_max',
+    'box_y_min',
+    'box_y_max',
+    'box_z_min',
+    'box_z_max',
+    'crop_id']
 CENTER_INTENSITY_IND = 0
 BACKGROUND_AVERAGE = 2
 CROP_STAT_IND = 13
@@ -296,63 +300,51 @@ BC_ZSCORE_IND = 14
 
 
 def get_bound_from_stats(stats):
-    return stats[X_BOX_IND : Z_BOX_IND + 1]
+    return stats[X_BOX_IND:Z_BOX_IND + 1]
 
 
 def save_centers_data(data, path):
-    """
+    '''
     data: centers_num x 2
     each entry represents a result from an image
     centers contain a list of centers
     stats contain a list of stats
-    """
-    with open(path, "w+", newline="") as f:
+    '''
+    with open(path, 'w+', newline='') as f:
         writer = csv.writer(f)
-        header = ["t", "z", "c", "x", "y"] + stats_header
+        header = ['t', 'z', 'c', 'x', 'y'] + \
+            stats_header
         writer.writerow(header)
         for i in range(len(data[0])):
             center = data[0][i]
             stat = data[1][i]
-            (
-                t,
-                z,
-                c,
-                center_intensity,
-                group_size,
-                background_avg,
-                background_size,
-                background_bounding_x,
-                background_bounding_y,
-                background_bounding_z,
-            ) = stat[:10]
+            t, z, c, center_intensity, group_size, background_avg, background_size, \
+                background_bounding_x, background_bounding_y, background_bounding_z,\
+                = stat[:10]
             bd = stat[10:16]
             crop_id = stat[16]
-            row = (
-                [
-                    t,
-                    z,
-                    c,
-                    center[0],
-                    center[1],
-                    center_intensity,
-                    group_size,
-                    background_avg,
-                    background_size,
-                    background_bounding_x,
-                    background_bounding_y,
-                    background_bounding_z,
-                ]
-                + bd
+            row = [t,
+                   z,
+                   c,
+                   center[0],
+                   center[1],
+                   center_intensity,
+                   group_size,
+                   background_avg,
+                   background_size,
+                   background_bounding_x,
+                   background_bounding_y,
+                   background_bounding_z]\
+                + bd\
                 + [crop_id]
-            )
             writer.writerow(row)
 
 
 def read_centers_data(path):
-    """
+    '''
     return: two dicts with key (t, z, c),
     containing centers, stats data at t, z, c respectively.
-    """
+    '''
     res = []
     t_centers = []
     t_stats = []
@@ -387,10 +379,10 @@ active_circles = []
 
 
 def plot_traj_maps(ax, image, maps, draw_traj=False):
-    """
+    '''
     given a list of mapping {centerId:pos}
     draw trajectories
-    """
+    '''
     global active_circles
     all_keys = []
     for mapping in maps:
@@ -424,34 +416,36 @@ def plot_traj_maps(ax, image, maps, draw_traj=False):
 
         if key in maps[-1]:
             cx, cy, cz = traj[-1]
-            circle = plt.Circle((cy, cx), traj_circle_radius, color="r", fill=False)
+            circle = plt.Circle(
+                (cy, cx), traj_circle_radius, color='r', fill=False)
             active_circles.append(circle)
             ax.add_artist(circle)
 
 
 def write_comp_data(data, path, kernel):
-    with open(path, "w+") as f:
-        f.write(str(len(data)) + " " + str(len(data[0])) + " " + str(kernel) + "\n")
+    with open(path, 'w+') as f:
+        f.write(str(len(data)) + ' ' + str(len(data[0])) + ' '
+                + str(kernel) + '\n')
         for vec in data:
             for num in vec:
-                f.write("%d " % num)
-            f.write("\n")
+                f.write('%d ' % num)
+            f.write('\n')
 
 
 def read_comp_data(path):
-    with open(path, "r") as f:
+    with open(path, 'r') as f:
         res = []
         for row in f:
-            row = row.strip().replace("\n", "").split(" ")
+            row = row.strip().replace('\n', '').split(' ')
             row = [float(r) for r in row]
             res.append(row)
     return np.array(res)
 
 
 def get_max_centers_series(t_centers_data, channel):
-    """
+    '''
     t_centers_data[t][1]=max_centers
-    """
+    '''
     t_centers = []
     t_center2stats = []
     for data in t_centers_data:
@@ -463,22 +457,26 @@ def get_max_centers_series(t_centers_data, channel):
     return t_centers, t_center2stats
 
 
-def get_center_background(images, center, group, boundings):
-    """
+def get_center_background(images, center, group,
+                          boundings):
+    '''
     boundings: x, y, z boundings
     group: 2D group
     caution: images are in z,x,y order due to nd2, center and center are in x y z order
-    """
+    '''
     center = [int(x) for x in center]
     shape = images.shape
-    group = set([tuple(int(x) for x in group_center) for group_center in group])
+    group = set([tuple(int(x) for x in group_center)
+                 for group_center in group])
     # print('debug get center background: group size=', len(group), list(group)[0])
     acc = 0
     count = 0
     for x in range(center[0] - boundings[0], center[0] + boundings[0]):
         for y in range(center[1] - boundings[1], center[1] + boundings[1]):
             for z in range(center[2] - boundings[2], center[2] + boundings[2]):
-                if x < 0 or y < 0 or z < 0 or x >= shape[1] or y >= shape[2] or z >= shape[0] or (x, y) in group:
+                if x < 0 or y < 0 or z < 0\
+                   or x >= shape[1] or y >= shape[2] or z >= shape[0]\
+                   or (x, y) in group:
                     continue
                 else:
                     acc += images[z, x, y]
@@ -488,28 +486,37 @@ def get_center_background(images, center, group, boundings):
     return acc / count, count
 
 
-def get_centers_background(image, centers, groups, boundings=[100, 100, 2]):
+def get_centers_background(image,
+                           centers,
+                           groups,
+                           boundings=[100, 100, 2]):
     res = []
     for i in range(len(centers)):
         center = centers[i]
         group = groups[i]
-        background = get_center_background(image, center, group, boundings)
+        background = get_center_background(image, center,
+                                           group, boundings)
         res.append(background)
     return res
 
 
-def get_center_stats(image, z_images, centers, groups, background_boundings=[10, 10, 2]):
-    """
+def get_center_stats(image,
+                     z_images,
+                     centers,
+                     groups,
+                     background_boundings=[10, 10, 2]):
+    '''
     return #centers x stats
     stats: [[center intensity, group length, ...]]
-    """
+    '''
     stats = []
 
     for j in range(len(centers)):
         center = centers[j]
         group = groups[j]
         center_intensity = image[center[0], center[1]]
-        background_avg, background_size = get_center_background(z_images, center, group, background_boundings)
+        background_avg, background_size = get_center_background(
+            z_images, center, group, background_boundings)
         stat = [
             center_intensity,
             len(group),
@@ -517,8 +524,7 @@ def get_center_stats(image, z_images, centers, groups, background_boundings=[10,
             background_size,
             background_boundings[0],
             background_boundings[1],
-            background_boundings[2],
-        ]
+            background_boundings[2]]
         stats.append(stat)
         # print('debug stat:', stat)
     return stats
@@ -526,14 +532,13 @@ def get_center_stats(image, z_images, centers, groups, background_boundings=[10,
 
 def get_2d_center_bg_avg(image, center, boundings, signal_size=7):
     if signal_size >= boundings[0] or signal_size >= boundings[1]:
-        assert False, "cell size larger than boundings"
+        assert False, 'cell size larger than boundings'
     x1, x2 = center[0] - boundings[0], center[0] + boundings[0]
     y1, y2 = center[1] - boundings[1], center[1] + boundings[1]
     sub = image[x1:x2, y1:y2]
     ids = np.full(sub.shape, True)
-    ids[
-        boundings[0] - signal_size : boundings[0] + signal_size, boundings[1] - signal_size : boundings[1] + signal_size
-    ] = False
+    ids[boundings[0] - signal_size:boundings[0] + signal_size,
+        boundings[1] - signal_size:boundings[1] + signal_size] = False
     sub = sub[ids]
     avg = np.mean(sub.flatten())
     std = np.std(sub.flatten())
@@ -548,9 +553,8 @@ def get_2d_center_avg(image, center, boundings):
     return avg, std
 
 
-track_header = (
-    ["t", "c", "x", "y", "z", "track_id"] + stats_header + ["bc_score", "bc_center_intensity", "bc_bg_avg", "bc_bg_std"]
-)
+track_header = ['t', 'c', 'x', 'y', 'z', 'track_id'] + stats_header + \
+    ['bc_score', 'bc_center_intensity', 'bc_bg_avg', 'bc_bg_std']
 
 
 def gen_tracking_datarows(mappings_list, t_center2stats, channel):
@@ -562,7 +566,10 @@ def gen_tracking_datarows(mappings_list, t_center2stats, channel):
         for track_id in mapping:
             center = mapping[track_id]
             stats = center2stats[tuple(center)]
-            row = [t, channel] + list(center) + [track_id] + list(stats)
+            row = [t, channel] + \
+                list(center) + \
+                [track_id] + \
+                list(stats)
             rows.append(row)
     # print('debug gen data rows, results...')
     # for row in rows:
@@ -570,7 +577,8 @@ def gen_tracking_datarows(mappings_list, t_center2stats, channel):
     return rows
 
 
-def gen_tracking_datarows_from_mapping_list_only(mappings_list, channel, t_track2cell=None):
+def gen_tracking_datarows_from_mapping_list_only(
+        mappings_list, channel, t_track2cell=None):
     rows = []
     for t in range(len(mappings_list)):
         mapping = mappings_list[t]
@@ -580,19 +588,22 @@ def gen_tracking_datarows_from_mapping_list_only(mappings_list, channel, t_track
             track2cell = None
         for track_id in mapping:
             center = mapping[track_id]
-            row = [t, center[2], channel] + list(center[:2]) + [track_id]
+            row = [t, center[2], channel] + \
+                list(center[:2]) + \
+                [track_id]
             if not (track2cell is None):
                 cell = track2cell[track_id]
                 if cell is None:
                     row += [None] * 6
                 else:
-                    row += [cell.id, cell.time] + list(cell.regionprop.bbox[:4])
+                    row += [cell.id, cell.time] + \
+                        list(cell.regionprop.bbox[:4])
             rows.append(row)
     return rows
 
 
 def save_tracking_data(rows, path, track_header=track_header):
-    with open(path, "w+", newline="") as f:
+    with open(path, 'w+', newline='') as f:
         writer = csv.writer(f)
         writer.writerow(track_header)
         for row in rows:
@@ -600,10 +611,10 @@ def save_tracking_data(rows, path, track_header=track_header):
 
 
 def read_tracking_data(path):
-    """
+    '''
     :param path:
     :return: two dicts: tc2centers, tc2stats
-    """
+    '''
     with open(path, "r") as f:
         reader = csv.reader(f)
         centers = {}
@@ -632,11 +643,11 @@ def read_tracking_data(path):
 
 
 def tracking_data_to_signal_mapping(tc2centers, tc2stats, return_stats=False):
-    """
+    '''
     :param tc2centers:
     :param tc2stats:
     :return: dict, c => t => trackid => center
-    """
+    '''
     max_t, max_c = -1, -1
     for t, c in tc2centers:
         max_t, max_c = max(max_t, t), max(max_c, c)
@@ -660,9 +671,9 @@ def tracking_data_to_signal_mapping(tc2centers, tc2stats, return_stats=False):
 
 
 def get_filename_from_path(path, extension=False):
-    """
+    '''
     returns filename from a path, without extension
-    """
+    '''
     basename = os.path.basename(path)
     res = os.path.splitext(basename)  # filename, ext
     if not extension:
@@ -671,41 +682,43 @@ def get_filename_from_path(path, extension=False):
 
 
 def get_mask_path(mask_dir, cur_t, cur_c, cur_z):
-    return os.path.join(mask_dir, "mask_T=%d_C=%d_Z=%d.png" % (cur_t, cur_c, cur_z))
+    return os.path.join(
+        mask_dir, 'mask_T=%d_C=%d_Z=%d.png' %
+        (cur_t, cur_c, cur_z))
 
 
-crop_info_header = ["t", "c", "xmin", "xmax", "ymin", "ymax", "zmin", "zmax"]
+crop_info_header = ['t', 'c', 'xmin', 'xmax', 'ymin', 'ymax', 'zmin', 'zmax']
 
 
 def save_crop_info(bd_info, masks, crop_path, mask_dir, cur_t, cur_c):
-    """
+    '''
     masks should be 3d
-    """
-    with open(crop_path, "w+") as f:
+    '''
+    with open(crop_path, 'w+') as f:
         writer = csv.writer(f)
         writer.writerow(crop_info_header)
         for t, c in bd_info:
             for bd in bd_info[t, c]:
                 row = [t, c] + list(bd)
                 writer.writerow(row)
-    if not (masks is None):
+    if not(masks is None):
         # check mask shape
         assert len(masks.shape) == 3
         for z in range(0, masks.shape[2]):
             mask = masks[:, :, z]
             mask_path = get_mask_path(mask_dir, cur_t, cur_c, z)
-            converted_mask = mask.astype(mask_cast_type, casting="unsafe")
+            converted_mask = mask.astype(mask_cast_type, casting='unsafe')
             # im = PIL.Image.fromarray(converted_mask, mode=mask_mode)
             # im.save(mask_path)
             writer = png.Writer(mask.shape[1], mask.shape[0], bitdepth=16)
-            with open(mask_path, "wb+") as f:
+            with open(mask_path, 'wb+') as f:
                 writer.write(f, converted_mask)
 
 
 def read_crop_info(crop_path):
     bd_info = {}
     t_max, c_max = -1, -1
-    with open(crop_path, "r") as f:
+    with open(crop_path, 'r') as f:
         reader = csv.reader(f)
         is_header = True
         header = None
@@ -731,20 +744,20 @@ def read_crop_info(crop_path):
 
 
 def read_mask(path):
-    mask = np.array(PIL.Image.open(path, mode="r"))
+    mask = np.array(PIL.Image.open(path, mode='r'))
     return mask
 
 
 def read_masks(mask_dir, t, c, z_levels):
-    """
+    '''
     return a 3d mask: X x Y x Z
-    """
+    '''
     masks = []
     for z in range(z_levels):
         path = get_mask_path(mask_dir, t, c, z)
         if not os.path.exists(path):
             return None
-        mask = np.array(PIL.Image.open(path, mode="r"))
+        mask = np.array(PIL.Image.open(path, mode='r'))
         # plt.imshow(mask)
         # plt.show()
         masks.append(mask)
@@ -754,30 +767,30 @@ def read_masks(mask_dir, t, c, z_levels):
 
 
 def read_all_masks(mask_dir, at, ac, az):
-    """
+    '''
     input: path, #t, #c, #z
     output: masks: t x Z x c x X x Y
-    """
+    '''
     all_masks = []
     for t in range(at):
         all_masks.append([])
         for c in range(ac):
             all_masks[t].append(read_masks(mask_dir, t, c, az))
-    print("debug shape:", np.array(all_masks))
+    print('debug shape:', np.array(all_masks))
     return np.moveaxis(np.array(all_masks), 4, 1)
 
 
 def save_png_image(image, path, bitdepth=16):
-    """
+    '''
     save png image with bit depth 16
-    """
+    '''
     writer = png.Writer(image.shape[1], image.shape[0], bitdepth=bitdepth)
-    with open(path, "wb+") as f:
+    with open(path, 'wb+') as f:
         writer.write(f, image)
 
 
-def save_tiff_image(image, path, bitdepth=64, mode="RGB"):
-    with open(path, "wb+") as f:
+def save_tiff_image(image, path, bitdepth=64, mode='RGB'):
+    with open(path, 'wb+') as f:
         im = PIL.Image.fromarray(image.astype(np.uint8), mode=mode)
         im.save(path)
 
@@ -788,16 +801,16 @@ def convert_nd2_to_png(nd2_path, dest):
     images = ND2Reader(nd2_path)
     # t_levels = images.shape[0]
     # z_levels = images.shape[1]
-    t_levels = images.metadata["frames"]
-    z_levels = images.metadata["z_levels"]
-    channels = images.metadata["channels"]
-    channel_num = len(images.metadata["channels"])
+    t_levels = images.metadata['frames']
+    z_levels = images.metadata['z_levels']
+    channels = images.metadata['channels']
+    channel_num = len(images.metadata['channels'])
     # channel_num = images.shape[2]
     total = channel_num * len(t_levels) * len(z_levels)
     nd2_name = get_filename_from_path(nd2_path)
 
     # check dtype < 16bits
-    print("image dtype:", read_nd2_specific(nd2_path, 0, 0, 0).dtype)
+    print('image dtype:', read_nd2_specific(nd2_path, 0, 0, 0).dtype)
     assert read_nd2_specific(nd2_path, 0, 0, 0).dtype == np.uint16
     count = 0
     for c in range(channel_num):
@@ -805,14 +818,15 @@ def convert_nd2_to_png(nd2_path, dest):
             for z in z_levels:
                 # print(t, z, c)
                 # filename = nd2_name + '_T=' + str(t) + '_C=' + str(c) + '_Z=' + str(z) + '.png'
-                filename = nd2_name + "_T=" + str(t) + "_C=" + str(c) + "_Z=" + str(z) + ".tiff"
+                filename = nd2_name + '_T=' + \
+                    str(t) + '_C=' + str(c) + '_Z=' + str(z) + '.tiff'
                 path = os.path.join(dest, filename)
                 count += 1
                 if os.path.exists(path):
-                    print("skipping", count)
+                    print('skipping', count)
                     continue
                 if count % (10) == 0:
-                    print("%d/%d converted" % (count, total), flush=True)
+                    print('%d/%d converted' % (count, total), flush=True)
                     gc.collect()
                 # image = images[t, z, c, ...]
                 try:
@@ -821,43 +835,35 @@ def convert_nd2_to_png(nd2_path, dest):
                     save_tiff_image(image, path)
                     pass
                 except Exception as e:
-                    print("error")
+                    print('error')
                     print(e)
 
 
 def plot_boxes_on_image(ax, bds):
-    """
+    '''
     bds: list of [xmin, xmax, ymin, ymax, ...]
-    """
+    '''
     for bd in bds:
-        rec = plt.Rectangle(
-            (
-                bd[2],
-                bd[0],
-            ),
-            bd[3] - bd[2],
-            bd[1] - bd[0],
-            color="r",
-            fill=False,
-        )
+        rec = plt.Rectangle((bd[2], bd[0], ), bd[3] -
+                            bd[2], bd[1] - bd[0], color='r', fill=False)
         active_circles.append(rec)
         ax.add_artist(rec)
 
 
 def get_nikon_position_from_nd2_converted_filename(filename):
-    idx = filename.find("_XY")
+    idx = filename.find('_XY')
     idx = idx + 1
     temp = idx
-    while filename[temp] != "_" and filename[temp] != ".":
+    while filename[temp] != '_' and filename[temp] != '.':
         temp += 1
     end = temp
-    pos = filename[idx + 2 : end]
+    pos = filename[idx + 2: end]
     pos = pos.lstrip("0")
     return pos
 
 
 def get_nikon_nd2_convention_tzc_from_name(filename):
-    """
+    '''
     input: a filename with nikon conversion convention
     output: t, z, c coords extracted
 
@@ -867,8 +873,7 @@ def get_nikon_nd2_convention_tzc_from_name(filename):
     output: 1, 15, 1
     input: 293t_xy07_z15_mono1_t01.tif
     output: 1, 15, 2
-    """
-
+    '''
     def parse(name, pre):
 
         # not sensitive to upper/lower cases
@@ -877,24 +882,24 @@ def get_nikon_nd2_convention_tzc_from_name(filename):
 
         idx = name.find(pre)
         if idx == -1:
-            """
+            '''
             need to check this case.
             Default bahvior of nikon conversion is when there is only 1 Z or 1 time point, no T or Z in filename
-            """
+            '''
             # assert False, pre + ' not found in ' + name
             return 1
         else:
             temp = idx + 1
-            while filename[temp] != "_" and filename[temp] != ".":
+            while filename[temp] != '_' and filename[temp] != '.':
                 temp += 1
             end = temp
-            res = name[idx + len(pre) : end]
+            res = name[idx + len(pre):end]
             res = res.lstrip("0")
             return res
 
-    t = int(parse(filename, "_T"))
-    z = int(parse(filename, "_Z"))
-    c = parse(filename, "Mono")
+    t = int(parse(filename, '_T'))
+    z = int(parse(filename, '_Z'))
+    c = parse(filename, 'Mono')
     if c == "":
         c = 1
     else:
@@ -904,25 +909,27 @@ def get_nikon_nd2_convention_tzc_from_name(filename):
     return t, z, c
 
 
-def move_pos_img_to_subdirs(image_dir, ext="png"):
-    paths = load_nd2_path_from_dirs([image_dir], ext=ext, limit=float("inf"))
+def move_pos_img_to_subdirs(image_dir, ext='png'):
+    paths = load_nd2_path_from_dirs([image_dir], ext=ext, limit=float('inf'))
     # print(paths)
     for path in paths:
         filename, file_ext = get_filename_from_path(path, extension=True)
-        pos = get_nikon_position_from_nd2_converted_filename(filename + file_ext)
+        pos = get_nikon_position_from_nd2_converted_filename(
+            filename + file_ext)
         t, z, c = get_nikon_nd2_convention_tzc_from_name(filename + file_ext)
-        subdir = os.path.join(image_dir, "channel" + str(c), pos)
+        subdir = os.path.join(image_dir, 'channel' + str(c), pos)
         if not os.path.exists(subdir):
             make_dir(subdir, abort=False)
         new_path = os.path.join(subdir, filename + file_ext)
         shutil.move(path, new_path)
         # print('filename, ext:', filename, ext)
-        print("move %s to %s" % (path, new_path))
+        print('move %s to %s' % (path, new_path))
 
 
 def read_2d_png_exp_data(path):
     dirs = [path]
-    images, filenames = load_images_from_dirs(dirs, ext="tif", return_filename=True)
+    images, filenames = load_images_from_dirs(
+        dirs, ext='tif', return_filename=True)
     tzc_list = []
     # only that converted nd2 count starting from 1
     # so no need to add 1 to shape later
@@ -934,7 +941,13 @@ def read_2d_png_exp_data(path):
         tzc_list.append([t, z, c])
         t_max, z_max, c_max = max(t_max, t), max(z_max, z), max(c_max, c)
 
-    data = np.zeros((t_max, z_max, c_max, images[0].shape[0], images[0].shape[1]), dtype=images[0].dtype)
+    data = np.zeros(
+        (t_max,
+         z_max,
+         c_max,
+         images[0].shape[0],
+         images[0].shape[1]),
+        dtype=images[0].dtype)
     for i in range(len(images)):
         image = images[i]
         t, z, c = tzc_list[i]
@@ -944,9 +957,10 @@ def read_2d_png_exp_data(path):
     return data
 
 
-def read_2d_classified_data(path, limit=float("inf")):  # , num_class=3):
+def read_2d_classified_data(path, limit=float('inf')):  # , num_class=3):
     dirs = [path]
-    images, filenames = load_images_from_dirs(dirs, ext="tif", return_filename=True, limit=limit)
+    images, filenames = load_images_from_dirs(
+        dirs, ext='tif', return_filename=True, limit=limit)
     # tzc_list = []
     tzc2image = {}
     # only that converted nd2 count starting from 1
@@ -957,21 +971,18 @@ def read_2d_classified_data(path, limit=float("inf")):  # , num_class=3):
         filename = filenames[i]
         t, z, c = get_nikon_nd2_convention_tzc_from_name(filename)
         # print("check extraction results", filename, t, z, c)
-        assert not (t - 1, z - 1, c - 1) in tzc2image, "duplicate prob map, check parsing or source dir"
+        assert not (
+            t - 1, z - 1, c - 1) in tzc2image, "duplicate prob map, check parsing or source dir"
         # note index starts from 0, so -1
-        tzc2image[
-            (
-                t - 1,
-                z - 1,
-                c - 1,
-            )
-        ] = image
+        tzc2image[(t - 1, z - 1, c - 1,)] = image
     return tzc2image
 
 
-def read_2d_classified_data_np_arr(path, limit=float("inf")):  # , num_class=3):
+def read_2d_classified_data_np_arr(
+        path, limit=float('inf')):  # , num_class=3):
     dirs = [path]
-    images, filenames = load_images_from_dirs(dirs, ext="tif", return_filename=True, limit=limit)
+    images, filenames = load_images_from_dirs(
+        dirs, ext='tif', return_filename=True, limit=limit)
     # tzc_list = []
     tzc2image = {}
     # only that converted nd2 count starting from 1
@@ -1001,9 +1012,13 @@ def read_2d_classified_data_np_arr(path, limit=float("inf")):  # , num_class=3):
     return res_data
 
 
-def read_2d_classified_data_specific_tzc(dir_path, t, z, c, ext="tif"):
+def read_2d_classified_data_specific_tzc(dir_path, t, z, c, ext='tif'):
     paths = load_nd2_path_from_dirs([dir_path], ext=ext)
-    filenames = ["".join(get_filename_from_path(path, extension=True)) for path in paths]
+    filenames = [
+        ''.join(
+            get_filename_from_path(
+                path,
+                extension=True)) for path in paths]
     for i, filename in enumerate(filenames):
         path = paths[i]
         ft, fz, fc = get_nikon_nd2_convention_tzc_from_name(filename)
@@ -1017,15 +1032,7 @@ def get_data_pair(tzcxy_images, tzc2image):
     X, Y = [], []
     for t, z, c in tzc2image:
         X.append(tzcxy_images[t, z, c, ...])
-        Y.append(
-            tzc2image[
-                (
-                    t,
-                    z,
-                    c,
-                )
-            ]
-        )
+        Y.append(tzc2image[(t, z, c, )])
     return X, Y
 
 
@@ -1034,8 +1041,9 @@ def assemble_prob_map(images, offsets, height, width, sh, sw, n_channel):
     for i in range(len(images)):
         image = images[i]
         offset = offsets[i]
-        origin = res[offset[0] : offset[0] + sh, offset[1] : offset[1] + sw, ...]
-        res[offset[0] : offset[0] + sh, offset[1] : offset[1] + sw, ...] = np.maximum(image, origin)
+        origin = res[offset[0]:offset[0] + sh, offset[1]:offset[1] + sw, ...]
+        res[offset[0]:offset[0] + sh, offset[1]:offset[1] + sw, ...] = \
+            np.maximum(image, origin)
     return res
 
 
@@ -1058,7 +1066,13 @@ def tzcDict2npArray(tzc2some):
         max_t, max_z, max_c = max(max_t, t), max(max_z, z), max(max_c, c)
         shape = tzc2some[t, z, c].shape
 
-    res = np.zeros((max_t + 1, max_z + 1, max_c + 1, shape[0], shape[1], shape[2]))
+    res = np.zeros(
+        (max_t + 1,
+         max_z + 1,
+         max_c + 1,
+         shape[0],
+         shape[1],
+         shape[2]))
     for t in range(max_t + 1):
         # res.append([])
         for z in range(max_z + 1):
@@ -1070,25 +1084,24 @@ def tzcDict2npArray(tzc2some):
 
 
 def save_max_projected_images(images, dest, channel_num=2, t_start=0):
-    prefix_name = "max_projected"
+    prefix_name = 'max_projected'
 
     def gen_name(t, c):
-        return prefix_name + "_T=" + t + "_C=" + c
-
+        return prefix_name + '_T=' + t + '_C=' + c
     for t in range(t_start):
         for c in range(channel_num):
             mask = images[t, c, ...]
             writer = png.Writer(mask.shape[1], mask.shape[0], bitdepth=16)
             image_path = os.path.join(dest, gen_name(t, c))
-            with open(image_path, "wb+") as f:
+            with open(image_path, 'wb+') as f:
                 writer.write(f, mask)
 
 
 def bb_intersection_over_union(boxA, boxB):
-    """
+    '''
     source: https://gist.github.com/meyerjo/dd3533edc97c81258898f60d8978eddc
     :return:
-    """
+    '''
     # determine the (x, y)-coordinates of the intersection rectangle
     xA = max(boxA[0], boxB[0])
     yA = max(boxA[1], boxB[1])
@@ -1120,15 +1133,15 @@ def distance(c1, c2):
 
 
 def print_mappings(mappings):
-    print("mappings result:")
+    print('mappings result:')
     for i, mapping in enumerate(mappings):
-        print("at %d, mappings:" % i, mappings[i])
+        print('at %d, mappings:' % i, mappings[i])
 
 
 def save_mask(mask, mask_path):
     # converted_mask = mask.astype('i2', casting='unsafe')
     writer = png.Writer(mask.shape[1], mask.shape[0], bitdepth=16)
-    with open(mask_path, "wb+") as f:
+    with open(mask_path, 'wb+') as f:
         writer.write(f, mask)
 
 
@@ -1146,10 +1159,11 @@ def get_bds_from_bboxes(bboxes):
 
 
 def convert_multi_tif_to_single_tifs():
-    """
+    '''
     TODO: not needed for now
     Fiji script has solved this problem
-    """
-    assert False, "Ke: Not implemented :("
-    path = "/Volumes/Fusion0_dat/dante_weikang_imaging_data/rpe_pcna_p21_72hr_time_lapse/bg_corrected_data/Corrected_TRITC_data.tif"
-    multi_tif_images, multi_tif_filenames = load_images_from_dirs(paths, ext="tif", return_filename=True, limit=None)
+    '''
+    assert False, 'Ke: Not implemented :('
+    path = '/Volumes/Fusion0_dat/dante_weikang_imaging_data/rpe_pcna_p21_72hr_time_lapse/bg_corrected_data/Corrected_TRITC_data.tif'
+    multi_tif_images, multi_tif_filenames = load_images_from_dirs(
+        paths, ext='tif', return_filename=True, limit=None)

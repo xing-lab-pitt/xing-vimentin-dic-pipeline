@@ -686,6 +686,169 @@ def prep_icnn_seg_train_data(img_path, obj_h, obj_w, classes = ['single_cell', '
     data, label = np.array(data), np.array(label)
     return data, label
 
+def prep_icnn_seg_reduc_aug(img_path, obj_h, obj_w, classes = ['single_cell', 'cell_fragment', 'multi_cells']):
+    data = []
+    label = []
+
+    for cla in classes:
+        img_sub_path = img_path + '/' + cla
+        img_list = sorted(listdir(img_sub_path))
+        i = 0
+        while (i < len(img_list)):
+
+            img = imread(img_sub_path + '/' + img_list[i])
+            mask = img!=0
+            
+            if len(img[mask]) ==0:
+                #print(img)
+                #print(mask)
+                print(img_sub_path + '/' + img_list[i])
+                i = i+1
+                continue
+            #mask = img > 0
+
+            # fill with nearest neighbor(distance transform)
+            img_nbg = np.copy(img)
+            img_mbg = np.copy(img)  # fill background with median
+            # img_abg=np.copy(img)  # fill with average(mean)
+            img_hbg = np.copy(img)  # fill with maximum
+            img_lbg = np.copy(img)  # fill with minimum
+
+            inds = ndimage.distance_transform_edt(
+                img_nbg == 0, return_distances=False, return_indices=True)
+            img_nbg = img_nbg[tuple(inds)]
+            img_blur_nbg = gaussian(img_nbg, sigma=0.5, preserve_range=True)
+            img_unsharp_nbg = unsharp_mask(img_nbg, preserve_range=True)
+            img_noise_nbg = img_nbg + 0.25 * img_nbg.std() * np.random.randn(*img_nbg.shape)
+
+            img_mbg[img_mbg == 0] = np.median(img[mask])
+            img_blur_mbg = gaussian(img_mbg, sigma=0.5, preserve_range=True)
+            img_unsharp_mbg = unsharp_mask(img_mbg, preserve_range=True)
+            img_noise_mbg = img_mbg + 0.25 * img_mbg.std() * np.random.randn(*img_mbg.shape)
+
+            lbg_percent = np.random.randint(10, high=40)
+            img_lbg[img_lbg == 0] = np.percentile(img[mask], lbg_percent)
+            # img_blur_lbg=gaussian(img_lbg,sigma=0.5,preserve_range=True)
+            img_unsharp_lbg = unsharp_mask(img_lbg, preserve_range=True)
+            img_noise_lbg = img_lbg + 0.25 * img_lbg.std() * np.random.randn(*img_lbg.shape)
+
+            hbg_percent = np.random.randint(60, high=90)
+            img_hbg[img_hbg == 0] = np.percentile(img[mask], hbg_percent)
+            # img_blur_hbg=gaussian(img_hbg,sigma=0.5,preserve_range=True)
+            img_unsharp_hbg = unsharp_mask(img_hbg, preserve_range=True)
+            img_noise_hbg = img_hbg + 0.25 * img_hbg.std() * np.random.randn(*img_hbg.shape)
+
+            img_nbg = obj_transform(
+		keep_aspect_resize(
+		    img_nbg, obj_h, obj_w))
+            img_blur_nbg = obj_transform(
+                keep_aspect_resize(
+                    img_blur_nbg, obj_h, obj_w))
+            img_unsharp_nbg = obj_transform(
+                keep_aspect_resize(
+                    img_unsharp_nbg, obj_h, obj_w))
+            img_noise_nbg = obj_transform(
+                keep_aspect_resize(
+                    img_noise_nbg, obj_h, obj_w))
+
+            img_mbg = obj_transform(
+		keep_aspect_resize(
+		    img_mbg, obj_h, obj_w))
+            img_blur_mbg = obj_transform(
+                keep_aspect_resize(
+                    img_blur_mbg, obj_h, obj_w))
+            img_unsharp_mbg = obj_transform(
+                keep_aspect_resize(
+                    img_unsharp_mbg, obj_h, obj_w))
+            img_noise_mbg = obj_transform(
+                keep_aspect_resize(
+                    img_noise_mbg, obj_h, obj_w))
+
+            img_unsharp_lbg = obj_transform(
+                keep_aspect_resize(
+                    img_unsharp_lbg, obj_h, obj_w))
+            img_noise_lbg = obj_transform(
+                keep_aspect_resize(
+                    img_noise_lbg, obj_h, obj_w))
+
+            img_unsharp_hbg = obj_transform(
+                keep_aspect_resize(
+                    img_unsharp_hbg, obj_h, obj_w))
+            img_noise_hbg = obj_transform(
+                keep_aspect_resize(
+                    img_noise_hbg, obj_h, obj_w))
+
+            if cla == classes[0]:
+                data.append(img_nbg)
+                data.append(img_blur_nbg)
+                data.append(img_unsharp_nbg)
+                data.append(img_noise_nbg)
+
+                data.append(img_mbg)
+                data.append(img_blur_mbg)
+                data.append(img_unsharp_mbg)
+                data.append(img_noise_mbg)
+
+                data.append(img_unsharp_lbg)
+                data.append(img_noise_lbg)
+
+                data.append(img_unsharp_hbg)
+                data.append(img_noise_hbg)
+
+                gt = np.array([1, 0, 0])
+                for l in range(12):
+                    label.append(gt)
+
+            elif cla == classes[1]:
+                data.append(img_nbg)
+                data.append(img_blur_nbg)
+                data.append(img_unsharp_nbg)
+                data.append(img_noise_nbg)
+
+                data.append(img_mbg)
+                data.append(img_blur_mbg)
+                data.append(img_unsharp_mbg)
+                data.append(img_noise_mbg)
+
+                data.append(img_unsharp_lbg)
+                data.append(img_noise_lbg)
+
+                data.append(img_unsharp_hbg)
+                data.append(img_noise_hbg)
+
+                gt = np.array([0, 1, 0])
+                for m in range(12):
+                    label.append(gt)
+
+            elif cla == classes[2]:
+                data.append(img_nbg)
+                data.append(img_blur_nbg)
+                data.append(img_unsharp_nbg)
+                data.append(img_noise_nbg)
+
+                data.append(img_mbg)
+                data.append(img_blur_mbg)
+                data.append(img_unsharp_mbg)
+                data.append(img_noise_mbg)
+
+                data.append(img_unsharp_lbg)
+                data.append(img_noise_lbg)
+
+                data.append(img_unsharp_hbg)
+                data.append(img_noise_hbg)
+
+                gt = np.array([0, 0, 1])
+                for n in range(12):
+                    label.append(gt)
+
+            i += 1
+    data, label = np.array(data), np.array(label)
+    return data, label
+
+
+
+
+
 # 1 keep aspect-ratio resize and fill 0 background with different pixel value
 # 2 gaussian,unsharp_mask and noise processing
 # 3 normailze and equalize_adapthist

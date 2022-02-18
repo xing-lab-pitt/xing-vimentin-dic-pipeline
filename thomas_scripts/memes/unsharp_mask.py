@@ -7,7 +7,9 @@ from skimage import img_as_float
 def _unsharp_mask_single_channel(image, radius, amount, vrange):
     """Single channel implementation of the unsharp masking filter."""
 
-    blurred = gaussian_filter(image, sigma=radius, mode="reflect")
+    blurred = gaussian_filter(image,
+                              sigma=radius,
+                              mode='reflect')
 
     result = image + (image - blurred) * amount
     if vrange is not None:
@@ -15,7 +17,8 @@ def _unsharp_mask_single_channel(image, radius, amount, vrange):
     return result
 
 
-def unsharp_mask(image, radius=1.0, amount=1.0, multichannel=False, preserve_range=False):
+def unsharp_mask(image, radius=1.0, amount=1.0, multichannel=False,
+                 preserve_range=False):
     """Unsharp masking filter.
     The sharp details are identified as the difference between the original
     image and its blurred version. These details are then scaled, and added
@@ -105,14 +108,15 @@ def unsharp_mask(image, radius=1.0, amount=1.0, multichannel=False, preserve_ran
         fimg = img_as_float(image)
         negative = np.any(fimg < 0)
         if negative:
-            vrange = [-1.0, 1.0]
+            vrange = [-1., 1.]
         else:
-            vrange = [0.0, 1.0]
+            vrange = [0., 1.]
 
     if multichannel:
         result = np.empty_like(fimg, dtype=np.float)
         for channel in range(image.shape[-1]):
-            result[..., channel] = _unsharp_mask_single_channel(fimg[..., channel], radius, amount, vrange)
+            result[..., channel] = _unsharp_mask_single_channel(
+                fimg[..., channel], radius, amount, vrange)
         return result
     else:
         return _unsharp_mask_single_channel(fimg, radius, amount, vrange)
