@@ -1,3 +1,7 @@
+# In[1]: import
+import sys
+sys.path.insert(1, '/home/thomas/research/projects/a549_40x/scripts/memes/')
+
 import copy
 import numpy as np
 from skimage.segmentation import watershed, clear_border
@@ -26,8 +30,8 @@ from sklearn.preprocessing import StandardScaler, RobustScaler, Normalizer
 from cell_class import single_cell, fluor_single_cell
 import pipe_util2
 
-
-def pcna_haralick_pca(top_path, pattern="output"):
+# In[2]: function
+def pcna_haralick_pca(top_path, pattern='XY'):
     """
 
     :param top_path: folder including all output folders
@@ -44,7 +48,7 @@ def pcna_haralick_pca(top_path, pattern="output"):
         output_path = pipe_util2.folder_verify(output_path)
         cells_path = output_path + "cells/"
 
-        with open(cells_path + 'fluor_cells', 'rb') as fp:
+        with open(cells_path + 'pcna_cells-02', 'rb') as fp:
             cells = pickle.load(fp)
         data = np.array([single_cell.pcna_feature_values[3]
                          for single_cell in cells if hasattr(single_cell, 'pcna_feature_values')])
@@ -73,13 +77,13 @@ def pcna_haralick_pca(top_path, pattern="output"):
     plt.savefig("pcna_haralic_1.png",dpi = 300)
     plt.show()
     
-    sns.kdeplot(Y[:,0],Y[:,1],n_levels=100,shade=True)
+    # sns.kdeplot(Y[:,0],Y[:,1],n_levels=100,shade=True)
     #plt.axis([-100000,500000,-2000,2000])
-    plt.savefig("pcna_haralic_2.png",dpi = 300)
-    plt.show()
+    # plt.savefig("pcna_haralic_2.png",dpi = 300)
+    # plt.show()
 
 
-    with open(top_path+'norm_haralick_pca', 'wb') as fp:
+    with open(top_path+'norm_pcna_haralick_pca', 'wb') as fp:
         pickle.dump(pca, fp)
 
 
@@ -92,19 +96,22 @@ def pcna_haralick_pca(top_path, pattern="output"):
         output_path = pipe_util2.folder_verify(output_path)
         cells_path = output_path + "cells/"
 
-        with open(cells_path + 'fluor_cells', 'rb') as fp:
+        with open(cells_path + 'pcna_cells-02', 'rb') as fp:
             cells = pickle.load(fp)
 
         for i in range(len(cells)):
-            if hasattr(cells[i], 'vimentin_feature_values'):
-                X = np.expand_dims(cells[i].vimentin_feature_values[4], axis=0)
+            if hasattr(cells[i], 'pcna_feature_values'):
+                X = np.expand_dims(cells[i].pcna_feature_values[4], axis=0)
                 X = scaler.transform(X)
                 Y = pca.transform(X)[0]
-                cells[i].set_fluor_pca_cord(pcna_feature_name, Y)
-        with open(cells_path + 'fluor_cells', 'wb') as fp:
+                cells[i].set_fluor_pca_cord(fluor_feature_name, Y)
+        with open(cells_path + 'pcna_cells-02', 'wb') as fp:
             pickle.dump(cells, fp)
 
+# In[1]: run
 if __name__ == "__main__":
     # stuff only to run when not called via 'import' here
-    top_path = sys.argv[1]
+    top_path = top_path = '/home/thomas/research/projects/a549_40x/data/out/pcna/01-18-22_72hr_no-treat/'
     pcna_haralick_pca(top_path)
+
+# %%

@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # coding: utf-8
-
-# In[1]:
-
+# In[1]: import
+import sys
+sys.path.insert(1, '/home/thomas/research/projects/a549_40x/scripts/memes/')
 
 import copy
 import numpy as np
@@ -47,12 +47,9 @@ import pipe_util2
 # posi_end=1
 
 
-# In[ ]:
-
-
 # do not use StandarScaler on cell contour points
 # ----------cal cell_contour pca coordinates-------------------
-def morph_pca(top_path, pattern="output" ):
+def morph_pca(top_path, pattern='XY' ):
     """
 
     :param top_path: string, including several output folders
@@ -110,7 +107,7 @@ def morph_pca(top_path, pattern="output" ):
         output_path = pipe_util2.folder_verify(output_path)
         cells_path = output_path+"cells/"
 
-        with open(cells_path + 'fluor_cells', 'rb') as fp:
+        with open(cells_path + 'pcna_cells-02', 'rb') as fp:
             cells = pickle.load(fp)
         for i in range(len(cells)):
             if hasattr(cells[i], 'cell_contour'):
@@ -118,11 +115,12 @@ def morph_pca(top_path, pattern="output" ):
                 X, X_shape = utility_tools.flatten_data(data)
                 Y = pca.transform(X)[0]
                 cells[i].set_pca_cord(Y)
-        with open(cells_path + 'fluor_cells', 'wb') as fp:
+        with open(cells_path + 'pcna_cells-02', 'wb') as fp:
             pickle.dump(cells, fp)
 
 if __name__ == "__main__":
     # stuff only to run when not called via 'import' here
-    top_path = sys.argv[1]
+    top_path = '/home/thomas/research/projects/a549_40x/data/out/pcna/01-18-22_72hr_no-treat/'
     morph_pca(top_path)
 
+# %%
