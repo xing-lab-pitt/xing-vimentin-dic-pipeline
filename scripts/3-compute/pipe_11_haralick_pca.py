@@ -31,34 +31,38 @@ from cell_class import single_cell, fluor_single_cell
 import pipe_util2
 
 # In[2]: function
-def vim_haralick_pca(top_path, pattern='XY'):
+def vim_haralick_pca(all_datset_path, all_datsets, pattern='XY'):
     """
 
-    :param top_path: folder including all output folders
+    :param all_datset_path: folder including all output folders
     :param pattern: the pattern for matching the output folders
     :return:
     """
 
     all_data = np.array([])
-    top_path = pipe_util2.folder_verify(top_path)
-    output_path_list = pipe_util2.folder_file_num(top_path, pattern)
-    i = 0
-    while i < len(output_path_list):
-        output_path = output_path_list[i]
-        output_path = pipe_util2.folder_verify(output_path)
-        cells_path = output_path + "cells/"
+    all_output_path_list = []
+    for datset_idx in range(len(all_datsets)):
+        curr_datset_path = pipe_util2.folder_verify(all_datset_path+all_datsets[datset_idx])
+        output_path_list = pipe_util2.folder_file_num(curr_datset_path, pattern)
+        i = 0
+        while i < len(output_path_list):
+            output_path = output_path_list[i]
+            output_path = pipe_util2.folder_verify(output_path)
+            all_output_path_list.append(output_path)
+            cells_path = output_path + "cells/"
 
-        with open(cells_path + 'fluor_cells', 'rb') as fp:
-            cells = pickle.load(fp)
-        data = np.array([single_cell.vimentin_feature_values[3]
-                         for single_cell in cells if hasattr(single_cell, 'vimentin_feature_values')])
+            with open(cells_path + 'pcna_cells-02', 'rb') as fp:
+                cells = pickle.load(fp)
 
-        if all_data.size == 0:
-            all_data = data
-        else:
-            all_data = np.vstack((all_data, data))
+            data = np.array([single_cell.vimentin_feature_values[3]
+                            for single_cell in cells if hasattr(single_cell, 'vimentin_feature_values')])
 
-        i = i+1
+            if all_data.size == 0:
+                all_data = data
+            else:
+                all_data = np.vstack((all_data, data))
+
+            i = i+1
     scaler = StandardScaler()
 
     X = scaler.fit_transform(all_data)
@@ -68,22 +72,22 @@ def vim_haralick_pca(top_path, pattern='XY'):
     Y = pca.fit_transform(X)
     print(pca.components_, pca.explained_variance_ratio_)
 
-    dot_color=np.arange(Y[:].shape[0])
-    cm=plt.cm.get_cmap('jet')
+    # dot_color=np.arange(Y[:].shape[0])
+    # cm=plt.cm.get_cmap('jet')
 
-    sc=plt.scatter(Y[:,0],Y[:,1],c=dot_color,cmap=cm)
-    plt.scatter(Y[:,0],Y[:,1],s=0.1)
-    #plt.axis([-100000,500000,-2000,2000])
-    plt.savefig("vim_haralic_1.png",dpi = 300)
-    plt.show()
+    # sc=plt.scatter(Y[:,0],Y[:,1],c=dot_color,cmap=cm)
+    # plt.scatter(Y[:,0],Y[:,1],s=0.1)
+    # #plt.axis([-100000,500000,-2000,2000])
+    # plt.savefig("vim_haralic_1.png",dpi = 300)
+    # plt.show()
     
-    sns.kdeplot(Y[:,0],Y[:,1],n_levels=100,shade=True)
-    #plt.axis([-100000,500000,-2000,2000])
-    plt.savefig("vim_haralic_2.png",dpi = 300)
-    plt.show()
+    # sns.kdeplot(Y[:,0],Y[:,1],n_levels=100,shade=True)
+    # #plt.axis([-100000,500000,-2000,2000])
+    # plt.savefig("vim_haralic_2.png",dpi = 300)
+    # plt.show()
 
 
-    with open(top_path+'norm_vim_haralick_pca', 'wb') as fp:
+    with open(all_datset_path+'norm_vim_haralick_pca', 'wb') as fp:
         pickle.dump(pca, fp)
 
 
@@ -92,7 +96,7 @@ def vim_haralick_pca(top_path, pattern='XY'):
 
 
     fluor_feature_name = 'vimentin_haralick'
-    for output_path in output_path_list:
+    for output_path in all_output_path_list:
         output_path = pipe_util2.folder_verify(output_path)
         cells_path = output_path + "cells/"
 
@@ -105,13 +109,15 @@ def vim_haralick_pca(top_path, pattern='XY'):
                 X = scaler.transform(X)
                 Y = pca.transform(X)[0]
                 cells[i].set_fluor_pca_cord(fluor_feature_name, Y)
+        print(cells_path)
         with open(cells_path + 'pcna_cells-02', 'wb') as fp:
             pickle.dump(cells, fp)
 
 # In[3]: run
 if __name__ == "__main__":
     # stuff only to run when not called via 'import' here
-    top_path = '/home/thomas/research/projects/a549_40x/data/out/pcna/01-18-22_72hr_no-treat/'
-    vim_haralick_pca(top_path)
+    all_datset_path = '/home/thomas/research/projects/a549_40x/data/out/pcna/' # directory containing all outputs of all datasets
+    all_datsets = ['01-13-22_72hr_no-treat','01-18-22_72hr_no-treat'] # directory names of all datasets
+    vim_haralick_pca(all_datset_path, all_datsets)
 
 # %%

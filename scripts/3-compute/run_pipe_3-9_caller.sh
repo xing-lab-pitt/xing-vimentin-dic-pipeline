@@ -4,9 +4,9 @@ desc=72hr_no-treat
 job_outdir=${date}_${desc}
 
 # define paths & files
-script_dir=/net/capricorn/home/xing/tch42/projects/a549_40x/scripts/3-compute
-tools_dir=/net/capricorn/home/xing/tch42/projects/a549_40x/scripts/memes
-dat_dir=/net/capricorn/home/xing/tch42/projects/a549_40x/data
+script_dir=/net/capricorn/home/xing/tch42/projects/emt/scripts/3-compute
+tools_dir=/net/capricorn/home/xing/tch42/projects/emt/scripts/memes
+dat_dir=/net/capricorn/home/xing/tch42/projects/emt/data
 out_dir=${dat_dir}/out/
 ori_dir=${dat_dir}/ori/pcna/01-13-22_72hr_no-treat
 

@@ -49,33 +49,37 @@ import pipe_util2
 
 # do not use StandarScaler on cell contour points
 # ----------cal cell_contour pca coordinates-------------------
-def morph_pca(top_path, pattern='XY' ):
+def morph_pca(all_datset_path, all_datsets, pattern='XY'):
     """
 
-    :param top_path: string, including several output folders
+    :param all_datset_path: string, including several output folders
     :param pattern: string, for indexing output folders
     :return:
     """
     all_data = np.array([])
-    top_path = pipe_util2.folder_verify(top_path)
-    output_path_list = pipe_util2.folder_file_num(top_path, pattern)
-    i = 0
-    while i<len(output_path_list):
-        output_path = output_path_list[i]
-        output_path = pipe_util2.folder_verify(output_path)
-        cells_path = output_path + "cells/"
+    all_output_path_list = []
+    for datset_idx in range(len(all_datsets)):
 
-        with open(cells_path + 'cells', 'rb') as fp:
-            cells = pickle.load(fp)
+        curr_datset_path = pipe_util2.folder_verify(all_datset_path+all_datsets[datset_idx])
+        output_path_list = pipe_util2.folder_file_num(curr_datset_path, pattern)
+        i = 0
+        while i<len(output_path_list):
+            output_path = output_path_list[i]
+            output_path = pipe_util2.folder_verify(output_path)
+            all_output_path_list.append(output_path)
+            cells_path = output_path + "cells/"
 
-        data = np.array([single_cell.cell_contour.points for single_cell in cells if hasattr(
-            single_cell, 'cell_contour')])
+            with open(cells_path + 'cells', 'rb') as fp:
+                cells = pickle.load(fp)
 
-        if all_data.size == 0:
-            all_data = data
-        else:
-            all_data = np.vstack((all_data, data))
-        i = i+1
+            data = np.array([single_cell.cell_contour.points for single_cell in cells if hasattr(
+                single_cell, 'cell_contour')])
+
+            if all_data.size == 0:
+                all_data = data
+            else:
+                all_data = np.vstack((all_data, data))
+            i = i+1
 
     # print(all_data.shape)
     # mean = all_data.mean(axis = 0)
@@ -97,13 +101,13 @@ def morph_pca(top_path, pattern='XY' ):
     # sns.kdeplot(Y[:,0],Y[:,1],n_levels=100,shade=True)
     # plt.show()
 
-    with open(top_path + 'morph_pca', 'wb') as fp:
+    with open(all_datset_path + 'morph_pca', 'wb') as fp:
         pickle.dump(pca, fp)
 
 
     # do not use StandarScaler on cell contour points
     # ----------cal cell_contour pca coordinates-------------------
-    for output_path in output_path_list:
+    for output_path in all_output_path_list:
         output_path = pipe_util2.folder_verify(output_path)
         cells_path = output_path+"cells/"
 
@@ -120,7 +124,8 @@ def morph_pca(top_path, pattern='XY' ):
 
 if __name__ == "__main__":
     # stuff only to run when not called via 'import' here
-    top_path = '/home/thomas/research/projects/a549_40x/data/out/pcna/01-18-22_72hr_no-treat/'
-    morph_pca(top_path)
+    all_datset_path = '/home/thomas/research/projects/a549_40x/data/out/pcna/' # directory containing all outputs of all datasets
+    all_datsets = ['01-13-22_72hr_no-treat','01-18-22_72hr_no-treat'] # directory names of all datasets
+    morph_pca(all_datset_path,all_datsets)
 
 # %%
