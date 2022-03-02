@@ -1,5 +1,6 @@
 name: tf1
 channels:
+  - conda-forge
   - anaconda
   - defaults
 dependencies:
@@ -8,8 +9,8 @@ dependencies:
   - astor=0.8.0=py37_0
   - blas=1.0=mkl
   - c-ares=1.15.0=h7b6447c_1001
-  - ca-certificates=2020.1.1=0
-  - certifi=2020.4.5.1=py37_0
+  - ca-certificates=2021.10.8=ha878542_0
+  - certifi=2021.10.8=py37h89c1867_1
   - cudatoolkit=10.0.130=0
   - cudnn=7.6.5=cuda10.0_0
   - cupti=10.0.130=0
@@ -36,11 +37,12 @@ dependencies:
   - ncurses=6.2=he6710b0_1
   - numpy=1.18.1=py37h4f9e942_0
   - numpy-base=1.18.1=py37hde5b4d6_1
-  - openssl=1.1.1g=h7b6447c_0
+  - openssl=1.1.1h=h516909a_0
   - opt_einsum=3.1.0=py_0
   - pip=20.0.2=py37_3
   - protobuf=3.11.4=py37he6710b0_0
   - python=3.7.7=hcff3b4d_5
+  - python_abi=3.7=2_cp37m
   - readline=8.0=h7b6447c_0
   - scipy=1.4.1=py37h0b6359f_0
   - setuptools=46.2.0=py37_0
@@ -52,6 +54,7 @@ dependencies:
   - tensorflow-estimator=1.15.1=pyh2649769_0
   - termcolor=1.1.0=py37_1
   - tk=8.6.8=hbc83047_0
+  - tree=1.8.0=h516909a_1
   - webencodings=0.5.1=py37_1
   - werkzeug=0.16.1=py_0
   - wheel=0.34.2=py37_0
@@ -71,6 +74,7 @@ dependencies:
     - joblib==0.15.1
     - keras==2.3.1
     - kiwisolver==1.2.0
+    - mahotas==1.4.9
     - matplotlib==3.2.1
     - nd2reader==3.2.3
     - networkx==2.4
@@ -95,7 +99,7 @@ dependencies:
     - tensorflow-gpu==1.15.0
     - threadpoolctl==2.0.0
     - tifffile==2020.5.11
+    - tqdm==4.62.3
     - urllib3==1.25.9
     - xmltodict==0.12.0
-prefix: /home/ke/anaconda3/envs/tf1
-
+prefix: /net/capricorn/home/xing/ken67/.conda/envs/tf1
