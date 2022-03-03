@@ -231,7 +231,7 @@ def similar(sp,data,dc,Metric_L):
 def sp_traj_scaling(sct,t_cutoff=6,t_range=48,Metric_L=1,norm_flag=False):
     mask=sct.traj_vimentin_feature_values[0]!=0
     traj_t=sct.traj_seri[mask][:,0]
-    traj_morph=sct.traj_cord[mask]
+    traj_morph=sct.traj_morph_pca_cord[mask]
     if norm_flag==True:
         traj_vim=sct.traj_norm_vimentin_haralick_pca_cord[mask]
     else:
@@ -284,7 +284,7 @@ def sp_traj_scaling(sct,t_cutoff=6,t_range=48,Metric_L=1,norm_flag=False):
             st,et=scope[scale_t][0],scope[scale_t][1]
         print(st,et)
         
-        morph_scale_area=np.mean(sct.traj_feature[mask][:,key_mask][st:et,0])
+        morph_scale_area=np.mean(sct.traj_feature[mask][:,key_mask][st:et,0]) # key map sets the features, 0 index sets the specific feature (area)
         morph_scale_ar=np.mean(sct.traj_feature[mask][:,key_mask][st:et,8])#mean redius
         morph_scale_mr=np.mean(sct.traj_feature[mask][:,key_mask][st:et,9])#median redius
         
@@ -299,8 +299,6 @@ def sp_traj_scaling(sct,t_cutoff=6,t_range=48,Metric_L=1,norm_flag=False):
         vim_scale=np.mean(sct.traj_vimentin_feature_values[ind][mask][st:et,:],axis=0)
 
         scale_haralick=sct.traj_vimentin_feature_values[ind][mask]-vim_scale
-
-
 
     else:
         if SP.shape[0]>0:

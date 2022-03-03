@@ -5,7 +5,7 @@
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 # job name
-#SBATCH --job-name=mbell-53deb5_run_all_12
+#SBATCH --job-name=pcna_72hr_no-treat_0-2
 
 #SBATCH --gres=gpu:1
 #SBATCH --exclude=g019,g102,g104,g122,g012,g013
@@ -73,7 +73,7 @@ module load cuda/11.1
 bash run_cp.sh $output_path $tools_dir
 echo 'step cell profiler complete'
 conda deactivate
-source activate tf1
+source activate tf1-new
 
 python pipe_3_traj_reorganize_1st.py $img_path $output_path $icnn_seg_wts_file $DIC_chan_label
 echo 'step3 complete'

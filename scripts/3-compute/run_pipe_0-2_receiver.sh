@@ -5,7 +5,7 @@
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 # job name
-#SBATCH --job-name=mbell-53deb5_run_all_12
+#SBATCH --job-name=pcna_72hr_no-treat_0-2
 
 #SBATCH --gres=gpu:1
 #SBATCH --exclude=g019,g102,g104,g122,g012,g013
@@ -72,7 +72,7 @@ rsync -ra ${script_dir}/* .
 rsync -ra ${tools_dir}/* .
 module load anaconda/3-cluster
 module load cuda/11.1
-source activate tf1
+source activate tf1-new
 
 #### 0 preprocess ###
 #python 0_img_crop.py $ori_dir ${dat_dir}/ori_cropped $position_label

@@ -8,7 +8,7 @@ script_dir=/net/capricorn/home/xing/tch42/projects/emt/scripts/3-compute
 tools_dir=/net/capricorn/home/xing/tch42/projects/emt/scripts/memes
 dat_dir=/net/capricorn/home/xing/tch42/projects/emt/data
 out_dir=${dat_dir}/out/
-ori_dir=${dat_dir}/ori/pcna/01-13-22_72hr_no-treat
+ori_dir=${dat_dir}/ori/pcna/${job_outdir}
 
 icnn_seg_wts_file=${dat_dir}/wts/icnn_seg/icnn_seg_dc_comb_wk.hdf5
 

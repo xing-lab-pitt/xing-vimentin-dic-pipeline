@@ -78,19 +78,6 @@ def compute_nuc_fluor_info(seg, fluor_img):
 
         nuc_label=label(nuc_mask)
 
-        mean_intensity[i] = np.sum(cell_img) * 1.0 / r.area
-        std_intensity[i] = np.std(cell_img[region_cell_mask])
-
-        min_value, max_value = np.amin(
-            cell_img[region_cell_mask]), np.amax(
-            cell_img[region_cell_mask])
-        min_value = min_value - 1
-
-        intensity_range[i] = max_value - min_value
-
-        norm_cell_img = (cell_img - min_value) * region_cell_mask
-
-
 #         #-------normalize single cell to 0-1 and to 0-1024
 #         norm_crop_img=(crop_img-min_value)*1.0/(max_value-min_value)
 #         norm_cell_img=(np.ceil(norm_crop_img*norm_range)).astype(np.int)*region_cell_mask#norm_range=1024
