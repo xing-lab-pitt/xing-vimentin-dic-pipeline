@@ -8,10 +8,10 @@
 #SBATCH --job-name=pcna_72hr_no-treat_0-2
 
 #SBATCH --gres=gpu:1
-#SBATCH --exclude=g019,g102,g104,g122,g012,g013
+#SBATCH --exclude=g019,g102,g104,g122,g012,g013,g131
 #SBATCH --cpus-per-task=16
 
-#SBATCH --mem=32G
+#SBATCH --mem=40G
 
 # partition (queue) declaration
 #SBATCH --partition=any_gpu
@@ -72,7 +72,7 @@ rsync -ra ${script_dir}/* .
 rsync -ra ${tools_dir}/* .
 module load anaconda/3-cluster
 module load cuda/11.1
-source activate tf1-new
+source activate tf1
 
 #### 0 preprocess ###
 #python 0_img_crop.py $ori_dir ${dat_dir}/ori_cropped $position_label

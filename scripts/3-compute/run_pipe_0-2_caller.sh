@@ -17,8 +17,8 @@ icnn_seg_wts_file=${dat_dir}/wts/icnn_seg/icnn_seg_dc_comb_wk.hdf5
 ### mkdir and resize ###
 for i in {1..1} ; do
 #for i in 0{1..3} ; do
-	img_path=${ori_dir}/XY${i}_test
-	output_path=${out_dir}/${job_outdir}/XY${i}_test
+	img_path=${ori_dir}/XY${i}
+	output_path=${out_dir}/${job_outdir}/XY${i}
 	position_label=XY${i}
 	mkdir -p $output_path
 	sbatch run_pipe_0-2_receiver.sh $script_dir $tools_dir $dat_dir $img_path $output_path $ori_dir $position_label\
