@@ -84,11 +84,11 @@ def pcna_haralick_pca(all_datset_path,all_datsets,norm,pattern='XY'):
         plt.show()
 
         if norm == False:
-            with open(all_datset_path+'pcna_haralick_pca', 'wb') as fp:
+            with open(curr_datset_path+'pcna_haralick_pca', 'wb') as fp:
                 pickle.dump(pca, fp)
             fluor_feature_name = 'pcna_haralick'
         else:
-            with open(all_datset_path+'norm_pcna_haralick_pca', 'wb') as fp:
+            with open(curr_datset_path+'norm_pcna_haralick_pca', 'wb') as fp:
                 pickle.dump(pca, fp)
             fluor_feature_name = 'norm_pcna_haralick'
         
@@ -119,7 +119,7 @@ if __name__ == "__main__":
                                     '01-27-22_72hr_no-treat','02-03-22_72hr_no-treat',\
                                     '02-11-22_72hr_no-treat','02-21-22_72hr_no-treat',\
                                     '12-19-21_72hr_no-treat'] # directory names of all datasets
-    norm = True # whether to use normalized haralick values
+    norm = False # whether to use normalized haralick values
     pcna_haralick_pca(all_datset_path,all_datsets,norm)
 
 # %%

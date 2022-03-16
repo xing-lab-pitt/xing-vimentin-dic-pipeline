@@ -83,11 +83,11 @@ def vim_haralick_pca(all_datset_path,all_datsets,norm,pattern='XY'):
         # plt.savefig("vim_haralic_1.png",dpi = 300)
         # plt.show()
         if norm == False:
-            with open(all_datset_path+'vimentin_haralick_pca', 'wb') as fp:
+            with open(curr_datset_path+'vimentin_haralick_pca', 'wb') as fp:
                 pickle.dump(pca, fp)
             fluor_feature_name = 'vimentin_haralick'
         else:
-            with open(all_datset_path+'norm_vimentin_haralick_pca', 'wb') as fp:
+            with open(curr_datset_path+'norm_vimentin_haralick_pca', 'wb') as fp:
                 pickle.dump(pca, fp)
             fluor_feature_name = 'norm_vimentin_haralick'
 
