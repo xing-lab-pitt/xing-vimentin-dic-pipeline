@@ -5,13 +5,13 @@
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 # job name
-#SBATCH --job-name=mbell-53deb5_run_all_12
+#SBATCH --job-name=pcna_72hr_no-treat_0-2
 
 #SBATCH --gres=gpu:1
-#SBATCH --exclude=g019,g102,g104,g122,g012,g013
+#SBATCH --exclude=g019,g102,g104,g122,g012,g013,g131
 #SBATCH --cpus-per-task=16
 
-#SBATCH --mem=32G
+#SBATCH --mem=40G
 
 # partition (queue) declaration
 #SBATCH --partition=any_gpu

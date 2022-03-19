@@ -5,8 +5,8 @@ class single_cell_traj(object):
     def set_traj_feature(self,traj_feature):
         self.traj_feature=traj_feature
 
-    def set_traj_cord(self,traj_cord):
-        self.traj_cord=traj_cord
+    def set_traj_morph_pca_cord(self,traj_cord):
+        self.traj_morph_pca_cord=traj_cord
     def set_traj_cord_variation(self,traj_cord_variation):
         self.traj_cord_variation=traj_cord_variation
 

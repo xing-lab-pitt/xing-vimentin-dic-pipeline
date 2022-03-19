@@ -101,7 +101,6 @@ def folder_edt_predict(input_folder, output_folder, weight_file, DIC_chan_label,
     img_list = sorted(glob.glob(input_folder + "*" + DIC_chan_label + "*"))
 
     for i in range(len(img_list)):
-        
         img_name = os.path.basename(img_list[i])
         print(img_name)
         img = imread(img_list[i])

@@ -8,8 +8,6 @@ import os
 from os import listdir
 import pandas as pd
 from scipy.stats import kde
-import seaborn as sns
-import copy
 from math import exp,log
 import pickle
 import scipy.ndimage as ndimage
@@ -28,22 +26,26 @@ from traj_class import single_cell_traj,fluor_single_cell_traj
 from sklearn.preprocessing import MinMaxScaler,StandardScaler,RobustScaler,QuantileTransformer
 
 # import sparse
-from statsmodels.tsa.stattools import grangercausalitytests
 from scipy import signal
 from statsmodels import robust
 
-
-
-key_list=['Cell_AreaShape_Area', 'Cell_AreaShape_Center_X', 'Cell_AreaShape_Center_Y', 'Cell_AreaShape_Center_Z', \
-          'Cell_AreaShape_Compactness', 'Cell_AreaShape_Eccentricity', 'Cell_AreaShape_EulerNumber', \
-          'Cell_AreaShape_Extent', 'Cell_AreaShape_FormFactor', 'Cell_AreaShape_MajorAxisLength',\
-          'Cell_AreaShape_MaxFeretDiameter', 'Cell_AreaShape_MaximumRadius', 'Cell_AreaShape_MeanRadius', \
-          'Cell_AreaShape_MedianRadius', 'Cell_AreaShape_MinFeretDiameter', 'Cell_AreaShape_MinorAxisLength', \
-          'Cell_AreaShape_Orientation', 'Cell_AreaShape_Perimeter', 'Cell_AreaShape_Solidity']
+key_list=['Cell_AreaShape_Area', 'Cell_AreaShape_BoundingBoxArea', \
+    'Cell_AreaShape_BoundingBoxMaximum_X', 'Cell_AreaShape_BoundingBoxMaximum_Y', 'Cell_AreaShape_BoundingBoxMinimum_X', 'Cell_AreaShape_BoundingBoxMinimum_Y', \
+    'Cell_AreaShape_Center_X', 'Cell_AreaShape_Center_Y', \
+    'Cell_AreaShape_Compactness', 'Cell_AreaShape_Eccentricity', 'Cell_AreaShape_EquivalentDiameter', 'Cell_AreaShape_EulerNumber', \
+    'Cell_AreaShape_Extent', 'Cell_AreaShape_FormFactor', 'Cell_AreaShape_MajorAxisLength',\
+    'Cell_AreaShape_MaxFeretDiameter', 'Cell_AreaShape_MaximumRadius', 'Cell_AreaShape_MeanRadius', \
+    'Cell_AreaShape_MedianRadius', 'Cell_AreaShape_MinFeretDiameter', 'Cell_AreaShape_MinorAxisLength', \
+    'Cell_AreaShape_Orientation', 'Cell_AreaShape_Perimeter', 'Cell_AreaShape_Solidity']
 key_mask=np.ones((len(key_list),),dtype=bool)
+key_mask[key_list.index('Cell_AreaShape_BoundingBoxArea')]=False
+key_mask[key_list.index('Cell_AreaShape_BoundingBoxMaximum_X')]=False
+key_mask[key_list.index('Cell_AreaShape_BoundingBoxMaximum_Y')]=False
+key_mask[key_list.index('Cell_AreaShape_BoundingBoxMinimum_X')]=False
+key_mask[key_list.index('Cell_AreaShape_BoundingBoxMinimum_Y')]=False
 key_mask[key_list.index('Cell_AreaShape_Center_Y')]=False
 key_mask[key_list.index('Cell_AreaShape_Center_X')]=False
-key_mask[key_list.index('Cell_AreaShape_Center_Z')]=False
+key_mask[key_list.index('Cell_AreaShape_EquivalentDiameter')]=False
 key_mask[key_list.index('Cell_AreaShape_EulerNumber')]=False
 key_mask[key_list.index('Cell_AreaShape_Orientation')]=False
 
@@ -231,7 +233,7 @@ def similar(sp,data,dc,Metric_L):
 def sp_traj_scaling(sct,t_cutoff=6,t_range=48,Metric_L=1,norm_flag=False):
     mask=sct.traj_vimentin_feature_values[0]!=0
     traj_t=sct.traj_seri[mask][:,0]
-    traj_morph=sct.traj_cord[mask]
+    traj_morph=sct.traj_morph_pca_cord[mask]
     if norm_flag==True:
         traj_vim=sct.traj_norm_vimentin_haralick_pca_cord[mask]
     else:
@@ -284,7 +286,7 @@ def sp_traj_scaling(sct,t_cutoff=6,t_range=48,Metric_L=1,norm_flag=False):
             st,et=scope[scale_t][0],scope[scale_t][1]
         print(st,et)
         
-        morph_scale_area=np.mean(sct.traj_feature[mask][:,key_mask][st:et,0])
+        morph_scale_area=np.mean(sct.traj_feature[mask][:,key_mask][st:et,0]) # key map sets the features, 0 index sets the specific feature (area)
         morph_scale_ar=np.mean(sct.traj_feature[mask][:,key_mask][st:et,8])#mean redius
         morph_scale_mr=np.mean(sct.traj_feature[mask][:,key_mask][st:et,9])#median redius
         
@@ -299,8 +301,6 @@ def sp_traj_scaling(sct,t_cutoff=6,t_range=48,Metric_L=1,norm_flag=False):
         vim_scale=np.mean(sct.traj_vimentin_feature_values[ind][mask][st:et,:],axis=0)
 
         scale_haralick=sct.traj_vimentin_feature_values[ind][mask]-vim_scale
-
-
 
     else:
         if SP.shape[0]>0:

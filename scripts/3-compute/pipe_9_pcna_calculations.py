@@ -18,7 +18,7 @@ from skimage.morphology import opening, closing, remove_small_holes, remove_smal
 from skimage.measure import regionprops, label
 from skimage.color import label2rgb
 from PIL import Image, ImageDraw, ImageFont
-from math import pi
+from math import ceil,pi,sqrt
 import cv2
 import glob
 import pandas as pd
@@ -30,6 +30,7 @@ from scipy.signal import medfilt
 from scipy.interpolate import bisplrep, bisplev
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
+from scipy.stats import skew, kurtosis
 from sklearn.preprocessing import RobustScaler, StandardScaler
 
 import multiprocessing
@@ -55,10 +56,7 @@ fluor_interval=6
 
 def compute_nuc_fluor_info(seg, fluor_img):
     rps = regionprops(seg)
-
-    mean_intensity = np.zeros((len(rps)))
-    std_intensity = np.zeros((len(rps)))
-    intensity_range = np.zeros((len(rps)))
+    histogram_features = []
     fluor_haralick = []
     norm_fluor_haralick = []
     scale_fluor_haralick = []
@@ -73,54 +71,39 @@ def compute_nuc_fluor_info(seg, fluor_img):
 
         nuc_mask=cell_img>otsu(cell_img,selem=disk(max(cell_img.shape)/2), mask=cell_img>0)
         nuc_mask=remove_small_objects(opening(nuc_mask),100)
-        nuc_mask=closing(nuc_mask)
         nuc_mask=remove_small_holes(nuc_mask,100)
 
         nuc_label=label(nuc_mask)
 
-        mean_intensity[i] = np.sum(cell_img) * 1.0 / r.area
-        std_intensity[i] = np.std(cell_img[region_cell_mask])
-
-        min_value, max_value = np.amin(
-            cell_img[region_cell_mask]), np.amax(
-            cell_img[region_cell_mask])
-        min_value = min_value - 1
-
-        intensity_range[i] = max_value - min_value
-
-        norm_cell_img = (cell_img - min_value) * region_cell_mask
-
-
-#         #-------normalize single cell to 0-1 and to 0-1024
-#         norm_crop_img=(crop_img-min_value)*1.0/(max_value-min_value)
-#         norm_cell_img=(np.ceil(norm_crop_img*norm_range)).astype(np.int)*region_cell_mask#norm_range=1024
-
-
-#         #-------use robust scaler to scale single cell
-#         transformer = RobustScaler().fit(np.expand_dims(cell_img[region_cell_mask],axis=1))
-#         scale_crop_img=transformer.transform(np.expand_dims(crop_img.flatten(),axis=1)).reshape((r.bbox[2]-r.bbox[0],r.bbox[3]-r.bbox[1]))
-#         min_scale_value,max_scale_value=np.amin(scale_crop_img[region_cell_mask]),np.amax(scale_crop_img[region_cell_mask])
-#         scale_crop_img=(scale_crop_img-min_scale_value)*1.0/(max_scale_value-min_scale_value)
-#         scale_cell_img=(np.ceil(scale_crop_img*norm_range)).astype(np.int)*region_cell_mask
-#         print(min_scale_value,max_scale_value)
-#         plt.imshow(scale_cell_img)
-#         plt.show()
-
         # the haralick features have four directions, to meet rotation
         # invariance,use average for each feature
-        print(np.sum(cell_img))
 
-        if np.sum(nuc_mask)/np.sum(cell_mask)>1/10 and np.amax(nuc_label)==1:
-            
-            nuc_img=cell_img*nuc_mask
-            
-            mean_intensity[i]=np.sum(nuc_img)*1.0/np.sum(nuc_mask)
-            
-            std_intensity[i]=np.std(nuc_img[nuc_mask])
-        
-            min_value,max_value=np.quantile(nuc_img[nuc_mask],0.09),np.quantile(nuc_img[nuc_mask],0.91)
+        if np.sum(nuc_mask) > ceil(0.1*np.sum(cell_mask)) and np.amax(nuc_label)==1: 
+            # original nucleus stats
+            ori_nuc_area=np.sum(nuc_mask)
+            nuc_radius=round(sqrt(np.sum(nuc_mask)/pi))
 
-            intensity_range[i]=max_value-min_value
+	    # smoothening + dilation
+            nuc_mask=closing(nuc_mask,disk(round(nuc_radius/3)))
+            nuc_mask=opening(nuc_mask,disk(round(nuc_radius/3)))
+            curr_nuc_area=np.sum(nuc_mask)
+            if curr_nuc_area < ori_nuc_area:
+                while curr_nuc_area < ori_nuc_area:
+                    nuc_mask = dilation(nuc_mask)
+                    curr_nuc_area=np.sum(nuc_mask)
+            nuc_mask=nuc_mask*cell_mask[r.bbox[0]:r.bbox[2],r.bbox[1]:r.bbox[3]]
+
+            nuc_img=nuc_mask*cell_img
+            int_prof = nuc_img[np.nonzero(nuc_img)]
+
+            int_mean=np.sum(int_prof)/np.sum(nuc_mask)
+            int_min,int_max=np.quantile(int_prof,0.02),np.quantile(int_prof,0.98)
+            int_std=np.std(int_prof)
+            int_skew=skew(int_prof)
+            int_kurt=kurtosis(int_prof,fisher=True)
+            hist_fea=np.array([int_mean,int_min,int_max,int_std,int_skew,int_kurt]) # histogram features
+            histogram_features.append(hist_fea)
+
             norm_nuc_img=(nuc_img-np.amin(nuc_img[nuc_mask])+1)*nuc_mask
             fl_hara=mht.haralick(nuc_img, ignore_zeros=True,return_mean=True)
             norm_fl_hara=mht.haralick(norm_nuc_img, ignore_zeros=True,return_mean=True)
@@ -128,22 +111,22 @@ def compute_nuc_fluor_info(seg, fluor_img):
             fluor_haralick.append(fl_hara)
             norm_fluor_haralick.append(norm_fl_hara)
         else:
+            histogram_features.append(np.zeros((6,)))
             fluor_haralick.append(np.zeros((13,)))
             norm_fluor_haralick.append(np.zeros((13,)))
 
+    histogram_features = np.array(histogram_features)
     fluor_haralick = np.array(fluor_haralick)
     norm_fluor_haralick = np.array(norm_fluor_haralick)
 
-    return mean_intensity, std_intensity, intensity_range, fluor_haralick, norm_fluor_haralick
+    return histogram_features, fluor_haralick, norm_fluor_haralick
 
 
 # In[7]:
 
 
 feature_list = [
-    'mean_intensity',
-    'std_intensity',
-    'intensity_range',
+    'histogram_features',
     'haralick',
     'norm_haralick']
 
@@ -180,23 +163,22 @@ def single_folder_run(img_folder, output_path, pcna_chan_label):
         cell_seg = imread(cell_seg_path + cell_seg_list[ti])
 
         pcna_img = imread(pcna_img_path + pcna_img_list[ti])
-        mean_intensity, std_intensity, intensity_range, fluor_haralick, norm_fluor_haralick = compute_nuc_fluor_info(
+        histogram_features, fluor_haralick, norm_fluor_haralick = compute_nuc_fluor_info(
             cell_seg, pcna_img)
 
-        print(img_num,mean_intensity,std_intensity)
+        print(histogram_features.shape)
+        print(fluor_haralick.shape)
         for obj_num in np.arange(1, np.amax(cell_seg) + 1):
             ind = df.loc[(df['ImageNumber'] == img_num) & (
                 df['ObjectNumber'] == obj_num)].index.tolist()[0]
-            pcna_features = [mean_intensity[obj_num - 1], 
-                            std_intensity[obj_num - 1], 
-                            intensity_range[obj_num - 1], 
-                            fluor_haralick[obj_num - 1, :], 
-                            norm_fluor_haralick[obj_num - 1, :]]
+            pcna_features = [histogram_features[obj_num - 1,:], 
+                            fluor_haralick[obj_num - 1,:], 
+                            norm_fluor_haralick[obj_num - 1,:]]
             
             cells[ind].set_fluor_features(
                 'pcna', feature_list, pcna_features)
 
-    with open(fluor_cells_path + 'pcna_cells-09', 'wb') as fp:
+    with open(fluor_cells_path + 'pcna_cells-02', 'wb') as fp:
         pickle.dump(cells, fp)
 
 if __name__ == "__main__":

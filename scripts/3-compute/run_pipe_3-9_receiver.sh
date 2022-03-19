@@ -5,10 +5,10 @@
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 # job name
-#SBATCH --job-name=mbell-53deb5_run_all_12
+#SBATCH --job-name=pcna_72hr_no-treat_3-9
 
 #SBATCH --gres=gpu:1
-#SBATCH --exclude=g019,g102,g104,g122,g012,g013
+#SBATCH --exclude=g019,g102,g104,g122,g012,g013,g018
 #SBATCH --cpus-per-task=16
 
 #SBATCH --mem=32G
@@ -69,37 +69,39 @@ rsync -ra ${tools_dir}/* .
 module load anaconda/3-cluster
 module load cuda/11.1
 
-## cell_profiler ###
-bash run_cp.sh $output_path $tools_dir
-echo 'step cell profiler complete'
-conda deactivate
+echo $img_path
+
+### cell_profiler ###
+#bash run_cp.sh $output_path $tools_dir
+#echo 'step cell profiler complete'
+#conda deactivate
 source activate tf1
 
-python pipe_3_traj_reorganize_1st.py $img_path $output_path $icnn_seg_wts_file $DIC_chan_label
-echo 'step3 complete'
-python pipe_4_traj_reorganize_2nd.py $output_path
-echo 'step4 complete'
-python pipe_5_traj_reorganize_3rd.py $output_path
-echo 'step5 complete'
-python pipe_6_build_single_cell.py $output_path
-echo 'step6 complete'
-
-# remember to modify file names in this script
-# move segmentation results to different folders
-
-#### calculate mean contours and pca modes ###
-#python pipe_meancontour_and_pcamodes.py $output_path
-#mkdir -p ${output_path}/contour
-#cp /net/capricorn/home/xing/weikang/wwk/210309_2ng_tgf_a549/g1/data/mean_cell_contour ${output_path}/contour
-
-# after calculate mean contours
-mean_contour_path=${dat_dir}/stats/mean_cell_contour
-python pipe_7_cell_contours_calculation.py $output_path $mean_contour_path 
-echo 'step7 complete'
-
-# modify fluor_interval: check visually or in README.md
-python pipe_8_haralick_calculation.py $img_path $output_path $vim_chan_label
-echo 'step8 complete'
+#python pipe_3_traj_reorganize_1st.py $img_path $output_path $icnn_seg_wts_file $DIC_chan_label
+#echo 'step3 complete'
+#python pipe_4_traj_reorganize_2nd.py $output_path
+#echo 'step4 complete'
+#python pipe_5_traj_reorganize_3rd.py $output_path
+#echo 'step5 complete'
+#python pipe_6_build_single_cell.py $output_path
+#echo 'step6 complete'
+#
+## remember to modify file names in this script
+## move segmentation results to different folders
+#
+##### calculate mean contours and pca modes ###
+##python pipe_meancontour_and_pcamodes.py $output_path
+##mkdir -p ${output_path}/contour
+##cp /net/capricorn/home/xing/weikang/wwk/210309_2ng_tgf_a549/g1/data/mean_cell_contour ${output_path}/contour
+#
+## after calculate mean contours
+#mean_contour_path=${dat_dir}/stats/mean_cell_contour
+#python pipe_7_cell_contours_calculation.py $output_path $mean_contour_path 
+#echo 'step7 complete'
+#
+## modify fluor_interval: check visually or in README.md
+#python pipe_8_haralick_calculation.py $img_path $output_path $vim_chan_label
+#echo 'step8 complete'
 
 python pipe_9_pcna_calculations.py $img_path $output_path $pcna_chan_label
 echo 'step9 complete'
