@@ -34,21 +34,35 @@
 %all tiles are being saved to the same file so you would have to just
 %remove that tiles line.
 
+
+
+
 %% for tiles
 
+% completed: 
+% experiment a549_vim_rfp_control_091621/ XY1 XY2
+% experiment a549_vim_rfp_pcna_2ng_24hr_091721/ XY1
+% experiment a549_vim_rfp_pcna_4ng_48hr_091821/ XY1 
+
 experiment='a549_vim_rfp_pcna_gfp_g418_control_high_121521/';
-position='XY5';
-tile='tile2';
+position='XY2';
+tile='tile5';
 time_point='T01';
 
 filename=erase(experiment,'/');
 file_name_split=strsplit(filename,'_');
 
 Img_str=strcat(filename,'_',time_point,'_',position);
+%video_name=char(strcat(strjoin(file_name_split(1:length(file_name_split)-1),'_'),'_',position,'_',file_name_split(end),'.avi'));
+%crop_file=strcat(filename,'_crop_file.txt');
 %tiles index starts with 0 and goes to 8 
 
-dir_path=strcat('C:/Users/14432/OneDrive/Research/Projects/a549_pcna/data/train/reg/tiles/',experiment);
-seg_path=strcat('C:/Users/14432/OneDrive/Research/Projects/a549_pcna/data/train/reg/seg/',filename);
+
+dir_path=strcat('/home/dante/cluster/data/image_data/40x_large_calcein_time_lapse_training_datset/tiles/',experiment);
+seg_path=strcat('/home/dante/cluster/data/image_data/40x_large_calcein_time_lapse_training_datset/seg/',filename);
+%crop_path=strcat('/home/dante/cluster/data/image_data/40x_large_calcein_time_lapse_training_datset/crops/',experiment,crop_file);
+%video_path=strcat('/home/dante/cluster/data/image_data/40x_large_calcein_time_lapse_training_datset/videos/',experiment,video_name);
+
 
 dic=imread(strcat(dir_path,Img_str,'_C1_',tile,'.tif'));
 calcein=imread(strcat(dir_path,Img_str,'_C2_',tile,'.tif'));
@@ -277,7 +291,7 @@ crop_site=0;
             
             %deletes all crops in the file that matches the regular
             %expression that includes the tile and the image string 
-            delete(strcat(seg_path,'/*',Img_str,'_',tile,'*'))
+            delete(strcat(seg_path,'*',Img_str,'_',tile,'*'))
             close all
             %close(vid)
             return
@@ -325,7 +339,7 @@ crop_site=0;
         end
     end
 
-%close all 
+close all 
 %close(vid)
 %theoretically, there should be a script that deletes all crops if I mess
 %up 
