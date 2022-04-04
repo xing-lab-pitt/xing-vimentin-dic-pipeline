@@ -16,5 +16,14 @@ Create conda environment for cellprofiler4. Note that currently cellprofiler4 on
 conda env create -f envs/cp4.yml 
 ```
 
+## Install Precommit Hook  
+**You would like to ensure that the code you push has good code style**  
+**This step enables pre-commit to check and auto-format your style before every git commit.**
+### Install (once)  
+`pip install pre-commit`  
+`pre-commit install`  
+### format all code (rare usage)  
+`pre-commit run --all`
+
 
 ## Development guide

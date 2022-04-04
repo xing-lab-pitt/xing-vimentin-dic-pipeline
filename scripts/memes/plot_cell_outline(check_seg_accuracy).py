@@ -16,11 +16,11 @@ from os import listdir
 # In[2]:
 
 
-main_path = '/home/zoro/Desktop/experiment_data/ATCC data/'
+main_path = "/home/zoro/Desktop/experiment_data/ATCC data/"
 posi_end = 20
-input_path = main_path + 'test_img/'
+input_path = main_path + "test_img/"
 # input_path='/media/zoro/easystore/xing-lab-1/experiment_data/2019-03-10_HK2_fucci/cdt1/'
-output_path = main_path + 'output/'
+output_path = main_path + "output/"
 
 
 # In[4]:
@@ -35,12 +35,10 @@ def find_contours_labelimg(seg_img, contour_value):
     # print(r_labels)
     contours = []
     for label in r_labels:
-        single_obj_seg_img = (seg_img == label)
+        single_obj_seg_img = seg_img == label
         single_contour = find_contours(
-            single_obj_seg_img,
-            level=contour_value,
-            fully_connected='low',
-            positive_orientation='low')
+            single_obj_seg_img, level=contour_value, fully_connected="low", positive_orientation="low"
+        )
         # print(len(single_contour))
         max_len = 0
         for i in range(len(single_contour)):
@@ -61,7 +59,7 @@ def find_contours_labelimg(seg_img, contour_value):
 #     img_path=input_path+str(posi)+'/'
 #     seg_path=output_path+str(posi)+'/seg/'
 img_path = input_path
-seg_path = output_path + 'seg/'
+seg_path = output_path + "seg/"
 img_list = sorted(listdir(img_path))
 seg_list = sorted(listdir(seg_path))
 
@@ -77,12 +75,12 @@ fig, ax = plt.subplots(figsize=(10, 10))
 ax.imshow(img)
 plt.show()
 fig, ax = plt.subplots(figsize=(10, 10))
-ax.imshow(img, interpolation='nearest', cmap=plt.cm.gray)
+ax.imshow(img, interpolation="nearest", cmap=plt.cm.gray)
 
 for n, contour in enumerate(contours):
     ax.plot(contour[:, 1], contour[:, 0], linewidth=2)
 
-ax.axis('image')
+ax.axis("image")
 plt.show()
 
 

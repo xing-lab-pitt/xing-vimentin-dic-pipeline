@@ -26,8 +26,7 @@ def pca(data):
     flat, data_point_shape = utility_tools.flatten_data(centered)
     # could use _flat_pca_svd, but that appears empirically slower...
     pcs, variances, stds, positions, norm_positions = _flat_pca_eig(flat)
-    norm_pcs = utility_tools.fatten_data(
-        pcs * stds[:, numpy.newaxis], data_point_shape)
+    norm_pcs = utility_tools.fatten_data(pcs * stds[:, numpy.newaxis], data_point_shape)
     pcs = utility_tools.fatten_data(pcs, data_point_shape)
     return mean, pcs, norm_pcs, variances, positions, norm_positions
 
@@ -37,7 +36,7 @@ def _flat_pca_svd(flat):
     pcs = vt
     v = numpy.transpose(vt)
     data_count = len(flat)
-    variances = s**2 / data_count
+    variances = s ** 2 / data_count
     root_data_count = numpy.sqrt(data_count)
     stds = s / root_data_count
     positions = u * s
@@ -51,11 +50,10 @@ def _flat_pca_eig(flat):
     variances = values / len(flat)
     stds = numpy.sqrt(variances)
     positions = numpy.dot(flat, vectors)
-    err = numpy.seterr(divide='ignore', invalid='ignore')
+    err = numpy.seterr(divide="ignore", invalid="ignore")
     norm_positions = positions / stds
     numpy.seterr(**err)
-    norm_positions = numpy.where(
-        numpy.isfinite(norm_positions), norm_positions, 0)
+    norm_positions = numpy.where(numpy.isfinite(norm_positions), norm_positions, 0)
     return pcs, variances, stds, positions, norm_positions
 
 
@@ -86,7 +84,7 @@ def _symm_eig(a):
         sst_diag = numpy.where(sst_diag < 0, 0, sst_diag)
         # now get the inverse square root of the diagonal, which will form the
         # main diagonal of s_hat
-        err = numpy.seterr(divide='ignore', invalid='ignore')
+        err = numpy.seterr(divide="ignore", invalid="ignore")
         s_hat_diag = 1 / numpy.sqrt(sst_diag)
         numpy.seterr(**err)
         s_hat_diag = numpy.where(numpy.isfinite(s_hat_diag), s_hat_diag, 0)
@@ -107,15 +105,21 @@ def pca_dimensionality_reduce(data, required_variance_explained):
     mean, pcs, norm_pcs, variances, positions, norm_positions = pca(data)
     total_variance = numpy.add.accumulate(variances / numpy.sum(variances))
     num = bisect.bisect(total_variance, required_variance_explained) + 1
-    return mean, pcs[:num], norm_pcs[:num], variances[:num], numpy.sum(
-        variances), positions[:, :num], norm_positions[:, :num]
+    return (
+        mean,
+        pcs[:num],
+        norm_pcs[:num],
+        variances[:num],
+        numpy.sum(variances),
+        positions[:, :num],
+        norm_positions[:, :num],
+    )
 
 
 def pca_reconstruct(scores, pcs, mean):
     # scores and pcs are indexed along axis zero
     flat, data_point_shape = utility_tools.flatten_data(pcs)
-    return mean + \
-        utility_tools.fatten_data(numpy.dot(scores, flat), data_point_shape)
+    return mean + utility_tools.fatten_data(numpy.dot(scores, flat), data_point_shape)
 
 
 def pca_decompose(data, pcs, mean, variances=None):

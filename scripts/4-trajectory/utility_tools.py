@@ -9,7 +9,8 @@ import numpy
 import scipy.ndimage as ndimage
 import scipy.interpolate.fitpack as fitpack
 import heapq
-#from py23_compat import set
+
+# from py23_compat import set
 
 
 def distance(a, b):
@@ -21,7 +22,7 @@ def distance_squared(a, b):
     """Return the squared distance between two vectors."""
     a = numpy.asarray(a)
     b = numpy.asarray(b)
-    return ((a - b)**2).sum()
+    return ((a - b) ** 2).sum()
 
 
 def squared_distance_matrix(x):
@@ -40,8 +41,8 @@ def squared_distance_matrix(x):
     # diag = numpy.ndarray(buffer=distances, dtype=distances.dtype, shape=(l,), strides=((l+1)*distances.dtype.itemsize,))
     # diag[:] = 0
     for i in range(l - 1):
-        dists = ((x[i + 1:] - x[i])**2).sum(axis=-1)
-        distances[i, i + 1:] = dists
+        dists = ((x[i + 1 :] - x[i]) ** 2).sum(axis=-1)
+        distances[i, i + 1 :] = dists
         # distances[i+1:, i] = dists
     return distances
 
@@ -52,7 +53,7 @@ def norm(data, axis=0):
     if axis != 0:
         data = numpy.swapaxes(data, axis, 0)
     data, oldshape = flatten_data(data)
-    return numpy.sqrt((data**2).sum(axis=1))
+    return numpy.sqrt((data ** 2).sum(axis=1))
 
 
 def first_derivative(data):
@@ -61,8 +62,8 @@ def first_derivative(data):
     data = numpy.asarray(data)
     out = numpy.empty(data.shape, dtype=float)
     out[1:-1] = (data[2:] - data[:-2]) / 2.0
-    out[0] = (data[1] - data[0])
-    out[-1] = (data[-1] - data[-2])
+    out[0] = data[1] - data[0]
+    out[-1] = data[-1] - data[-2]
     return out
 
 
@@ -79,7 +80,7 @@ def periodic_second_derivative(data):
     the data are periodic."""
     forward = numpy.roll(data, -1, axis=0)
     backward = numpy.roll(data, 1, axis=0)
-    return (forward - 2 * data + backward)
+    return forward - 2 * data + backward
 
 
 def flatten_data(data):
@@ -91,8 +92,7 @@ def flatten_data(data):
     data_count = data.shape[0]
     data_point_shape = data.shape[1:]
     if len(data.shape) > 1:
-        flat = numpy.reshape(
-            data, (data_count, numpy.product(data_point_shape)))
+        flat = numpy.reshape(data, (data_count, numpy.product(data_point_shape)))
     else:
         flat = numpy.atleast_2d(data).transpose()
     return flat, data_point_shape
@@ -131,8 +131,7 @@ def inclusive_periodic_slice(data, begin=None, end=None):
     return periodic_slice(data, begin, end)
 
 
-def make_homogenous_transform(
-        transform=[[1, 0], [0, 1]], scale=1, translation=[0, 0]):
+def make_homogenous_transform(transform=[[1, 0], [0, 1]], scale=1, translation=[0, 0]):
     """Return a 3x3 homogenous transform (for row vectors) from a 2x2 rigid transform
     matrix, a scalar scale factor, and a translation vector."""
     T = numpy.zeros((3, 3))
@@ -206,7 +205,7 @@ def b_spline_to_bezier_series(tck, per=False):
         # the first and last k+1 knots are identical in the non-periodic case, so
         # no need to consider them when increasing the knot multiplicities
         # below
-        knots_to_consider = numpy.unique(t[k + 1:-k - 1])
+        knots_to_consider = numpy.unique(t[k + 1 : -k - 1])
     # For each unique knot, bring its multiplicity up to the next multiple of k+1
     # This removes all continuity constraints between each of the original knots,
     # creating a set of independent Bezier curves.
@@ -226,11 +225,7 @@ def b_spline_to_bezier_series(tck, per=False):
         # again, ignore the leading and trailing k knots
         bezier_points = bezier_points[k:-k]
     # group the points into the desired bezier curves
-    return numpy.split(
-        bezier_points,
-        len(bezier_points) /
-        desired_multiplicity,
-        axis=0)
+    return numpy.split(bezier_points, len(bezier_points) / desired_multiplicity, axis=0)
 
 
 def line_intersections(start, end, ref_start, ref_end):
@@ -253,7 +248,7 @@ def line_intersections(start, end, ref_start, ref_end):
     u = p1 - p0
     v = q1 - q0
     w = p0 - q0
-    err = numpy.seterr(divide='ignore')
+    err = numpy.seterr(divide="ignore")
     denom = v[:, 0] * u[1] - v[:, 1] * u[0]
     s_i = (v[:, 1] * w[:, 0] - v[:, 0] * w[:, 1]) / denom
     t_i = (u[0] * w[:, 1] - u[1] * w[:, 0]) / -denom
@@ -294,8 +289,7 @@ def signed_distances_to_line(points, line_start, line_end):
     x, y = points.T
     x0, y0 = line_start
     x1, y1 = line_end
-    return ((y0 - y1) * x + (x1 - x0) * y + (x0 * y1 - x1 * y0)) / \
-        numpy.sqrt(((line_start - line_end)**2).sum())
+    return ((y0 - y1) * x + (x1 - x0) * y + (x0 * y1 - x1 * y0)) / numpy.sqrt(((line_start - line_end) ** 2).sum())
 
 
 def find_perp(p0, p1, normalize=True):
@@ -305,7 +299,7 @@ def find_perp(p0, p1, normalize=True):
     diff = numpy.roll(diff, 1, axis=-1)
     diff[..., 0] *= -1
     if normalize:
-        diff /= numpy.sqrt(numpy.sum(diff**2, axis=-1))[..., numpy.newaxis]
+        diff /= numpy.sqrt(numpy.sum(diff ** 2, axis=-1))[..., numpy.newaxis]
     return diff
 
 
@@ -338,7 +332,7 @@ def parabola_estimate_center(x_values, y_values, index, cyclic=False):
     x_values = x_values[indices]
     y_values = y_values[indices]
     A = numpy.ones((3, 3), dtype=float)
-    A[:, 0] = x_values**2
+    A[:, 0] = x_values ** 2
     A[:, 1] = x_values
     a, b, c = numpy.linalg.solve(A, y_values)
     center = -b / (2 * a)
@@ -391,28 +385,16 @@ def local_maxima(array, min_distance=1, cyclic=False, endpoints_allowed=True):
     array = numpy.asarray(array)
     cval = 0
     if cyclic:
-        mode = 'wrap'
+        mode = "wrap"
     elif endpoints_allowed:
-        mode = 'nearest'
+        mode = "nearest"
     else:
-        mode = 'constant'
+        mode = "constant"
         cval = array.max() + 1
-    return numpy.arange(
-        len(array))[
-        array == ndimage.maximum_filter(
-            array,
-            1 + 2 * min_distance,
-            mode=mode,
-            cval=cval)]
+    return numpy.arange(len(array))[array == ndimage.maximum_filter(array, 1 + 2 * min_distance, mode=mode, cval=cval)]
 
 
-def A_star(
-        start,
-        goal,
-        successors,
-        edge_cost,
-        heuristic_cost_to_goal=lambda position,
-        goal: 0):
+def A_star(start, goal, successors, edge_cost, heuristic_cost_to_goal=lambda position, goal: 0):
     """Very general a-star search. Start and goal are objects to be compared
     with the '==' operator, successors is a function that, given a node, returns
     other nodes reachable therefrom, edge_cost is a function that returns the
@@ -432,8 +414,6 @@ def A_star(
         closed.add(tail)
         for new_tail in successors(tail):
             new_cost_so_far = cost_so_far + edge_cost(tail, new_tail)
-            new_heuristic_cost = new_cost_so_far + \
-                heuristic_cost_to_goal(new_tail, goal)
-            heapq.heappush(
-                open, (new_cost_so_far, new_heuristic_cost, path + (new_tail,)))
-    raise RuntimeError('No path found.')
+            new_heuristic_cost = new_cost_so_far + heuristic_cost_to_goal(new_tail, goal)
+            heapq.heappush(open, (new_cost_so_far, new_heuristic_cost, path + (new_tail,)))
+    raise RuntimeError("No path found.")

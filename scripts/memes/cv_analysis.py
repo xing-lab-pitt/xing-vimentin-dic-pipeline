@@ -45,22 +45,17 @@ def find_image_edges(images):
         sure_threshold = 6
         # image = cv2.fastNlMeansDenoising(image,None, 20, 7, 21)
         # edges = cv2.Canny(image, not_sure_threshold, sure_threshold, 20)
-        edges = feature.canny(image,
-                              low_threshold=not_sure_threshold,
-                              high_threshold=sure_threshold)
+        edges = feature.canny(image, low_threshold=not_sure_threshold, high_threshold=sure_threshold)
         edges[edges == 0] = np.ma.masked
         res.append(edges)
     return res
 
 
-def collapse_centers(centers, groups,
-                     max_group_sample_size=None,
-                     dist_threshold=60,
-                     image=None):
-    '''
+def collapse_centers(centers, groups, max_group_sample_size=None, dist_threshold=60, image=None):
+    """
     collapse centers based on sorted (prior: high to low) list of center
     use brightest pixel as center group representative
-    '''
+    """
     cur_centers = list(centers)
     cur_groups = [list(group) for group in groups]
 
@@ -105,9 +100,7 @@ def collapse_centers(centers, groups,
     return cur_centers, cur_groups
 
 
-def cluster_indices(pts, image, center_num=10,
-                    dist_threshold=60,
-                    max_group_sample_size=1000):
+def cluster_indices(pts, image, center_num=10, dist_threshold=60, max_group_sample_size=1000):
     # print('#selected pixels:', len(pts))
     origins = pts
     pts = list(pts)
@@ -144,18 +137,14 @@ def cluster_indices(pts, image, center_num=10,
         # NOTE: order of + is important here: keep sorted
         centers = centers + new_centers
         groups = groups + new_groups
-        centers, groups = collapse_centers(centers,
-                                           groups,
-                                           max_group_sample_size,
-                                           dist_threshold=dist_threshold)
+        centers, groups = collapse_centers(centers, groups, max_group_sample_size, dist_threshold=dist_threshold)
 
     return centers[:center_num], groups[:center_num]
 
 
-def find_chrom_centers_simple_bound(image, bounding_size,
-                                    max_center_num=10,
-                                    sampling_quantile=0.97,
-                                    collapse_dist_threshold=20):
+def find_chrom_centers_simple_bound(
+    image, bounding_size, max_center_num=10, sampling_quantile=0.97, collapse_dist_threshold=20
+):
     shape = image.shape
     # print('calculating scores with bounding size=%d...' % bounding_size)
     # scores = find_bounding_sums_cpp(image, bounding_size)
@@ -166,12 +155,11 @@ def find_chrom_centers_simple_bound(image, bounding_size,
     # C language (row major order)
     # choose top sampling_quantile coordinates regarding intensity,
     # then cluster indices based on these coordinates
-    indices = (np.array(np.unravel_index(args, shape, order='C'))).T
+    indices = (np.array(np.unravel_index(args, shape, order="C"))).T
     sample_size = utils.count_image_gaussian_quantile(image, sampling_quantile)
-    centers, groups = cluster_indices(indices[:sample_size],
-                                      image,
-                                      center_num=max_center_num,
-                                      dist_threshold=collapse_dist_threshold)
+    centers, groups = cluster_indices(
+        indices[:sample_size], image, center_num=max_center_num, dist_threshold=collapse_dist_threshold
+    )
     return centers[:max_center_num], groups[:max_center_num]
 
 
@@ -180,8 +168,7 @@ def crop_by_sampling(image, sampling_quantile=0.99):
     scores = -image
     args = np.argsort(scores, None)
     # indices = (np.array(np.unravel_index(args, image.shape, order='C'))).T
-    sample_size = utils.count_image_gaussian_quantile(
-        image, q=sampling_quantile)
+    sample_size = utils.count_image_gaussian_quantile(image, q=sampling_quantile)
     # rows, cols = [x[0] for x in indices], [x[1] for x in indices]
     # rows, cols = rows[:sample_size], cols[:sample_size]
     mask = np.zeros(image.shape[0] * image.shape[1])
@@ -190,9 +177,7 @@ def crop_by_sampling(image, sampling_quantile=0.99):
     return mask
 
 
-def crop_by_local_threshold(image,
-                            block_size=301,
-                            offset=10):
+def crop_by_local_threshold(image, block_size=301, offset=10):
     # image = utils.denoise_bilateral(image)
     threshold = threshold_local(image, block_size=block_size, offset=offset)
     mask = (image > threshold).astype(int)
@@ -260,7 +245,7 @@ def bg_correction_whole_image(image, centers, stats):
     bds = set()
     image = np.copy(image)
     for stat in stats:
-        xy_bds = tuple(stat[utils.X_BOX_IND: utils.X_BOX_IND + 4])
+        xy_bds = tuple(stat[utils.X_BOX_IND : utils.X_BOX_IND + 4])
         xy_bds = tuple([int(x) for x in xy_bds])
         x1, x2, y1, y2 = xy_bds
         bds.add(xy_bds)
@@ -270,7 +255,7 @@ def bg_correction_whole_image(image, centers, stats):
         try:
             image[x1:x2, y1:y2] = bg_correction(image[x1:x2, y1:y2])
         except Exception as e:
-            print('bisplrep raises err, disregard...')
+            print("bisplrep raises err, disregard...")
             print(e)
     return image
 
@@ -281,10 +266,10 @@ def find_contours(image, level=0.5):
 
 
 def k_cluster_sklearn(pts, k=10, iters=3, min_group_size=None):
-    '''
+    """
     Note: pts are sorted based on image pixel values.
     return: a list of centers and a list of groups (list of list)
-    '''
+    """
     if len(pts) < k:
         # samples not enough
         return [], []
@@ -315,9 +300,9 @@ def k_cluster_sklearn(pts, k=10, iters=3, min_group_size=None):
 
 
 def find_3d_centers_in_frame_simple_z(image, data, dist_threshold):
-    '''
+    """
     image: Z x X x Y
-    '''
+    """
     centers = []
     center2stats = {}
     for z, c, z_centers, stats in data:
@@ -327,12 +312,10 @@ def find_3d_centers_in_frame_simple_z(image, data, dist_threshold):
         for i in range(len(d3_centers)):
             center = d3_centers[i]
             center2stats[tuple(center)] = stats[i]
-    centers = sorted(
-        centers, key=lambda x: image[x[2], x[0], x[1]], reverse=True)
+    centers = sorted(centers, key=lambda x: image[x[2], x[0], x[1]], reverse=True)
     # print('#centers in all z axis:', len(centers))
     groups = [[center] for center in centers]
-    res_centers, groups = collapse_centers(
-        centers, groups, dist_threshold=dist_threshold)
+    res_centers, groups = collapse_centers(centers, groups, dist_threshold=dist_threshold)
     max_centers = []
     avg_centers = []
 
@@ -354,12 +337,12 @@ def find_3d_centers_in_frame_simple_z(image, data, dist_threshold):
 
 
 def find_3d_centers_in_frame_simple(image, data, dist_threshold):
-    '''
+    """
     input:
           data: a list of (z, c, centers, stats) found by each image
           image: z x c x x xy
     return: c x [avg_centers, max_centers, groups]
-    '''
+    """
     channels = image.shape[1]
     all_c = set([c for c in range(channels)])
 
@@ -373,22 +356,22 @@ def find_3d_centers_in_frame_simple(image, data, dist_threshold):
             else:
                 row = z, cur_c, centers, stats
                 c_data.append(row)
-        res = find_3d_centers_in_frame_simple_z(
-            c_image, c_data, dist_threshold)
+        res = find_3d_centers_in_frame_simple_z(c_image, c_data, dist_threshold)
         channel2centers[c] = res
     return channel2centers
 
 
 def filter_signals_in_image_by_background_contrast(
-        tzc_image,
-        data,
-        factor=5,
-        # low_bg_pixel_num_threshold=10,
-        signal_size=None):
-    '''
+    tzc_image,
+    data,
+    factor=5,
+    # low_bg_pixel_num_threshold=10,
+    signal_size=None,
+):
+    """
     input: image, dicts of centers, dicts of stats, low/high threshold;
     return: a list of (center, stat)
-    '''
+    """
     res_centers = []
     res_stats = []
     centers, stats = data
@@ -399,10 +382,8 @@ def filter_signals_in_image_by_background_contrast(
         # center_intensity = stat[0]
         # bg_avg, bg_pixel_num = stat[2], stat[3]
         # center_intensity = tzc_image[int(center[0]), int(center[1])]
-        center_intensity, center_std = utils.get_2d_center_avg(
-            tzc_image, center, [signal_size, signal_size])
-        bg_avg, bg_std = utils.get_2d_center_bg_avg(
-            tzc_image, center, [25, 25], signal_size=signal_size)
+        center_intensity, center_std = utils.get_2d_center_avg(tzc_image, center, [signal_size, signal_size])
+        bg_avg, bg_std = utils.get_2d_center_bg_avg(tzc_image, center, [25, 25], signal_size=signal_size)
         # bg pixel num should be fine: we have filtered by group size before.
         ratio = center_intensity / bg_avg
         if ratio >= factor:
@@ -418,11 +399,11 @@ def filter_signals_in_image_by_background_contrast(
     return res_centers, res_stats
 
 
-def filter_signals_in_image_by_groupsize(image, data, low=50, high=10**4):
-    '''
+def filter_signals_in_image_by_groupsize(image, data, low=50, high=10 ** 4):
+    """
     input: image, dicts of centers, dicts of stats, low/high threshold;
     return: a list of (center, stat)
-    '''
+    """
     res_centers = []
     res_stats = []
     centers, stats = data
@@ -436,12 +417,11 @@ def filter_signals_in_image_by_groupsize(image, data, low=50, high=10**4):
     return res_centers, res_stats
 
 
-def filter_signals_in_image_by_local_threshold(image, data, block_size=51,
-                                               offset=20, factor=1.1):
-    '''
+def filter_signals_in_image_by_local_threshold(image, data, block_size=51, offset=20, factor=1.1):
+    """
     input: image, dicts of centers, dicts of stats, low/high threshold;
     return: a list of (center, stat)
-    '''
+    """
 
     res_centers = []
     res_stats = []
@@ -460,10 +440,7 @@ def filter_signals_in_image_by_local_threshold(image, data, block_size=51,
     return res_centers, res_stats
 
 
-def filter_signals_by_neighbors(
-        data,
-        cell_radius,
-        max_allowed_signals_per_cell=utils.max_allowed_signals_per_cell):
+def filter_signals_by_neighbors(data, cell_radius, max_allowed_signals_per_cell=utils.max_allowed_signals_per_cell):
     res_centers = []
     res_stats = []
     centers, stats = data
@@ -486,8 +463,7 @@ def filter_signals_by_neighbors(
 
         if len(temp_centers) >= max_allowed_signals_per_cell:
             indices = [x for x in range(len(temp_centers))]
-            sorted_indices = sorted(
-                indices, key=lambda x: temp_zscores[x], reverse=True)
+            sorted_indices = sorted(indices, key=lambda x: temp_zscores[x], reverse=True)
             rank = sorted_indices.index(cur_id)  # find current center's rank
             if rank > max_allowed_signals_per_cell:
                 continue
@@ -498,14 +474,17 @@ def filter_signals_by_neighbors(
     return res_centers, res_stats
 
 
-def filter_all_image_centers(images,
-                             # bg_corrected_images,
-                             tzc_centers, tzc_stats,
-                             contrast_factor=10,
-                             signal_size=5):
-    '''
+def filter_all_image_centers(
+    images,
+    # bg_corrected_images,
+    tzc_centers,
+    tzc_stats,
+    contrast_factor=10,
+    signal_size=5,
+):
+    """
     return: tuple of (tzc_centers, tzc_stats)
-    '''
+    """
     res_tzc_centers = {}
     res_tzc_stats = {}
     centers, stats = [], []
@@ -520,7 +499,8 @@ def filter_all_image_centers(images,
         filtered_data = (centers, stats)
         # filtered_data = filter_signals_in_image_by_groupsize(tzc_image, (centers, stats))
         filtered_data = filter_signals_in_image_by_background_contrast(
-            tzc_image, filtered_data, factor=contrast_factor, signal_size=signal_size)
+            tzc_image, filtered_data, factor=contrast_factor, signal_size=signal_size
+        )
         # filtered_data = filter_signals_in_image_by_local_threshold(tzc_image, (centers, stats))
         res_tzc_centers[t, z, c] = filtered_data[0]
         res_tzc_stats[t, z, c] = filtered_data[1]
@@ -530,15 +510,14 @@ def filter_all_image_centers(images,
 
 def get_center_mask(images):
     n_segments = 10
-    mask = skimage.segmentation.slic(images,
-                                     n_segments=n_segments)
+    mask = skimage.segmentation.slic(images, n_segments=n_segments)
     return mask
 
 
 def get_area(bd):
-    '''
+    """
     return nd area
-    '''
+    """
     dims = int(len(bd) / 2)
     res = 1
     for dim in range(dims):
@@ -589,20 +568,15 @@ def filter_cell_boxes(boundaries):
     return res
 
 
-def combine_centers_within_same_t(
-        images,
-        centers_data,
-        dist_threshold,
-        max_center_num=None):
-    '''
+def combine_centers_within_same_t(images, centers_data, dist_threshold, max_center_num=None):
+    """
     combine signal centers found in 2d images and convert these centers to 3d ver.
     centers_data: a tuple of (centers, stats), two lists of centers, stats
     return: t x c x (avgCenters, maxCenters, stats)
-    '''
+    """
     # centers, stats = read_centers_data(center_path)
     centers, stats = centers_data
-    all_t, all_z, all_c = set(), set(), set(
-        [c for c in range(images.shape[2])])
+    all_t, all_z, all_c = set(), set(), set([c for c in range(images.shape[2])])
     for t, z, c in centers:
         all_t.add(t)
         all_z.add(z)
@@ -618,8 +592,7 @@ def combine_centers_within_same_t(
                 if (t, z, c) in centers:
                     t2data[t].append((z, c, centers[t, z, c], stats[t, z, c]))
         image = images[t, :, :, :, :]
-        channel2data = find_3d_centers_in_frame_simple(
-            image, t2data[t], dist_threshold)
+        channel2data = find_3d_centers_in_frame_simple(image, t2data[t], dist_threshold)
         if max_center_num:
             for c in channel2data:
                 # last entry is center2stats
@@ -630,10 +603,7 @@ def combine_centers_within_same_t(
     return t_centers_data
 
 
-def combine_prob_map_centers(
-        tzc2centers,
-        tzc2probMaps,
-        threshold=utils.collapse_dist_threshold):
+def combine_prob_map_centers(tzc2centers, tzc2probMaps, threshold=utils.collapse_dist_threshold):
     t_max, z_max, c_max = -1, -1, -1
     for t, z, c in tzc2centers:
         t_max = max(t_max, t)
@@ -646,35 +616,35 @@ def combine_prob_map_centers(
             z_maps = []
             for z in range(z_max + 1):
                 # in case some z data are missing
-                if (t, z, c,) not in tzc2centers:
+                if (
+                    t,
+                    z,
+                    c,
+                ) not in tzc2centers:
                     continue
                 centers = tzc2centers[t, z, c]
-                centers = [list(x) + [z]
-                           for i, x in enumerate(centers)]  # convert to 3d
+                centers = [list(x) + [z] for i, x in enumerate(centers)]  # convert to 3d
                 probMap = tzc2probMaps[t, z, c]
                 z_maps.append(probMap)
                 z_centers.extend(centers)
 
             # collapse z centers
-            z_centers = sorted(z_centers,
-                               key=lambda x: z_maps[x[2]][x[0],
-                                                          x[1],
-                                                          0],
-                               reverse=True)  # 0 for signal prob
+            z_centers = sorted(z_centers, key=lambda x: z_maps[x[2]][x[0], x[1], 0], reverse=True)  # 0 for signal prob
             groups = [[center] for center in z_centers]
             res_centers, res_groups = collapse_centers(
-                z_centers, groups, dist_threshold=utils.collapse_dist_threshold_3d)
+                z_centers, groups, dist_threshold=utils.collapse_dist_threshold_3d
+            )
             res[t, c] = res_centers
     return res
 
 
 def get_cropped_images(images, bd):
-    '''
+    """
     Use numpy broadcast to get crop images along last dim axis.
     :param images: 3d or 2d images
     :param bd: a list of boundary min and max [min0, max0, min1, max1, ....]
     :return: a list of cropped images [image0, image1, image2, ...]
-    '''
+    """
     ind_tuple = []
     dims = int(np.array(bd).shape[0] / 2)
     for dim in range(dims):
@@ -684,17 +654,17 @@ def get_cropped_images(images, bd):
 
 
 def get_3d_mask_felzenszwalb(images):
-    '''
+    """
     3d version of felzenzwalb simply by apply felzenswalb to each
     2d image and make label in each 2d image unique.
     not a true "3d fel" segmentation.
     :param images:
     :return:
-    '''
+    """
     mask = []
     label_num = 0
     for z in range(images.shape[2]):
-        print('felzenszwalb handling %d of %d images' % (z, images.shape[2]))
+        print("felzenszwalb handling %d of %d images" % (z, images.shape[2]))
         image = images[:, :, z]
         z_mask = skimage.segmentation.felzenszwalb(image, scale=20)
         z_mask += label_num
@@ -705,11 +675,11 @@ def get_3d_mask_felzenszwalb(images):
 
 
 def find_boxes(images):
-    '''
+    """
     utility to segment and label images
     :param images:
     :return: 3d boundaries and mask, mask: same shape as images
-    '''
+    """
     assert len(images.shape) == 3
     n_segments = 100
     knn_input_images = images.reshape(list(images.shape) + [1])
@@ -720,11 +690,11 @@ def find_boxes(images):
     mask = get_3d_mask_felzenszwalb(images)
     # mask = skimage.segmentation.watershed(images)
     labels = set(mask.flatten())
-    print('segmentation found %d segments' % len(labels))
+    print("segmentation found %d segments" % len(labels))
     # print('mask shape:', mask.shape)
     bds = find_boxes_from_mask(mask)
     bds = filter_cell_boxes(bds)
-    print('segmentation found %d segments after filtering' % len(bds))
+    print("segmentation found %d segments after filtering" % len(bds))
     return bds, mask
 
 
@@ -738,10 +708,10 @@ def get_all_cropped_images(images, bds):
 
 
 def generate_crops(images):
-    '''
+    """
     images: 3d images (x, y, z), 1 channel
     return: a list of cropped 3d images, bds, 3d_mask
-    '''
+    """
 
     bds, mask = find_boxes(images)
     cropped_images_list = get_all_cropped_images(images, bds)
@@ -749,12 +719,19 @@ def generate_crops(images):
 
 
 def max_project_images_2d(images):
-    '''
+    """
     input: images: t x z x c x X x y
     return: t x c x X x Y
-    '''
+    """
     ts, zs, cs, xs, ys = images.shape
-    projection = np.zeros((ts, cs, xs, ys,))
+    projection = np.zeros(
+        (
+            ts,
+            cs,
+            xs,
+            ys,
+        )
+    )
     for t in range(ts):
         for c in range(cs):
             images_3d = images[t, :, c, :, :]
@@ -763,10 +740,10 @@ def max_project_images_2d(images):
 
 
 def max_project_images_xyz(images):
-    '''
+    """
     :param images:X x Y x Z
     :return: X x Y projection
-    '''
+    """
     projection = np.max(images, axis=2)
     return projection
 
@@ -803,12 +780,10 @@ def find_signal_directly_in_prob_map(prob_map):
     if len(prob_map.shape) != 2:
         assert False
     prob_map[prob_map < 0.5] = 0
-    coords = skimage.feature.peak_local_max(
-        prob_map, min_distance=utils.collapse_dist_threshold, indices=True)
+    coords = skimage.feature.peak_local_max(prob_map, min_distance=utils.collapse_dist_threshold, indices=True)
     coords = sorted(coords, key=lambda x: prob_map[x[0], x[1]], reverse=True)
     groups = [[center] for center in coords]
-    coords, groups = collapse_centers(
-        coords, groups, dist_threshold=utils.collapse_dist_threshold)
+    coords, groups = collapse_centers(coords, groups, dist_threshold=utils.collapse_dist_threshold)
     return coords
 
 
@@ -823,23 +798,19 @@ def find_cells_directly_in_tzc_prob_map(tzc_map):
     res_regions = {}
     res_label_masks = {}
     for t, z, c in tzc_map:
-        res_label_masks[t, z, c], res_regions[t, z, c] = find_cells_directly_in_prob_map(
-            tzc_map[t, z, c][..., 2])
+        res_label_masks[t, z, c], res_regions[t, z, c] = find_cells_directly_in_prob_map(tzc_map[t, z, c][..., 2])
 
     return res_label_masks, res_regions
 
 
-def segment_image_to_small_pieces(image, sh, sw,
-                                  return_offset=False,
-                                  start_h_offset=0,
-                                  start_w_offset=0):
-    '''
+def segment_image_to_small_pieces(image, sh, sw, return_offset=False, start_h_offset=0, start_w_offset=0):
+    """
 
     :param image:
     :param h: smaller h expected
     :param w:
     :return: offset: offset in original image space
-    '''
+    """
     h, w = image.shape[:2]
     res = []
     offsets = []
@@ -849,7 +820,7 @@ def segment_image_to_small_pieces(image, sh, sw,
         for j in range(start_w_offset, w, sw):
 
             if i + sh <= h and j + sw <= w:
-                res.append(image[i:i + sh, j:j + sw, ...])
+                res.append(image[i : i + sh, j : j + sw, ...])
                 offsets.append([i, j])
             else:
                 h_lb, h_ub, w_lb, w_ub = i, i + sh, j, j + sw
@@ -873,12 +844,12 @@ def segment_images_to_small_pieces(images, sh, sw, return_offset=False):
     for i in range(len(images)):
         # print(images.shape)
         if not return_offset:
-            smaller_images = segment_image_to_small_pieces(
-                images[i, ...], sh, sw, return_offset=return_offset)
+            smaller_images = segment_image_to_small_pieces(images[i, ...], sh, sw, return_offset=return_offset)
             res.extend(smaller_images)
         else:
             smaller_images, smaller_offsets = segment_image_to_small_pieces(
-                images[i, ...], sh, sw, return_offset=return_offset)
+                images[i, ...], sh, sw, return_offset=return_offset
+            )
             res.extend(smaller_images)
             offsets.append(smaller_offsets)
 
@@ -888,9 +859,9 @@ def segment_images_to_small_pieces(images, sh, sw, return_offset=False):
 
 
 def map_single_frame_signal_coord_to_cells(signal_coord, cur_t, cell_mappings):
-    '''
+    """
     returns: cell id, time at which this cell (nearest)
-    '''
+    """
     for t in range(cur_t, -1, -1):
         cell_map = cell_mappings[t]
         for cell_id in cell_map:
@@ -909,24 +880,23 @@ def map_signal_ids_to_cells(signal_mappings, cell_mappings):
         t_trackId2cell.append({})
         for signal_id in signal_map:
             coord = signal_map[signal_id]
-            cell = map_single_frame_signal_coord_to_cells(
-                coord, t, cell_mappings)
+            cell = map_single_frame_signal_coord_to_cells(coord, t, cell_mappings)
             t_trackId2cell[t][signal_id] = cell
     return t_trackId2cell
 
 
 def normalize_images(Y):
-    '''
+    """
     :param Y: images, N x w x h x n_class
     :return: a normalized version of Y
-    '''
+    """
     Y = np.array(Y)
     res = []
     channel_num = Y.shape[-1]
     for i in range(len(Y)):
         y = Y[i]
         # normalize channels separately
-        y_re = y.reshape((-1, y.shape[-1]), order='F')
+        y_re = y.reshape((-1, y.shape[-1]), order="F")
         mean = np.mean(y_re, axis=0)
         std = np.std(y_re, axis=0)
         y = (y - mean) / std
@@ -944,9 +914,8 @@ def resize_image_to_2_powers(image):
 def get_CNN_regression_mask(image, relu_edt=False):
     normalized_image = normalize_images([image])[0]
     resized_img = resize_image_to_2_powers(normalized_image)
-    predicted_mask = config.model.predict(
-        np.array([resized_img[..., np.newaxis]]), batch_size=1)[0]
-    print('predicted map shape:', predicted_mask.shape)
+    predicted_mask = config.model.predict(np.array([resized_img[..., np.newaxis]]), batch_size=1)[0]
+    print("predicted map shape:", predicted_mask.shape)
     predicted_mask = predicted_mask.reshape(predicted_mask.shape[:-1])
     predicted_mask = skimage.transform.resize(predicted_mask, image.shape)
     # try old felzenswalb
@@ -959,43 +928,35 @@ def get_CNN_regression_mask(image, relu_edt=False):
     else:
         possible_cell_mask = predicted_mask
         edt_dist = predicted_mask
-    markers = skimage.feature\
-                     .peak_local_max(edt_dist,
-                                     min_distance=20,
-                                     threshold_abs=3,
-                                     indices=False)
+    markers = skimage.feature.peak_local_max(edt_dist, min_distance=20, threshold_abs=3, indices=False)
     markers = ndi.label(markers)[0]
-    watershed_mask = skimage.segmentation\
-                            .watershed(-edt_dist,
-                                       markers=markers,
-                                       mask=possible_cell_mask)
+    watershed_mask = skimage.segmentation.watershed(-edt_dist, markers=markers, mask=possible_cell_mask)
 
     # simple visualization check
     # utils.show_images([image, normalized_image, resized_img, predicted_mask, mask, possible_cell_mask, watershed_mask])
     return watershed_mask
 
 
-def find_cells_directly_in_max_projected_nd2(
-        nd2_path, save_dir='./test_figs', return_masks=False):
-    '''
+def find_cells_directly_in_max_projected_nd2(nd2_path, save_dir="./test_figs", return_masks=False):
+    """
     :param nd2_path: target nd2 file to process.
     :param save_dir: directory for saving figures
     :return: a dictionary: from (t, c) to a list of regions in specific time and channel
-    '''
+    """
     utils.make_dir(save_dir, abort=False)
     images = utils.ND2Reader(nd2_path)
-    z_levels = images.metadata['z_levels']
-    frames = images.metadata['frames']
+    z_levels = images.metadata["z_levels"]
+    frames = images.metadata["frames"]
     t_num = len(frames)
-    channel_num = len(images.metadata['channels'])
+    channel_num = len(images.metadata["channels"])
     tc_projections = {}
     tc_masks = {}
     tc_regions = {}
     utils.make_dir(save_dir, abort=False)
     for c in range(channel_num):
         for t in frames:
-            mask_path = os.path.join(save_dir, 'C%d_T%d_mask' % (c, t))
-            print('channel:', c, t, "/", len(frames))
+            mask_path = os.path.join(save_dir, "C%d_T%d_mask" % (c, t))
+            print("channel:", c, t, "/", len(frames))
             images = utils.read_nd2_along_z(nd2_path, c, t)
             # print('test images shape:', images.shape)
             projection = max_project_images_xyz(images)
@@ -1005,25 +966,23 @@ def find_cells_directly_in_max_projected_nd2(
             mask = None
             if os.path.exists(mask_path):
                 mask = utils.read_mask(mask_path)
-                print('using existing mask')
+                print("using existing mask")
             else:
                 mask = get_CNN_regression_mask(projection)
                 # mask = skimage.segmentation.felzenszwalb(projection, scale=3, min_size=utils.min_cell_area)
                 # mask = skimage.segmentation.quickshift(projection)
             tc_masks[t, c] = mask
-            regions = skimage.measure.regionprops(
-                mask, intensity_image=projection)
-            regions = filter_regions_by_area(
-                regions, min_cell_area, max_cell_area)
+            regions = skimage.measure.regionprops(mask, intensity_image=projection)
+            regions = filter_regions_by_area(regions, min_cell_area, max_cell_area)
             tc_regions[t, c] = regions
 
             # save masks if needed
             fig, axes = plt.subplots(2)
             axes[0].imshow(projection)
             axes[1].imshow(mask)
-            plt.suptitle('c=%d,t=%d' % (c, t))
+            plt.suptitle("c=%d,t=%d" % (c, t))
             # plt.show()
-            plt.savefig(os.path.join(save_dir, 'C%d_T%d_plot' % (c, t)))
+            plt.savefig(os.path.join(save_dir, "C%d_T%d_plot" % (c, t)))
             plt.close()
             utils.save_mask(mask, mask_path)
 
@@ -1039,7 +998,7 @@ def correct_tiling_gap(image, row_num=3, col_num=3):
     return bg_corrected_img
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # BGR order
     # boundary = [(0, 0, 100), (50, 50, 255)]
     # mask_edge_example(img_path, boundary`)

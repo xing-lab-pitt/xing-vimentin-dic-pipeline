@@ -24,19 +24,20 @@ from scipy.optimize import linear_sum_assignment
 from index import Indexes
 from scipy.stats import pearsonr
 from skimage.exposure import equalize_adapthist
+
 # this is faster than the one from lineage mapper,only with matrix calculation
 
 
 def compute_overlap_matrix(img_path, img_list, img_num_1, img_num_2):
-    frame_1 = imread(img_path + '/' + img_list[img_num_1 - 1])
-    frame_2 = imread(img_path + '/' + img_list[img_num_2 - 1])
+    frame_1 = imread(img_path + "/" + img_list[img_num_1 - 1])
+    frame_2 = imread(img_path + "/" + img_list[img_num_2 - 1])
     nb_cell_1 = np.amax(frame_1)
     nb_cell_2 = np.amax(frame_2)
 
     frame_overlap = np.zeros((nb_cell_1, nb_cell_2))
     for obj_idx1 in range(nb_cell_1):
         obj_num1 = obj_idx1 + 1
-        sc_img = (frame_1 == obj_num1)
+        sc_img = frame_1 == obj_num1
         ol_judge = np.logical_and(sc_img, frame_2)
         ol_value = np.multiply(ol_judge, frame_2)
         ol_obj2 = np.unique(ol_value).tolist()
@@ -49,25 +50,21 @@ def compute_overlap_matrix(img_path, img_list, img_num_1, img_num_2):
                 frame_overlap[obj_idx1][obj_idx2] = ol_area
 
     return frame_overlap
+
+
 # compute relative overlap of two objects in different images
 
 
-def compute_overlap_pair(
-        img_path,
-        img_list,
-        img_num_1,
-        obj_num_1,
-        img_num_2,
-        obj_num_2):
-    frame_1 = imread(img_path + '/' + img_list[img_num_1 - 1])
-    frame_2 = imread(img_path + '/' + img_list[img_num_2 - 1])
+def compute_overlap_pair(img_path, img_list, img_num_1, obj_num_1, img_num_2, obj_num_2):
+    frame_1 = imread(img_path + "/" + img_list[img_num_1 - 1])
+    frame_2 = imread(img_path + "/" + img_list[img_num_2 - 1])
     nb_cell_1 = np.amax(frame_1)
     nb_cell_2 = np.amax(frame_2)
 
     target_overlap = np.zeros(nb_cell_2)
     source_overlap = np.zeros(nb_cell_1)
 
-    sc_img1 = (frame_1 == obj_num_1)
+    sc_img1 = frame_1 == obj_num_1
     obj1_area = np.sum(sc_img1)
     ol_judge = np.logical_and(sc_img1, frame_2)
     ol_value = np.multiply(ol_judge, frame_2)
@@ -78,7 +75,7 @@ def compute_overlap_pair(
         tar_idx = tar_obj - 1
         target_overlap[tar_idx] = ol_area / obj1_area
 
-    sc_img2 = (frame_2 == obj_num_2)
+    sc_img2 = frame_2 == obj_num_2
     obj2_area = np.sum(sc_img2)
     ol_judge = np.logical_and(sc_img2, frame_1)
     ol_value = np.multiply(ol_judge, frame_1)
@@ -94,20 +91,15 @@ def compute_overlap_pair(
 
 # compute relative overlap of 1 objects in another image
 # compute overlap of an object in another image
-def compute_overlap_single(
-        img_path,
-        img_list,
-        img_num_1,
-        obj_num_1,
-        img_num_2):
-    frame_1 = imread(img_path + '/' + img_list[img_num_1 - 1])
-    frame_2 = imread(img_path + '/' + img_list[img_num_2 - 1])
+def compute_overlap_single(img_path, img_list, img_num_1, obj_num_1, img_num_2):
+    frame_1 = imread(img_path + "/" + img_list[img_num_1 - 1])
+    frame_2 = imread(img_path + "/" + img_list[img_num_2 - 1])
     nb_cell_1 = np.amax(frame_1)
     nb_cell_2 = np.amax(frame_2)
 
     target_overlap = np.zeros(nb_cell_2)
 
-    sc_img1 = (frame_1 == obj_num_1)
+    sc_img1 = frame_1 == obj_num_1
     obj_area = np.sum(sc_img1)
 
     ol_judge = np.logical_and(sc_img1, frame_2)
@@ -120,20 +112,20 @@ def compute_overlap_single(
         target_overlap[tar_idx] = ol_area / obj_area
     return target_overlap
 
+
 # for relabel all traj based on traj start time
 
 
 def relabel_traj(df):
-    traj_labels = df['Cell_TrackObjects_Label'].values
+    traj_labels = df["Cell_TrackObjects_Label"].values
     traj_labels = np.sort(np.unique(traj_labels[traj_labels > 0]))
     traj_quan = len(traj_labels)  # the quantity of trajectories
-    print('traj quantity', traj_quan)
+    print("traj quantity", traj_quan)
     # -------------relabel all traj from 1,sort base on start time of each traj
     traj_label_st = []  # record traj start time and traj label
     for i in range(traj_quan):
         cur_traj_label = traj_labels[i]
-        traj_st = np.asscalar(
-            df.loc[df['Cell_TrackObjects_Label'] == cur_traj_label, 'ImageNumber'].values[0])
+        traj_st = np.asscalar(df.loc[df["Cell_TrackObjects_Label"] == cur_traj_label, "ImageNumber"].values[0])
         traj_label_st.append([traj_st, cur_traj_label])
     traj_label_st = np.array(traj_label_st)
     traj_label_st = traj_label_st[traj_label_st[:, 0].argsort()]
@@ -142,21 +134,19 @@ def relabel_traj(df):
     df_relabel = df.copy()
     for traj_i in range(traj_quan):
         cur_traj_label = traj_label_st[traj_i, 1]
-        cur_traj_inds = df[df['Cell_TrackObjects_Label']
-                           == cur_traj_label].index
-        df_relabel.loc[cur_traj_inds,
-                       'Cell_TrackObjects_Label'] = int(traj_i + 1)
+        cur_traj_inds = df[df["Cell_TrackObjects_Label"] == cur_traj_label].index
+        df_relabel.loc[cur_traj_inds, "Cell_TrackObjects_Label"] = int(traj_i + 1)
     return df_relabel
 
 
 def generate_traj_seri(df):
-    t_span = max(df['ImageNumber'])
+    t_span = max(df["ImageNumber"])
     # -------------record img_num and obj_num(or idx_num in Per_Object) in all traj into one table
     # label=row number+1
-    traj_label = df['Cell_TrackObjects_Label'].values
+    traj_label = df["Cell_TrackObjects_Label"].values
     traj_label = np.sort(np.unique(traj_label[traj_label > 0]))
     traj_quan = len(traj_label)  # the quantity of trajectories
-    print('traj quantity', traj_quan)
+    print("traj quantity", traj_quan)
 
     t_col = []
     for i in range(t_span):
@@ -172,29 +162,30 @@ def generate_traj_seri(df):
     for traj_i in range(traj_quan):
         cur_traj_label = traj_label[traj_i]
         # ----find all the index that have the same label(in the same trajectory)
-        traj_idx_list = df[df['Cell_TrackObjects_Label']
-                           == int(cur_traj_label)].index.tolist()
+        traj_idx_list = df[df["Cell_TrackObjects_Label"] == int(cur_traj_label)].index.tolist()
         for obj_idx in traj_idx_list:
-            time_i = df['ImageNumber'][obj_idx]
-            traj_seri_self[str(time_i)][traj_i] = df['ObjectNumber'][obj_idx]
+            time_i = df["ImageNumber"][obj_idx]
+            traj_seri_self[str(time_i)][traj_i] = df["ObjectNumber"][obj_idx]
             traj_idx_seri_self[str(time_i)][traj_i] = obj_idx
     return traj_seri_self, traj_idx_seri_self
 
 
 # return numpy record of each traj start and traj end. [img_num obj_num]
 def record_traj_start_end(df):
-    traj_labels = df['Cell_TrackObjects_Label'].values
+    traj_labels = df["Cell_TrackObjects_Label"].values
     traj_labels = np.sort(np.unique(traj_labels[traj_labels > 0]))
     traj_quan = len(traj_labels)  # the quantity of trajectories
-    print('traj quantity', traj_quan)
+    print("traj quantity", traj_quan)
 
     traj_start = []
     traj_end = []
     for cur_traj_label in traj_labels:
-        traj_start.append(df.loc[df['Cell_TrackObjects_Label'] == cur_traj_label, [
-                          'ImageNumber', 'ObjectNumber']].values[0].tolist())
-        traj_end.append(df.loc[df['Cell_TrackObjects_Label'] == cur_traj_label, [
-                        'ImageNumber', 'ObjectNumber']].values[-1].tolist())
+        traj_start.append(
+            df.loc[df["Cell_TrackObjects_Label"] == cur_traj_label, ["ImageNumber", "ObjectNumber"]].values[0].tolist()
+        )
+        traj_end.append(
+            df.loc[df["Cell_TrackObjects_Label"] == cur_traj_label, ["ImageNumber", "ObjectNumber"]].values[-1].tolist()
+        )
     traj_start = np.array(traj_start)
     traj_end = np.array(traj_end)
     return traj_start, traj_end
@@ -203,7 +194,7 @@ def record_traj_start_end(df):
 # judge Max OverLap type
 def judge_mol_type(frame_overlap, source_obj, target_obj):  # obj max_overlap relation judge
     rel_flag = 0
-    #print(source_obj.shape, source_obj.min(), source_obj.max(), source_obj)
+    # print(source_obj.shape, source_obj.min(), source_obj.max(), source_obj)
     to_ol_child = frame_overlap[source_obj - 1, :]
     if np.all(to_ol_child == 0):  # if source obj have no overlap child
         max_child_obj = 0
@@ -227,15 +218,7 @@ def judge_mol_type(frame_overlap, source_obj, target_obj):  # obj max_overlap re
     return rel_flag
 
 
-def search_false_link(
-        df,
-        relation_df,
-        frame_overlap,
-        img_num_1,
-        source_obj,
-        img_num_2,
-        target_obj,
-        rel_flag):
+def search_false_link(df, relation_df, frame_overlap, img_num_1, source_obj, img_num_2, target_obj, rel_flag):
     break_pair = []
     to_ol_child = frame_overlap[source_obj - 1, :]
     if np.all(to_ol_child == 0):  # if source obj have no overlap child
@@ -257,8 +240,10 @@ def search_false_link(
     # when rel_flag=1, max_parent_obj cannot be 0, because target obj already
     # overlap with source obj
     if rel_flag == 1:
-        max_parent_rel_child = relation_df.loc[(relation_df['image_number1'] == img_num_1) & (
-            relation_df['object_number1'] == max_parent_obj), 'object_number2'].values
+        max_parent_rel_child = relation_df.loc[
+            (relation_df["image_number1"] == img_num_1) & (relation_df["object_number1"] == max_parent_obj),
+            "object_number2",
+        ].values
         if max_parent_rel_child.size == 0:
             break_pair = [img_num_1, source_obj, img_num_2, target_obj]
 
@@ -270,8 +255,10 @@ def search_false_link(
     # max_child_obj cannot be 0, because source obj already overlap with target
 
     if rel_flag == 2:
-        max_child_rel_parent = relation_df.loc[(relation_df['image_number2'] == img_num_2) & (
-            relation_df['object_number2'] == max_child_obj), 'object_number1'].values
+        max_child_rel_parent = relation_df.loc[
+            (relation_df["image_number2"] == img_num_2) & (relation_df["object_number2"] == max_child_obj),
+            "object_number1",
+        ].values
         if max_child_rel_parent.size == 0:
             break_pair = [img_num_1, source_obj, img_num_2, target_obj]
 
@@ -283,71 +270,75 @@ def search_false_link(
 
     if rel_flag == 3:
         if max_parent_obj != 0 and max_child_obj == 0:
-            max_parent_rel_child = relation_df.loc[(relation_df['image_number1'] == img_num_1) & (
-                relation_df['object_number1'] == max_parent_obj), 'object_number2'].values
+            max_parent_rel_child = relation_df.loc[
+                (relation_df["image_number1"] == img_num_1) & (relation_df["object_number1"] == max_parent_obj),
+                "object_number2",
+            ].values
 
             if max_parent_rel_child.size == 0:
-                #print('max_child_obj=0','overseg broken')
+                # print('max_child_obj=0','overseg broken')
                 break_pair = [img_num_1, source_obj, img_num_2, target_obj]
             if max_parent_rel_child.size == 1:
                 max_parent_rel_child = int(np.asscalar(max_parent_rel_child))
-                flag3_1 = judge_mol_type(
-                    frame_overlap, max_parent_obj, max_parent_rel_child)
+                flag3_1 = judge_mol_type(frame_overlap, max_parent_obj, max_parent_rel_child)
                 # print('max_child_obj=0',flag1,max_parent_obj,max_parent_rel_child)
                 if flag3_1 == 3:
                     break_pair = [img_num_1, source_obj, img_num_2, target_obj]
 
         elif max_parent_obj == 0 and max_child_obj != 0:
-            max_child_rel_parent = relation_df.loc[(relation_df['image_number2'] == img_num_2) & (
-                relation_df['object_number2'] == max_child_obj), 'object_number1'].values
+            max_child_rel_parent = relation_df.loc[
+                (relation_df["image_number2"] == img_num_2) & (relation_df["object_number2"] == max_child_obj),
+                "object_number1",
+            ].values
             if max_child_rel_parent.size == 0:
                 # print('max_parent_obj=0,','traj_transfer')
                 break_pair = [img_num_1, source_obj, img_num_2, target_obj]
             if max_child_rel_parent.size == 1:
                 max_child_rel_parent = int(np.asscalar(max_child_rel_parent))
-                flag3_2 = judge_mol_type(
-                    frame_overlap, max_child_rel_parent, max_child_obj)
+                flag3_2 = judge_mol_type(frame_overlap, max_child_rel_parent, max_child_obj)
                 # print('max_parent_obj=0',flag2,max_child_rel_parent,max_child_obj)
                 if flag3_2 == 3:
                     break_pair = [img_num_1, source_obj, img_num_2, target_obj]
 
-
-#         elif max_parent_obj==0 and max_child_obj==0:
-#             print('cell move quickly in low density')
+        #         elif max_parent_obj==0 and max_child_obj==0:
+        #             print('cell move quickly in low density')
 
         elif max_parent_obj != 0 and max_child_obj != 0:
             flag_broken = 0
             flag_transfer = 0
             flag3_3 = 0
             flag3_4 = 0
-            max_parent_rel_child = relation_df.loc[(relation_df['image_number1'] == img_num_1) & (
-                relation_df['object_number1'] == max_parent_obj), 'object_number2'].values
+            max_parent_rel_child = relation_df.loc[
+                (relation_df["image_number1"] == img_num_1) & (relation_df["object_number1"] == max_parent_obj),
+                "object_number2",
+            ].values
 
             if max_parent_rel_child.size == 0:
-                #print('target_associate_pair,','overseg broken')
+                # print('target_associate_pair,','overseg broken')
                 flag_broken = 1
             if max_parent_rel_child.size == 1:
                 max_parent_rel_child = int(np.asscalar(max_parent_rel_child))
-                flag3_3 = judge_mol_type(
-                    frame_overlap, max_parent_obj, max_parent_rel_child)
+                flag3_3 = judge_mol_type(frame_overlap, max_parent_obj, max_parent_rel_child)
                 # print('target_associate_pair',flag3,max_parent_obj,max_parent_rel_child)
 
-            max_child_rel_parent = relation_df.loc[(relation_df['image_number2'] == img_num_2) & (
-                relation_df['object_number2'] == max_child_obj), 'object_number1'].values
+            max_child_rel_parent = relation_df.loc[
+                (relation_df["image_number2"] == img_num_2) & (relation_df["object_number2"] == max_child_obj),
+                "object_number1",
+            ].values
             if max_child_rel_parent.size == 0:
                 # print('source_associate_pair,','traj_transfer')
                 flag_transfer = 1
             if max_child_rel_parent.size == 1:
                 max_child_rel_parent = int(np.asscalar(max_child_rel_parent))
-                flag3_4 = judge_mol_type(
-                    frame_overlap, max_child_rel_parent, max_child_obj)
+                flag3_4 = judge_mol_type(frame_overlap, max_child_rel_parent, max_child_obj)
                 # print('source_associate_pair',flag4,max_child_rel_parent,max_child_obj)
 
-            if flag_broken == 1 or flag_transfer == 1 or flag3_3 == 3 or flag3_4 == 3 or (
-                    flag3_3 > 0 and flag3_4 > 0):
+            if flag_broken == 1 or flag_transfer == 1 or flag3_3 == 3 or flag3_4 == 3 or (flag3_3 > 0 and flag3_4 > 0):
                 break_pair = [img_num_1, source_obj, img_num_2, target_obj]
 
     return break_pair
+
+
 # def find_border_obj(img_path,img_list,img_num):
 #     border_obj=[]
 #     img=imread(img_path+'/'+img_list[img_num-1])
@@ -361,7 +352,7 @@ def search_false_link(
 
 def find_border_obj(img_path, img_list, img_num):
     border_obj = []
-    img = imread(img_path + '/' + img_list[img_num - 1])
+    img = imread(img_path + "/" + img_list[img_num - 1])
     img_h = img.shape[0]
     img_w = img.shape[1]
     rps = regionprops(img)
@@ -376,7 +367,7 @@ def find_border_obj(img_path, img_list, img_num):
 
 def judge_border(img_path, img_list, img_num, obj_num):
     border_flag = 0
-    img = imread(img_path + '/' + img_list[img_num - 1])
+    img = imread(img_path + "/" + img_list[img_num - 1])
     img_h = img.shape[0]
     img_w = img.shape[1]
     rps = regionprops(img)
@@ -389,62 +380,64 @@ def judge_border(img_path, img_list, img_num, obj_num):
 
 
 def break_link(df, relation_df, false_link):
-    max_label = max(df['Cell_TrackObjects_Label'])
+    max_label = max(df["Cell_TrackObjects_Label"])
     for img_num_1, source_obj, img_num_2, target_obj in false_link:
-        target_idx = np.asscalar(df[(df['ImageNumber'] == img_num_2) & (
-            df['ObjectNumber'] == target_obj)].index.values)
-        target_label = df.loc[target_idx, 'Cell_TrackObjects_Label']
+        target_idx = np.asscalar(df[(df["ImageNumber"] == img_num_2) & (df["ObjectNumber"] == target_obj)].index.values)
+        target_label = df.loc[target_idx, "Cell_TrackObjects_Label"]
 
-        if df.loc[target_idx, 'Cell_TrackObjects_LinkType'] > 0:
+        if df.loc[target_idx, "Cell_TrackObjects_LinkType"] > 0:
             max_label += 1
             # print(img_num_1,source_obj,img_num_2,target_obj,max_label)
-            df.at[target_idx, 'Cell_TrackObjects_ParentImageNumber'] = 0
-            df.at[target_idx, 'Cell_TrackObjects_ParentObjectNumber'] = 0
-            df.at[target_idx, 'Cell_TrackObjects_LinkType'] = 0
-            df.at[(df['Cell_TrackObjects_Label'] == target_label) & (
-                df['ImageNumber'] >= img_num_2), 'Cell_TrackObjects_Label'] = max_label
+            df.at[target_idx, "Cell_TrackObjects_ParentImageNumber"] = 0
+            df.at[target_idx, "Cell_TrackObjects_ParentObjectNumber"] = 0
+            df.at[target_idx, "Cell_TrackObjects_LinkType"] = 0
+            df.at[
+                (df["Cell_TrackObjects_Label"] == target_label) & (df["ImageNumber"] >= img_num_2),
+                "Cell_TrackObjects_Label",
+            ] = max_label
 
-            relation_df = relation_df.drop(relation_df[(relation_df['image_number1'] == img_num_1) & (
-                relation_df['object_number1'] == source_obj)].index)
+            relation_df = relation_df.drop(
+                relation_df[
+                    (relation_df["image_number1"] == img_num_1) & (relation_df["object_number1"] == source_obj)
+                ].index
+            )
     return df, relation_df
 
 
 # mark false_seg_object 'Cell_TrackObjects_Label' as -1
 def false_seg_mark(df, false_seg_obj):
     for img_num, obj_num in false_seg_obj:
-        df.loc[(df['ImageNumber'] == img_num) & (
-            df['ObjectNumber'] == obj_num), 'Cell_TrackObjects_Label'] = -1
+        df.loc[(df["ImageNumber"] == img_num) & (df["ObjectNumber"] == obj_num), "Cell_TrackObjects_Label"] = -1
     return df
+
 
 # connect link and re-order all traj labels
 
 
 def connect_link(df, relation_df, pairs_need_link):
     for parent_i_n, parent_o_n, child_i_n, child_o_n in pairs_need_link:
-        child_label = np.asscalar(df.loc[(df['ImageNumber'] == child_i_n) & (
-            df['ObjectNumber'] == child_o_n), 'Cell_TrackObjects_Label'].values)
+        child_label = np.asscalar(
+            df.loc[
+                (df["ImageNumber"] == child_i_n) & (df["ObjectNumber"] == child_o_n), "Cell_TrackObjects_Label"
+            ].values
+        )
         # ---------parent label should from the direct parent objects,because traj label may be updated(traj relink 2 or more times)
-        parent_label = np.asscalar(df.loc[(df['ImageNumber'] == parent_i_n) & (
-            df['ObjectNumber'] == parent_o_n), 'Cell_TrackObjects_Label'].values)
-        child_start_idx = df[(df['ImageNumber'] == child_i_n) & (
-            df['ObjectNumber'] == child_o_n)].index.values
-        df.at[child_start_idx, 'Cell_TrackObjects_Label'] = parent_label
-        df.at[child_start_idx, 'Cell_TrackObjects_ParentImageNumber'] = parent_i_n
-        df.at[child_start_idx, 'Cell_TrackObjects_ParentObjectNumber'] = parent_o_n
-        df.at[child_start_idx, 'Cell_TrackObjects_LinkType'] = 1
-        df.loc[df['Cell_TrackObjects_Label'] == child_label,
-               'Cell_TrackObjects_Label'] = parent_label
+        parent_label = np.asscalar(
+            df.loc[
+                (df["ImageNumber"] == parent_i_n) & (df["ObjectNumber"] == parent_o_n), "Cell_TrackObjects_Label"
+            ].values
+        )
+        child_start_idx = df[(df["ImageNumber"] == child_i_n) & (df["ObjectNumber"] == child_o_n)].index.values
+        df.at[child_start_idx, "Cell_TrackObjects_Label"] = parent_label
+        df.at[child_start_idx, "Cell_TrackObjects_ParentImageNumber"] = parent_i_n
+        df.at[child_start_idx, "Cell_TrackObjects_ParentObjectNumber"] = parent_o_n
+        df.at[child_start_idx, "Cell_TrackObjects_LinkType"] = 1
+        df.loc[df["Cell_TrackObjects_Label"] == child_label, "Cell_TrackObjects_Label"] = parent_label
 
-        new_rel = pd.DataFrame([[1,
-                                 parent_i_n,
-                                 parent_o_n,
-                                 child_i_n,
-                                 child_o_n]],
-                               columns=['relationship_type_id',
-                                        'image_number1',
-                                        'object_number1',
-                                        'image_number2',
-                                        'object_number2'])
+        new_rel = pd.DataFrame(
+            [[1, parent_i_n, parent_o_n, child_i_n, child_o_n]],
+            columns=["relationship_type_id", "image_number1", "object_number1", "image_number2", "object_number2"],
+        )
         # print(new_rel)
         relation_df = relation_df.append(new_rel, ignore_index=True)
         # print(relation_df.shape)
@@ -454,95 +447,68 @@ def connect_link(df, relation_df, pairs_need_link):
 
 # for judging the traj start part or end part is in am_record(apoptosis or
 # mitosis)
-def judge_traj_am(
-        df,
-        am_record,
-        img_num,
-        obj_num,
-        judge_later=True,
-        t_range=3):
-    t_span = max(df['ImageNumber'])
+def judge_traj_am(df, am_record, img_num, obj_num, judge_later=True, t_range=3):
+    t_span = max(df["ImageNumber"])
     obj_am_flag = 0
-    obj_traj_label = np.asscalar(df.loc[(df['ImageNumber'] == img_num) & (
-        df['ObjectNumber'] == obj_num)]['Cell_TrackObjects_Label'].values)
+    obj_traj_label = np.asscalar(
+        df.loc[(df["ImageNumber"] == img_num) & (df["ObjectNumber"] == obj_num)]["Cell_TrackObjects_Label"].values
+    )
     if judge_later:
-        ot_piece = df.loc[(df['ImageNumber'] >= img_num) & (df['ImageNumber'] < min(t_span, img_num + t_range)) & (
-            df['Cell_TrackObjects_Label'] == obj_traj_label), ['ImageNumber', 'ObjectNumber']].values.tolist()
+        ot_piece = df.loc[
+            (df["ImageNumber"] >= img_num)
+            & (df["ImageNumber"] < min(t_span, img_num + t_range))
+            & (df["Cell_TrackObjects_Label"] == obj_traj_label),
+            ["ImageNumber", "ObjectNumber"],
+        ].values.tolist()
     else:
-        ot_piece = df.loc[(df['ImageNumber'] <= img_num) & (df['ImageNumber'] > max(0, img_num - t_range)) & (
-            df['Cell_TrackObjects_Label'] == obj_traj_label), ['ImageNumber', 'ObjectNumber']].values.tolist()
+        ot_piece = df.loc[
+            (df["ImageNumber"] <= img_num)
+            & (df["ImageNumber"] > max(0, img_num - t_range))
+            & (df["Cell_TrackObjects_Label"] == obj_traj_label),
+            ["ImageNumber", "ObjectNumber"],
+        ].values.tolist()
     # will return the am_flag of the last time point in t_range, the last time
     # point reflect more possible state:mitosis to apoptosis
     for ot_i_n, ot_o_n in ot_piece:
-        if ((am_record['ImageNumber'] == ot_i_n) & (
-                am_record['ObjectNumber'] == ot_o_n)).any():
-            obj_am_flag = np.asscalar(am_record.loc[(am_record['ImageNumber'] == ot_i_n) & (
-                am_record['ObjectNumber'] == ot_o_n), 'am_flag'].values)
+        if ((am_record["ImageNumber"] == ot_i_n) & (am_record["ObjectNumber"] == ot_o_n)).any():
+            obj_am_flag = np.asscalar(
+                am_record.loc[
+                    (am_record["ImageNumber"] == ot_i_n) & (am_record["ObjectNumber"] == ot_o_n), "am_flag"
+                ].values
+            )
     return obj_am_flag
 
 
 def judge_apoptosis_tracklet(df, am_record, img_num, obj_num):
     apo_flag = 0
-    cur_traj_label = np.asscalar(df.loc[(df['ImageNumber'] == img_num) & (
-        df['ObjectNumber'] == obj_num)]['Cell_TrackObjects_Label'].values)
-    cur_traj_end = df.loc[df['Cell_TrackObjects_Label'] == cur_traj_label, [
-        'ImageNumber', 'ObjectNumber']].values[-1]
+    cur_traj_label = np.asscalar(
+        df.loc[(df["ImageNumber"] == img_num) & (df["ObjectNumber"] == obj_num)]["Cell_TrackObjects_Label"].values
+    )
+    cur_traj_end = df.loc[df["Cell_TrackObjects_Label"] == cur_traj_label, ["ImageNumber", "ObjectNumber"]].values[-1]
 
-    ot_size_arr = df.loc[df['Cell_TrackObjects_Label']
-                         == cur_traj_label, 'Cell_AreaShape_Area'].values
+    ot_size_arr = df.loc[df["Cell_TrackObjects_Label"] == cur_traj_label, "Cell_AreaShape_Area"].values
     ot_length = len(ot_size_arr)
     ot_mean_size = np.mean(ot_size_arr)
     sort_ot_size_arr = np.sort(ot_size_arr)
     if ot_length <= 3:
         # start_am_flag=judge_traj_am(df,am_record,img_num,obj_num,judge_later=True,t_range=1)
-        end_am_flag = judge_traj_am(
-            df,
-            am_record,
-            cur_traj_end[0],
-            cur_traj_end[1],
-            judge_later=False,
-            t_range=1)
+        end_am_flag = judge_traj_am(df, am_record, cur_traj_end[0], cur_traj_end[1], judge_later=False, t_range=1)
         if end_am_flag == 1:
             apo_flag = 1
     if ot_length > 3 and ot_length <= 5:
         # start_am_flag=judge_traj_am(df,am_record,img_num,obj_num,judge_later=True,t_range=2)
-        end_am_flag = judge_traj_am(
-            df,
-            am_record,
-            cur_traj_end[0],
-            cur_traj_end[1],
-            judge_later=False,
-            t_range=2)
+        end_am_flag = judge_traj_am(df, am_record, cur_traj_end[0], cur_traj_end[1], judge_later=False, t_range=2)
         if end_am_flag == 1:
             apo_flag = 1
     if ot_length > 5 and ot_length <= 10:
         # start_am_flag=judge_traj_am(df,am_record,img_num,obj_num,judge_later=True,t_range=3)
-        end_am_flag = judge_traj_am(
-            df,
-            am_record,
-            cur_traj_end[0],
-            cur_traj_end[1],
-            judge_later=False,
-            t_range=3)
+        end_am_flag = judge_traj_am(df, am_record, cur_traj_end[0], cur_traj_end[1], judge_later=False, t_range=3)
         if end_am_flag == 1:
             apo_flag = 1
     if ot_length > 10:
-        start_am_flag = judge_traj_am(
-            df,
-            am_record,
-            img_num,
-            obj_num,
-            judge_later=True,
-            t_range=5)
-        end_am_flag = judge_traj_am(
-            df,
-            am_record,
-            cur_traj_end[0],
-            cur_traj_end[1],
-            judge_later=False,
-            t_range=5)
-        size_variation = np.mean(
-            sort_ot_size_arr[ot_length - 5:ot_length]) / np.mean(sort_ot_size_arr[:5])
+        start_am_flag = judge_traj_am(df, am_record, img_num, obj_num, judge_later=True, t_range=5)
+        end_am_flag = judge_traj_am(df, am_record, cur_traj_end[0], cur_traj_end[1], judge_later=False, t_range=5)
+        size_variation = np.mean(sort_ot_size_arr[ot_length - 5 : ot_length]) / np.mean(sort_ot_size_arr[:5])
         if start_am_flag == 1 and end_am_flag == 1 and size_variation < 2:
             apo_flag = 1
 
@@ -580,10 +546,10 @@ def judge_apoptosis_tracklet(df, am_record, img_num, obj_num):
 
 # return numpy record of each traj start and traj end. [img_num obj_num]
 def traj_start_end_info(df):
-    traj_labels = df['Cell_TrackObjects_Label'].values
+    traj_labels = df["Cell_TrackObjects_Label"].values
     traj_labels = np.sort(np.unique(traj_labels[traj_labels > 0]))
     traj_quan = len(traj_labels)  # the quantity of trajectories
-    print('traj quantity', traj_quan)
+    print("traj quantity", traj_quan)
 
     traj_start = []
     traj_start_xy = []
@@ -592,18 +558,32 @@ def traj_start_end_info(df):
     traj_end_xy = []
     traj_end_area = []
     for cur_traj_label in traj_labels:
-        traj_start.append(df.loc[df['Cell_TrackObjects_Label'] == cur_traj_label, [
-                          'ImageNumber', 'ObjectNumber']].values[0].tolist())
-        traj_end.append(df.loc[df['Cell_TrackObjects_Label'] == cur_traj_label, [
-                        'ImageNumber', 'ObjectNumber']].values[-1].tolist())
-        traj_start_xy.append(df.loc[df['Cell_TrackObjects_Label'] == cur_traj_label, [
-                             'Cell_AreaShape_Center_X', 'Cell_AreaShape_Center_Y']].values[0].tolist())
-        traj_end_xy.append(df.loc[df['Cell_TrackObjects_Label'] == cur_traj_label, [
-                           'Cell_AreaShape_Center_X', 'Cell_AreaShape_Center_Y']].values[-1].tolist())
-        traj_start_area.append(df.loc[df['Cell_TrackObjects_Label'] ==
-                                      cur_traj_label, 'Cell_AreaShape_Area'].values[0].tolist())
-        traj_end_area.append(df.loc[df['Cell_TrackObjects_Label'] ==
-                                    cur_traj_label, 'Cell_AreaShape_Area'].values[-1].tolist())
+        traj_start.append(
+            df.loc[df["Cell_TrackObjects_Label"] == cur_traj_label, ["ImageNumber", "ObjectNumber"]].values[0].tolist()
+        )
+        traj_end.append(
+            df.loc[df["Cell_TrackObjects_Label"] == cur_traj_label, ["ImageNumber", "ObjectNumber"]].values[-1].tolist()
+        )
+        traj_start_xy.append(
+            df.loc[
+                df["Cell_TrackObjects_Label"] == cur_traj_label, ["Cell_AreaShape_Center_X", "Cell_AreaShape_Center_Y"]
+            ]
+            .values[0]
+            .tolist()
+        )
+        traj_end_xy.append(
+            df.loc[
+                df["Cell_TrackObjects_Label"] == cur_traj_label, ["Cell_AreaShape_Center_X", "Cell_AreaShape_Center_Y"]
+            ]
+            .values[-1]
+            .tolist()
+        )
+        traj_start_area.append(
+            df.loc[df["Cell_TrackObjects_Label"] == cur_traj_label, "Cell_AreaShape_Area"].values[0].tolist()
+        )
+        traj_end_area.append(
+            df.loc[df["Cell_TrackObjects_Label"] == cur_traj_label, "Cell_AreaShape_Area"].values[-1].tolist()
+        )
     traj_start = np.array(traj_start)
     traj_end = np.array(traj_end)
     traj_start_xy = np.array(traj_start_xy)
@@ -619,14 +599,23 @@ def am_obj_info(am_record, df):
     am_xy = []
 
     for index, row in am_record.iterrows():
-        am_i_n = row['ImageNumber']
-        am_o_n = row['ObjectNumber']
+        am_i_n = row["ImageNumber"]
+        am_o_n = row["ObjectNumber"]
         am_arr.append([am_i_n, am_o_n])
         # am_flag=row['am_flag']
-        am_area.append(df.loc[(df['ImageNumber'] == am_i_n) & (
-            df['ObjectNumber'] == am_o_n), 'Cell_AreaShape_Area'].values[0].tolist())
-        am_xy.append(df.loc[(df['ImageNumber'] == am_i_n) & (df['ObjectNumber'] == am_o_n), [
-                     'Cell_AreaShape_Center_X', 'Cell_AreaShape_Center_Y']].values[0].tolist())
+        am_area.append(
+            df.loc[(df["ImageNumber"] == am_i_n) & (df["ObjectNumber"] == am_o_n), "Cell_AreaShape_Area"]
+            .values[0]
+            .tolist()
+        )
+        am_xy.append(
+            df.loc[
+                (df["ImageNumber"] == am_i_n) & (df["ObjectNumber"] == am_o_n),
+                ["Cell_AreaShape_Center_X", "Cell_AreaShape_Center_Y"],
+            ]
+            .values[0]
+            .tolist()
+        )
 
     am_arr = np.array(am_arr)
     am_xy = np.array(am_xy)
@@ -634,20 +623,14 @@ def am_obj_info(am_record, df):
     return am_arr, am_xy, am_area
 
 
-def compute_specific_overlap(
-        img_path,
-        img_list,
-        img_num_1,
-        img_num_2,
-        obj_num_arr1,
-        obj_num_arr2):
-    frame_1 = imread(img_path + '/' + img_list[img_num_1 - 1])
-    frame_2 = imread(img_path + '/' + img_list[img_num_2 - 1])
+def compute_specific_overlap(img_path, img_list, img_num_1, img_num_2, obj_num_arr1, obj_num_arr2):
+    frame_1 = imread(img_path + "/" + img_list[img_num_1 - 1])
+    frame_2 = imread(img_path + "/" + img_list[img_num_2 - 1])
 
     frame_overlap = np.zeros((len(obj_num_arr1), len(obj_num_arr2)))
     for i in range(obj_num_arr1.shape[0]):
         obj_num1 = obj_num_arr1[i]
-        sc_img = (frame_1 == obj_num1)
+        sc_img = frame_1 == obj_num1
         ol_judge = np.logical_and(sc_img, frame_2)
         ol_value = np.multiply(ol_judge, frame_2)
         ol_obj2 = np.unique(ol_value).tolist()
@@ -662,15 +645,16 @@ def compute_specific_overlap(
 
 
 def compute_cost(
-        frame_overlap,
-        centroids_1,
-        centroids_2,
-        cells_size_1,
-        cells_size_2,
-        weight_overlap=1,
-        weight_centroids=1,
-        weight_size=0.5,
-        max_centroids_distance=150):
+    frame_overlap,
+    centroids_1,
+    centroids_2,
+    cells_size_1,
+    cells_size_2,
+    weight_overlap=1,
+    weight_centroids=1,
+    weight_size=0.5,
+    max_centroids_distance=150,
+):
 
     number_cells_1 = len(cells_size_1)
     number_cells_2 = len(cells_size_2)
@@ -684,20 +668,19 @@ def compute_cost(
 
     # Compute the centroid_term. delta_centroid is the distance between a
     # source cell centroid and a target cell centroid.
-    centroid_term = np.sqrt((M_centroids_1_X - M_centroids_2_X)**2 +
-                            (M_centroids_1_Y - M_centroids_2_Y)**2) / max_centroids_distance
+    centroid_term = (
+        np.sqrt((M_centroids_1_X - M_centroids_2_X) ** 2 + (M_centroids_1_Y - M_centroids_2_Y) ** 2)
+        / max_centroids_distance
+    )
 
     # Compute the overlap_term
-    overlap_term = 1 - (frame_overlap / (2 * M_cells_size_1) +
-                        frame_overlap / (2 * M_cells_size_2))
+    overlap_term = 1 - (frame_overlap / (2 * M_cells_size_1) + frame_overlap / (2 * M_cells_size_2))
 
     # Compute the size_term
-    size_term = np.absolute(M_cells_size_1 - M_cells_size_2) / \
-        np.maximum(M_cells_size_1, M_cells_size_2)
+    size_term = np.absolute(M_cells_size_1 - M_cells_size_2) / np.maximum(M_cells_size_1, M_cells_size_2)
     # print(centroid_term,overlap_term,size_term)
     # Compute the cost
-    frame_cost = weight_overlap * overlap_term + \
-        weight_centroids * centroid_term + weight_size * size_term
+    frame_cost = weight_overlap * overlap_term + weight_centroids * centroid_term + weight_size * size_term
 
     # Set to nan the invalid track costs
     frame_cost[centroid_term > 1] = 1e100
@@ -718,29 +701,22 @@ def cal_am_link_pairs(img_num, seg_path, seg_img_list):
     xy_arr2 = am_xy[mask2]
     area_arr1 = am_area[mask1]
     area_arr2 = am_area[mask2]
-    frame_overlap = compute_specific_overlap(
-        seg_path, seg_img_list, img_num_1, img_num_2, o_n_arr1, o_n_arr2)
-    frame_cost = compute_cost(
-        frame_overlap,
-        xy_arr1,
-        xy_arr2,
-        area_arr1,
-        area_arr2)
+    frame_overlap = compute_specific_overlap(seg_path, seg_img_list, img_num_1, img_num_2, o_n_arr1, o_n_arr2)
+    frame_cost = compute_cost(frame_overlap, xy_arr1, xy_arr2, area_arr1, area_arr2)
     row_ind, col_ind = linear_sum_assignment(frame_cost)
     for r, c in zip(row_ind, col_ind):
         if frame_cost[r, c] != 1e100:
-            am_link_pairs.append(
-                [img_num_1, o_n_arr1[r], img_num_2, o_n_arr2[c]])
+            am_link_pairs.append([img_num_1, o_n_arr1[r], img_num_2, o_n_arr2[c]])
     return am_link_pairs
 
 
 def find_am_sisters(F, mitosis_max_distance=50, size_simi_thres=0.7):
-    '''Compute scores for matching a parent to two daughters
+    """Compute scores for matching a parent to two daughters
 
     F - an N x 5 (or more) array x,y,img_num,obj_num,area
 
 
-    '''
+    """
 
     X = 0
 
@@ -796,11 +772,14 @@ def find_am_sisters(F, mitosis_max_distance=50, size_simi_thres=0.7):
     i, j, dmax = i[size_mask], j[size_mask], dmax[size_mask]
     return np.column_stack((F[i, 2:4], F[j, 2:4]))
 
+
 # -------calculate the cell fusion -----------------------
 
 
 def cal_cell_fusion(frame_overlap, img_num_1, img_num_2, nb_cell_1, nb_cell_2):
-    prefuse_group = []  # each element is a list include all prefuse cells in a fuse event, corresponding to postfuse_cells
+    prefuse_group = (
+        []
+    )  # each element is a list include all prefuse cells in a fuse event, corresponding to postfuse_cells
     postfuse_cells = []  # include: img_num,obj_num
     frame_fusion = np.zeros(frame_overlap.shape)
     for source_o_n in range(1, nb_cell_1 + 1):
@@ -829,11 +808,11 @@ def cal_cell_fusion(frame_overlap, img_num_1, img_num_2, nb_cell_1, nb_cell_2):
         frame_fusion_i = frame_fusion[:, np.where(S >= 2)[0][i]]
 
         for r in range(len(np.where(frame_fusion_i == 1)[0])):
-            #fuse_pairs.append([img_num_1,np.where(frame_fusion_i==1)[0][r]+1,img_num_2,np.where(S >= 2)[0][i]+1])
-            f_group.append([img_num_1, np.where(
-                frame_fusion_i == 1)[0][r] + 1])
+            # fuse_pairs.append([img_num_1,np.where(frame_fusion_i==1)[0][r]+1,img_num_2,np.where(S >= 2)[0][i]+1])
+            f_group.append([img_num_1, np.where(frame_fusion_i == 1)[0][r] + 1])
         prefuse_group.append(f_group)
     return postfuse_cells, prefuse_group
+
 
 # ------------------------------calculate cell split --------------------------
 # transpose the frame_overlap matrix, use the algorithm used in
@@ -872,7 +851,7 @@ def cal_cell_split(frame_overlap, img_num_1, img_num_2, nb_cell_1, nb_cell_2):
         presplit_cells.append([img_num_1, np.where(S >= 2)[0][i] + 1])
         frame_split_i = frame_split[:, np.where(S >= 2)[0][i]]
         for r in range(len(np.where(frame_split_i == 1)[0])):
-            #split_pairs.append([img_num_1,np.where(S >= 2)[0][i]+1,img_num_2,np.where(frame_split_i==1)[0][r]+1])
+            # split_pairs.append([img_num_1,np.where(S >= 2)[0][i]+1,img_num_2,np.where(frame_split_i==1)[0][r]+1])
             s_group.append([img_num_2, np.where(frame_split_i == 1)[0][r] + 1])
         postsplit_group.append(s_group)
     return presplit_cells, postsplit_group
@@ -890,30 +869,40 @@ def find_mitosis_pairs_to_break(relation_df, candi_am_sisters, false_link):
         sis2_i_n = candi_am_sisters[i][2]
         sis2_o_n = candi_am_sisters[i][3]
 
-        if ((relation_df['image_number2'] == sis1_i_n) & (
-                relation_df['object_number2'] == sis1_o_n)).any():
-            rel_parent_i_n = np.asscalar(relation_df.loc[(relation_df['image_number2'] == sis1_i_n) & (
-                relation_df['object_number2'] == sis1_o_n), 'image_number1'].values)
-            rel_parent_o_n = np.asscalar(relation_df.loc[(relation_df['image_number2'] == sis1_i_n) & (
-                relation_df['object_number2'] == sis1_o_n), 'object_number1'].values)
-            rel_pairs.append(
-                [rel_parent_i_n, rel_parent_o_n, sis1_i_n, sis1_o_n])
-            if [rel_parent_i_n, rel_parent_o_n,
-                    sis1_i_n, sis1_o_n] in false_link:
+        if ((relation_df["image_number2"] == sis1_i_n) & (relation_df["object_number2"] == sis1_o_n)).any():
+            rel_parent_i_n = np.asscalar(
+                relation_df.loc[
+                    (relation_df["image_number2"] == sis1_i_n) & (relation_df["object_number2"] == sis1_o_n),
+                    "image_number1",
+                ].values
+            )
+            rel_parent_o_n = np.asscalar(
+                relation_df.loc[
+                    (relation_df["image_number2"] == sis1_i_n) & (relation_df["object_number2"] == sis1_o_n),
+                    "object_number1",
+                ].values
+            )
+            rel_pairs.append([rel_parent_i_n, rel_parent_o_n, sis1_i_n, sis1_o_n])
+            if [rel_parent_i_n, rel_parent_o_n, sis1_i_n, sis1_o_n] in false_link:
                 mis_link = 1
         else:
             mis_link = 1
 
-        if ((relation_df['image_number2'] == sis2_i_n) & (
-                relation_df['object_number2'] == sis2_o_n)).any():
-            rel_parent_i_n = np.asscalar(relation_df.loc[(relation_df['image_number2'] == sis2_i_n) & (
-                relation_df['object_number2'] == sis2_o_n), 'image_number1'].values)
-            rel_parent_o_n = np.asscalar(relation_df.loc[(relation_df['image_number2'] == sis2_i_n) & (
-                relation_df['object_number2'] == sis2_o_n), 'object_number1'].values)
-            rel_pairs.append(
-                [rel_parent_i_n, rel_parent_o_n, sis2_i_n, sis2_o_n])
-            if [rel_parent_i_n, rel_parent_o_n,
-                    sis2_i_n, sis2_o_n] in false_link:
+        if ((relation_df["image_number2"] == sis2_i_n) & (relation_df["object_number2"] == sis2_o_n)).any():
+            rel_parent_i_n = np.asscalar(
+                relation_df.loc[
+                    (relation_df["image_number2"] == sis2_i_n) & (relation_df["object_number2"] == sis2_o_n),
+                    "image_number1",
+                ].values
+            )
+            rel_parent_o_n = np.asscalar(
+                relation_df.loc[
+                    (relation_df["image_number2"] == sis2_i_n) & (relation_df["object_number2"] == sis2_o_n),
+                    "object_number1",
+                ].values
+            )
+            rel_pairs.append([rel_parent_i_n, rel_parent_o_n, sis2_i_n, sis2_o_n])
+            if [rel_parent_i_n, rel_parent_o_n, sis2_i_n, sis2_o_n] in false_link:
                 mis_link = 1
         else:
             mis_link = 1
@@ -926,17 +915,13 @@ def find_mitosis_pairs_to_break(relation_df, candi_am_sisters, false_link):
         del candi_am_sisters[i]
     return candi_am_sisters, mitosis_pairs_to_break
 
+
 # --------remove non-fuse pairs-------
 # if each fuse parent has rel-child in Per-Relationships and not in false
 # link or border obj, they are right link
 
 
-def find_fuse_pairs_to_break(
-        relation_df,
-        postfuse_cells,
-        prefuse_group,
-        false_link,
-        border_obj):
+def find_fuse_pairs_to_break(relation_df, postfuse_cells, prefuse_group, false_link, border_obj):
     nf_ind = []
     fuse_pairs_to_break = []
     fuse_pairs = []
@@ -951,12 +936,19 @@ def find_fuse_pairs_to_break(
         fc_o_n = postfuse_cells[i][1]
         if [fc_i_n, fc_o_n] in border_obj:
             border_count += 1
-        if ((relation_df['image_number2'] == fc_i_n) & (
-                relation_df['object_number2'] == fc_o_n)).any():
-            rel_parent_i_n = np.asscalar(relation_df.loc[(relation_df['image_number2'] == fc_i_n) & (
-                relation_df['object_number2'] == fc_o_n), 'image_number1'].values)
-            rel_parent_o_n = np.asscalar(relation_df.loc[(relation_df['image_number2'] == fc_i_n) & (
-                relation_df['object_number2'] == fc_o_n), 'object_number1'].values)
+        if ((relation_df["image_number2"] == fc_i_n) & (relation_df["object_number2"] == fc_o_n)).any():
+            rel_parent_i_n = np.asscalar(
+                relation_df.loc[
+                    (relation_df["image_number2"] == fc_i_n) & (relation_df["object_number2"] == fc_o_n),
+                    "image_number1",
+                ].values
+            )
+            rel_parent_o_n = np.asscalar(
+                relation_df.loc[
+                    (relation_df["image_number2"] == fc_i_n) & (relation_df["object_number2"] == fc_o_n),
+                    "object_number1",
+                ].values
+            )
             rel_pairs.append([rel_parent_i_n, rel_parent_o_n, fc_i_n, fc_o_n])
             if [rel_parent_i_n, rel_parent_o_n, fc_i_n, fc_o_n] in false_link:
                 mis_link = 1
@@ -970,16 +962,21 @@ def find_fuse_pairs_to_break(
                 border_count += 1
 
             f_pairs.append([fp_i_n, fp_o_n, fc_i_n, fc_o_n])
-            if ((relation_df['image_number1'] == fp_i_n) & (
-                    relation_df['object_number1'] == fp_o_n)).any():
-                rel_child_i_n = np.asscalar(relation_df.loc[(relation_df['image_number1'] == fp_i_n) & (
-                    relation_df['object_number1'] == fp_o_n), 'image_number2'].values)
-                rel_child_o_n = np.asscalar(relation_df.loc[(relation_df['image_number1'] == fp_i_n) & (
-                    relation_df['object_number1'] == fp_o_n), 'object_number2'].values)
-                rel_pairs.append(
-                    [fp_i_n, fp_o_n, rel_child_i_n, rel_child_o_n])
-                if [fp_i_n, fp_o_n, rel_child_i_n,
-                        rel_child_o_n] in false_link:
+            if ((relation_df["image_number1"] == fp_i_n) & (relation_df["object_number1"] == fp_o_n)).any():
+                rel_child_i_n = np.asscalar(
+                    relation_df.loc[
+                        (relation_df["image_number1"] == fp_i_n) & (relation_df["object_number1"] == fp_o_n),
+                        "image_number2",
+                    ].values
+                )
+                rel_child_o_n = np.asscalar(
+                    relation_df.loc[
+                        (relation_df["image_number1"] == fp_i_n) & (relation_df["object_number1"] == fp_o_n),
+                        "object_number2",
+                    ].values
+                )
+                rel_pairs.append([fp_i_n, fp_o_n, rel_child_i_n, rel_child_o_n])
+                if [fp_i_n, fp_o_n, rel_child_i_n, rel_child_o_n] in false_link:
                     mis_link = 1
             else:
                 mis_link = 1
@@ -989,8 +986,7 @@ def find_fuse_pairs_to_break(
             fuse_pairs_to_break.extend(rel_pairs)
             fuse_pairs.extend(f_pairs)
     if len(fuse_pairs_to_break) > 0:
-        fuse_pairs_to_break = np.unique(
-            np.asarray(fuse_pairs_to_break), axis=0).tolist()
+        fuse_pairs_to_break = np.unique(np.asarray(fuse_pairs_to_break), axis=0).tolist()
     for i in sorted(nf_ind, reverse=True):
         del postfuse_cells[i]
         del prefuse_group[i]
@@ -998,12 +994,7 @@ def find_fuse_pairs_to_break(
 
 
 # remove non-split pairs
-def find_split_pairs_to_break(
-        relation_df,
-        presplit_cells,
-        postsplit_group,
-        false_link,
-        border_obj):
+def find_split_pairs_to_break(relation_df, presplit_cells, postsplit_group, false_link, border_obj):
     ns_ind = []
     split_pairs_to_break = []
     split_pairs = []
@@ -1019,12 +1010,19 @@ def find_split_pairs_to_break(
         if [sp_i_n, sp_o_n] in border_obj:
             border_count += 1
 
-        if ((relation_df['image_number1'] == sp_i_n) & (
-                relation_df['object_number1'] == sp_o_n)).any():
-            rel_child_i_n = np.asscalar(relation_df.loc[(relation_df['image_number1'] == sp_i_n) & (
-                relation_df['object_number1'] == sp_o_n), 'image_number2'].values)
-            rel_child_o_n = np.asscalar(relation_df.loc[(relation_df['image_number1'] == sp_i_n) & (
-                relation_df['object_number1'] == sp_o_n), 'object_number2'].values)
+        if ((relation_df["image_number1"] == sp_i_n) & (relation_df["object_number1"] == sp_o_n)).any():
+            rel_child_i_n = np.asscalar(
+                relation_df.loc[
+                    (relation_df["image_number1"] == sp_i_n) & (relation_df["object_number1"] == sp_o_n),
+                    "image_number2",
+                ].values
+            )
+            rel_child_o_n = np.asscalar(
+                relation_df.loc[
+                    (relation_df["image_number1"] == sp_i_n) & (relation_df["object_number1"] == sp_o_n),
+                    "object_number2",
+                ].values
+            )
             rel_pairs.append([sp_i_n, sp_o_n, rel_child_i_n, rel_child_o_n])
             if [sp_i_n, sp_o_n, rel_child_i_n, rel_child_o_n] in false_link:
                 mis_link = 1
@@ -1037,16 +1035,21 @@ def find_split_pairs_to_break(
             if [sc_i_n, sc_o_n] in border_obj:
                 border_count += 1
             s_pairs.append([sp_i_n, sp_o_n, sc_i_n, sc_o_n])
-            if ((relation_df['image_number2'] == sc_i_n) & (
-                    relation_df['object_number2'] == sc_o_n)).any():
-                rel_parent_i_n = np.asscalar(relation_df.loc[(relation_df['image_number2'] == sc_i_n) & (
-                    relation_df['object_number2'] == sc_o_n), 'image_number1'].values)
-                rel_parent_o_n = np.asscalar(relation_df.loc[(relation_df['image_number2'] == sc_i_n) & (
-                    relation_df['object_number2'] == sc_o_n), 'object_number1'].values)
-                rel_pairs.append(
-                    [rel_parent_i_n, rel_parent_o_n, sc_i_n, sc_o_n])
-                if [rel_parent_i_n, rel_parent_o_n,
-                        sc_i_n, sc_o_n] in false_link:
+            if ((relation_df["image_number2"] == sc_i_n) & (relation_df["object_number2"] == sc_o_n)).any():
+                rel_parent_i_n = np.asscalar(
+                    relation_df.loc[
+                        (relation_df["image_number2"] == sc_i_n) & (relation_df["object_number2"] == sc_o_n),
+                        "image_number1",
+                    ].values
+                )
+                rel_parent_o_n = np.asscalar(
+                    relation_df.loc[
+                        (relation_df["image_number2"] == sc_i_n) & (relation_df["object_number2"] == sc_o_n),
+                        "object_number1",
+                    ].values
+                )
+                rel_pairs.append([rel_parent_i_n, rel_parent_o_n, sc_i_n, sc_o_n])
+                if [rel_parent_i_n, rel_parent_o_n, sc_i_n, sc_o_n] in false_link:
                     mis_link = 1
             else:
                 mis_link = 1
@@ -1056,12 +1059,12 @@ def find_split_pairs_to_break(
             split_pairs_to_break.extend(rel_pairs)
             split_pairs.extend(s_pairs)
     if len(split_pairs_to_break) > 0:
-        split_pairs_to_break = np.unique(
-            np.asarray(split_pairs_to_break), axis=0).tolist()
+        split_pairs_to_break = np.unique(np.asarray(split_pairs_to_break), axis=0).tolist()
     for i in sorted(ns_ind, reverse=True):
         del presplit_cells[i]
         del postsplit_group[i]
     return presplit_cells, postsplit_group, split_pairs, split_pairs_to_break
+
 
 # -------------judge fuse type-----------
 # two fuse types:
@@ -1071,14 +1074,7 @@ def find_split_pairs_to_break(
 # (2) one single cell and one fragment
 
 
-def judge_fuse_type(
-        df,
-        am_record,
-        fc_cell,
-        fp_group,
-        fc_prob,
-        fp_group_prob,
-        tracklet_len_thres=5):
+def judge_fuse_type(df, am_record, fc_cell, fp_group, fc_prob, fp_group_prob, tracklet_len_thres=5):
     false_label = []
     mitosis_fc_label = []
     mitosis_fp_label = []
@@ -1086,23 +1082,17 @@ def judge_fuse_type(
     mitosis_fp_group_xy = []
     mitosis_fuse_flag = 0
 
-    type_list = ['single', 'fragment', 'multi']
+    type_list = ["single", "fragment", "multi"]
 
     fc_i_n, fc_o_n = fc_cell[0], fc_cell[1]
     fc_sure = 0
 
-    fc_label = np.asscalar(df.loc[(df['ImageNumber'] == fc_i_n) & (
-        df['ObjectNumber'] == fc_o_n), 'Cell_TrackObjects_Label'].values)
-    fc_arr = df.loc[df['Cell_TrackObjects_Label']
-                    == fc_label, 'Cell_AreaShape_Area'].values
+    fc_label = np.asscalar(
+        df.loc[(df["ImageNumber"] == fc_i_n) & (df["ObjectNumber"] == fc_o_n), "Cell_TrackObjects_Label"].values
+    )
+    fc_arr = df.loc[df["Cell_TrackObjects_Label"] == fc_label, "Cell_AreaShape_Area"].values
     fc_traj_len = len(fc_arr)
-    fc_am_flag = judge_traj_am(
-        df,
-        am_record,
-        fc_i_n,
-        fc_o_n,
-        judge_later=True,
-        t_range=3)
+    fc_am_flag = judge_traj_am(df, am_record, fc_i_n, fc_o_n, judge_later=True, t_range=3)
 
     fc_prob[1] = 0  # impossible to be a fragment
     if fc_traj_len > tracklet_len_thres:
@@ -1124,25 +1114,26 @@ def judge_fuse_type(
     size_simi = 0
 
     for [fp_i_n, fp_o_n], fp_prob in zip(fp_group, fp_group_prob):
-        fp_label = np.asscalar(df.loc[(df['ImageNumber'] == fp_i_n) & (
-            df['ObjectNumber'] == fp_o_n), 'Cell_TrackObjects_Label'].values)
-        fp_arr = df.loc[df['Cell_TrackObjects_Label']
-                        == fp_label, 'Cell_AreaShape_Area'].values
-        fp_size = np.asscalar(df.loc[(df['ImageNumber'] == fp_i_n) & (
-            df['ObjectNumber'] == fp_o_n), 'Cell_AreaShape_Area'].values)
+        fp_label = np.asscalar(
+            df.loc[(df["ImageNumber"] == fp_i_n) & (df["ObjectNumber"] == fp_o_n), "Cell_TrackObjects_Label"].values
+        )
+        fp_arr = df.loc[df["Cell_TrackObjects_Label"] == fp_label, "Cell_AreaShape_Area"].values
+        fp_size = np.asscalar(
+            df.loc[(df["ImageNumber"] == fp_i_n) & (df["ObjectNumber"] == fp_o_n), "Cell_AreaShape_Area"].values
+        )
         # fp_ff=np.asscalar(df.loc[(df['ImageNumber']==fp_i_n)&(df['ObjectNumber']==fp_o_n)]['Cell_AreaShape_FormFactor'].values)
 
-        fp_xy = df.loc[(df['ImageNumber'] == fp_i_n) & (df['ObjectNumber'] == fp_o_n), [
-            'Cell_AreaShape_Center_X', 'Cell_AreaShape_Center_Y']].values[0].tolist()
+        fp_xy = (
+            df.loc[
+                (df["ImageNumber"] == fp_i_n) & (df["ObjectNumber"] == fp_o_n),
+                ["Cell_AreaShape_Center_X", "Cell_AreaShape_Center_Y"],
+            ]
+            .values[0]
+            .tolist()
+        )
         fp_traj_len = len(fp_arr)
         # fp_size=np.asscalar(df.loc[(df['ImageNumber']==fp_i_n)&(df['ObjectNumber']==fp_o_n),'Cell_AreaShape_Area'].values)
-        fp_am_flag = judge_traj_am(
-            df,
-            am_record,
-            fp_i_n,
-            fp_o_n,
-            judge_later=False,
-            t_range=3)
+        fp_am_flag = judge_traj_am(df, am_record, fp_i_n, fp_o_n, judge_later=False, t_range=3)
         fp_sure = 0
 
         fp_prob[2] = 0  # impossible to be a multi_cell
@@ -1171,8 +1162,7 @@ def judge_fuse_type(
     fp_group_prob = new_fp_group_prob
 
     if nb_fp == 2:
-        size_simi = 1 - abs(fp_group_size[0] - fp_group_size[1]) * \
-            1.0 / (fp_group_size[0] + fp_group_size[1])
+        size_simi = 1 - abs(fp_group_size[0] - fp_group_size[1]) * 1.0 / (fp_group_size[0] + fp_group_size[1])
         if sum(fp_group_am_flag) > 1 and size_simi > 0.8:
             mitosis_fuse_flag = 1
 
@@ -1182,12 +1172,12 @@ def judge_fuse_type(
         mitosis_fp_group = fp_group
         mitosis_fp_group_xy = fp_group_xy
 
-    if fc_type == 'single' and fp_group_type.count('single') <= 1:
+    if fc_type == "single" and fp_group_type.count("single") <= 1:
         for i in range(nb_fp):
-            if fp_group_type[i] == 'fragment':
+            if fp_group_type[i] == "fragment":
                 false_label.append(fp_group_label[i])
 
-    if fc_type == 'single' and fp_group_type.count('single') > 1:
+    if fc_type == "single" and fp_group_type.count("single") > 1:
         if fc_sure == 1 and fp_group_sure.count(1) < 1:
             for i in range(nb_fp):
                 false_label.append(fp_group_label[i])
@@ -1228,17 +1218,17 @@ def judge_fuse_type(
         if fc_sure == 0 and fp_group_sure.count(1) > 1:
             false_label.append(fc_label)
             for i in range(nb_fp):
-                if fp_group_type[i] == 'fragment':
+                if fp_group_type[i] == "fragment":
                     false_label.append(fp_group_label[i])
 
-    if fc_type == 'multi' and fp_group_type.count('single') > 1:
+    if fc_type == "multi" and fp_group_type.count("single") > 1:
         false_label.append(fc_label)
         for i in range(nb_fp):
-            if fp_group_type[i] == 'fragment':
+            if fp_group_type[i] == "fragment":
                 false_label.append(fp_group_label[i])
 
-    if fc_type == 'multi' and fp_group_type.count('single') <= 1:
-        print('uncertain')
+    if fc_type == "multi" and fp_group_type.count("single") <= 1:
+        print("uncertain")
         if fp_group_sure.count(1) == 1:
             false_label.append(fc_label)
             idx = fp_group_sure.index(1)
@@ -1250,7 +1240,16 @@ def judge_fuse_type(
             for i in range(nb_fp):
                 false_label.append(fp_group_label[i])
 
-    return false_label, mitosis_fc_label, mitosis_fp_label, mitosis_fp_group, mitosis_fp_group_xy, fc_type, fp_group_type
+    return (
+        false_label,
+        mitosis_fc_label,
+        mitosis_fp_label,
+        mitosis_fp_group,
+        mitosis_fp_group_xy,
+        fc_type,
+        fp_group_type,
+    )
+
 
 # -------------judge split type-----------
 # 4 split types:
@@ -1261,36 +1260,23 @@ def judge_fuse_type(
 # 3 cell mitosis
 
 
-def judge_split_type(
-        df,
-        am_record,
-        sp_cell,
-        sc_group,
-        sp_prob,
-        sc_group_prob,
-        tracklet_len_thres=5):
+def judge_split_type(df, am_record, sp_cell, sc_group, sp_prob, sc_group_prob, tracklet_len_thres=5):
     false_label = []
     candi_mitosis_label = []
     false_mitosis_obj = []
 
-    type_list = ['single', 'fragment', 'multi']
+    type_list = ["single", "fragment", "multi"]
     candi_mitosis_flag = 0
 
     sp_i_n, sp_o_n = sp_cell[0], sp_cell[1]
     sp_sure = 0
 
-    sp_label = np.asscalar(df.loc[(df['ImageNumber'] == sp_i_n) & (
-        df['ObjectNumber'] == sp_o_n), 'Cell_TrackObjects_Label'].values)
-    sp_arr = df.loc[df['Cell_TrackObjects_Label']
-                    == sp_label, 'Cell_AreaShape_Area'].values
+    sp_label = np.asscalar(
+        df.loc[(df["ImageNumber"] == sp_i_n) & (df["ObjectNumber"] == sp_o_n), "Cell_TrackObjects_Label"].values
+    )
+    sp_arr = df.loc[df["Cell_TrackObjects_Label"] == sp_label, "Cell_AreaShape_Area"].values
     sp_traj_len = len(sp_arr)
-    sp_am_flag = judge_traj_am(
-        df,
-        am_record,
-        sp_i_n,
-        sp_o_n,
-        judge_later=False,
-        t_range=3)
+    sp_am_flag = judge_traj_am(df, am_record, sp_i_n, sp_o_n, judge_later=False, t_range=3)
 
     sp_prob[1] = 0  # impossible to be a fragment
     if sp_traj_len > tracklet_len_thres:
@@ -1312,21 +1298,16 @@ def judge_split_type(
     size_simi = 0
 
     for [sc_i_n, sc_o_n], sc_prob in zip(sc_group, sc_group_prob):
-        sc_label = np.asscalar(df.loc[(df['ImageNumber'] == sc_i_n) & (
-            df['ObjectNumber'] == sc_o_n), 'Cell_TrackObjects_Label'].values)
-        sc_arr = df.loc[df['Cell_TrackObjects_Label']
-                        == sc_label, 'Cell_AreaShape_Area'].values
+        sc_label = np.asscalar(
+            df.loc[(df["ImageNumber"] == sc_i_n) & (df["ObjectNumber"] == sc_o_n), "Cell_TrackObjects_Label"].values
+        )
+        sc_arr = df.loc[df["Cell_TrackObjects_Label"] == sc_label, "Cell_AreaShape_Area"].values
         sc_traj_len = len(sc_arr)
-        sc_size = np.asscalar(df.loc[(df['ImageNumber'] == sc_i_n) & (
-            df['ObjectNumber'] == sc_o_n), 'Cell_AreaShape_Area'].values)
+        sc_size = np.asscalar(
+            df.loc[(df["ImageNumber"] == sc_i_n) & (df["ObjectNumber"] == sc_o_n), "Cell_AreaShape_Area"].values
+        )
 
-        sc_am_flag = judge_traj_am(
-            df,
-            am_record,
-            sc_i_n,
-            sc_o_n,
-            judge_later=True,
-            t_range=3)
+        sc_am_flag = judge_traj_am(df, am_record, sc_i_n, sc_o_n, judge_later=True, t_range=3)
         sc_sure = 0
 
         sc_prob[2] = 0  # impossible to be a multi_cell
@@ -1356,18 +1337,21 @@ def judge_split_type(
     sc_group_prob = new_sc_group_prob
     # if sp_am_flag==2 and ((sc_group_am_flag.count(0)==1 and size_simi>0.8)
     # or (sc_group_am_flag.count(0)==0 and nb_sc==2)):
-    if sp_am_flag == 2 or sum(sc_group_am_flag) > 0 or (
-            sp_traj_len > tracklet_len_thres and sum(sc_group_traj_len) == 2):
+    if (
+        sp_am_flag == 2
+        or sum(sc_group_am_flag) > 0
+        or (sp_traj_len > tracklet_len_thres and sum(sc_group_traj_len) == 2)
+    ):
         candi_mitosis_flag = 1
 
     if candi_mitosis_flag == 0:
-        #if nb_sc>=3 or (sp_traj_len<=tracklet_len_thres and sum(sc_group_traj_len)>=2): undersegmentation
-        if sp_type == 'single' and sc_group_type.count('single') <= 1:
+        # if nb_sc>=3 or (sp_traj_len<=tracklet_len_thres and sum(sc_group_traj_len)>=2): undersegmentation
+        if sp_type == "single" and sc_group_type.count("single") <= 1:
             for i in range(nb_sc):
-                if sc_group_type[i] == 'fragment':
+                if sc_group_type[i] == "fragment":
                     false_label.append(sc_group_label[i])
 
-        if sp_type == 'single' and sc_group_type.count('single') > 1:
+        if sp_type == "single" and sc_group_type.count("single") > 1:
 
             if sp_sure == 1 and sc_group_sure.count(1) < 1:
                 for i in range(nb_sc):
@@ -1407,11 +1391,11 @@ def judge_split_type(
             if sp_sure == 0 and sc_group_sure.count(1) > 1:
                 false_label.append(sp_label)
                 for i in range(nb_sc):
-                    if sc_group_type[i] == 'fragment':
+                    if sc_group_type[i] == "fragment":
                         false_label.append(sc_group_label[i])
 
-        if sp_type == 'multi' and sc_group_type.count('single') <= 1:
-            print('uncertain')
+        if sp_type == "multi" and sc_group_type.count("single") <= 1:
+            print("uncertain")
             if sc_group_sure.count(1) == 1:
                 false_label.append(sp_label)
                 idx = sc_group_sure.index(1)
@@ -1423,10 +1407,10 @@ def judge_split_type(
                 for i in range(nb_sc):
                     false_label.append(sc_group_label[i])
 
-        if sp_type == 'multi' and sc_group_type.count('single') > 1:
+        if sp_type == "multi" and sc_group_type.count("single") > 1:
             false_label.append(sp_label)
             for i in range(nb_sc):
-                if sc_group_type[i] == 'fragment':
+                if sc_group_type[i] == "fragment":
                     false_label.append(sc_group_label[i])
 
     else:
@@ -1434,9 +1418,9 @@ def judge_split_type(
         for i in range(nb_sc):
             candi_mitosis_label.append(sc_group_label[i])
 
-        if sp_type == 'single':
+        if sp_type == "single":
             for i in range(nb_sc):
-                if sc_group_type[i] == 'fragment':
+                if sc_group_type[i] == "fragment":
                     false_mitosis_obj.append(sc_group[i])
 
         # if sp_type=='single' and sc_group_type.count('single')<=1:
@@ -1477,8 +1461,8 @@ def judge_split_type(
         #             if sc_group_type[i]=='fragment':
         #                 false_mitosis_obj.append(sc_group[i])
 
-        if sp_type == 'multi' and sc_group_type.count('single') <= 1:
-            print('uncertain')
+        if sp_type == "multi" and sc_group_type.count("single") <= 1:
+            print("uncertain")
             if sc_group_sure.count(1) == 1:
                 false_mitosis_obj.append(sp_cell)
                 idx = sc_group_sure.index(1)
@@ -1490,10 +1474,10 @@ def judge_split_type(
                 for i in range(nb_sc):
                     false_mitosis_obj.append(sc_group[i])
 
-        if sp_type == 'multi' and sc_group_type.count('single') > 1:
+        if sp_type == "multi" and sc_group_type.count("single") > 1:
             false_mitosis_obj.append(sp_cell)
             for i in range(nb_sc):
-                if sc_group_type[i] == 'fragment':
+                if sc_group_type[i] == "fragment":
                     false_mitosis_obj.append(sc_group[i])
 
     return candi_mitosis_flag, false_label, candi_mitosis_label, false_mitosis_obj, sp_type, sc_group_type
@@ -1503,8 +1487,7 @@ def judge_split_type(
 def find_uni(inds_arr):
     idx_sort = np.argsort(inds_arr)
     sorted_inds_arr = inds_arr[idx_sort]
-    vals, idx_start, count = np.unique(sorted_inds_arr, return_counts=True,
-                                       return_index=True)
+    vals, idx_start, count = np.unique(sorted_inds_arr, return_counts=True, return_index=True)
 
     # sets of indices
     res = np.split(idx_sort, idx_start[1:])
@@ -1517,12 +1500,8 @@ def find_uni(inds_arr):
     return vals, res
 
 
-def get_mitotic_triple_scores(
-        F,
-        L,
-        mitosis_max_distance=75,
-        size_simi_thres=0.7):
-    '''Compute scores for matching a parent to two daughters
+def get_mitotic_triple_scores(F, L, mitosis_max_distance=75, size_simi_thres=0.7):
+    """Compute scores for matching a parent to two daughters
 
     F - an N x 3 (or more) array giving X, Y and frame # of the first object
 
@@ -1541,7 +1520,7 @@ def get_mitotic_triple_scores(
 
              an M-element vector of distances of the parent from the expected
 
-    '''
+    """
 
     X = 0
 
@@ -1582,8 +1561,7 @@ def get_mitotic_triple_scores(
     i, j, dmax = i[dist_mask], j[dist_mask], dmax[dist_mask]
 
     # use size similarity to exclude candidate pairs
-    size_simi = 1 - abs((F[i, AIDX] - F[j, AIDX]) *
-                        1.0 / (F[i, AIDX] + F[j, AIDX]))
+    size_simi = 1 - abs((F[i, AIDX] - F[j, AIDX]) * 1.0 / (F[i, AIDX] + F[j, AIDX]))
     size_mask = np.zeros(i.shape, dtype=bool)
 
     uni_t = np.unique(F[i, IIDX])
@@ -1628,13 +1606,13 @@ def get_mitotic_triple_scores(
 
     center_y = (F[i, Y] + F[j, Y]) / 2
 
-    #frame = F[i, IIDX]
+    # frame = F[i, IIDX]
 
     # Find all parent-daughter pairs where the parent
 
     # is in the frame previous to the daughters
 
-    ij, k = [_.flatten() for _ in np.mgrid[0:len(i), 0:len(L)]]
+    ij, k = [_.flatten() for _ in np.mgrid[0 : len(i), 0 : len(L)]]
 
     mask = F[i[ij], IIDX] == L[k, IIDX] + 1
 
@@ -1644,9 +1622,7 @@ def get_mitotic_triple_scores(
 
         return np.array([]), np.array([]), np.array([])
 
-    d = np.sqrt((center_x[ij] - L[k, X]) ** 2 +
-
-                (center_y[ij] - L[k, Y]) ** 2)
+    d = np.sqrt((center_x[ij] - L[k, X]) ** 2 + (center_y[ij] - L[k, Y]) ** 2)
     # find the group with smallest d
     vals, res = find_uni(ij)
     mask = np.zeros(ij.shape, dtype=bool)
@@ -1659,7 +1635,7 @@ def get_mitotic_triple_scores(
             if d[min_ind] < dmax[ij[min_ind]]:
                 mask[min_ind] = True
 
-    #mask = d <= dmax[ij]
+    # mask = d <= dmax[ij]
 
     ij, k, d = ij[mask], k[mask], d[mask]
 
@@ -1667,58 +1643,49 @@ def get_mitotic_triple_scores(
 
         return np.array([]), np.array([]), np.array([])
 
+    #         rho = calculate_area_penalty(
 
-#         rho = calculate_area_penalty(
-
-#             F[i[ij], AIDX] + F[j[ij], AIDX], L[k, AIDX])
+    #             F[i[ij], AIDX] + F[j[ij], AIDX], L[k, AIDX])
 
     # return np.column_stack((i[ij], j[ij], k)), d * rho
-    return np.column_stack(
-        (L[k, 2:4], F[i[ij], 2:4], F[j[ij], 2:4])), d, size_simi[ij]
+    return np.column_stack((L[k, 2:4], F[i[ij], 2:4], F[j[ij], 2:4])), d, size_simi[ij]
 
 
 def search_wrong_mitosis(mitosis_record, mature_time):
 
-    mother_label = mitosis_record['mother_traj_label'].values
-    daughter_label = mitosis_record[[
-        'sis1_traj_label', 'sis2_traj_label']].values.flatten()
+    mother_label = mitosis_record["mother_traj_label"].values
+    daughter_label = mitosis_record[["sis1_traj_label", "sis2_traj_label"]].values.flatten()
     wrong_mitosis_inds = []
     # find mother label that have multiple paris of daughters
-    uni_m_label, counts = np.unique(
-        mother_label, return_index=False, return_inverse=False, return_counts=True)
+    uni_m_label, counts = np.unique(mother_label, return_index=False, return_inverse=False, return_counts=True)
     rep_m_label = uni_m_label[counts > 1]
     for rm_lable in rep_m_label:
-        inds = mitosis_record.loc[mitosis_record['mother_traj_label']
-                                  == rm_lable].index.tolist()
+        inds = mitosis_record.loc[mitosis_record["mother_traj_label"] == rm_lable].index.tolist()
         wrong_mitosis_inds.extend(inds)
     # find cell that have just been born and divide again
     for d_label in daughter_label:
         if d_label in mother_label.tolist():
-            birth_time = mitosis_record.loc[mitosis_record['sis1_traj_label']
-                                            == d_label, 'sis1_i_n'].values
+            birth_time = mitosis_record.loc[mitosis_record["sis1_traj_label"] == d_label, "sis1_i_n"].values
             if len(birth_time) == 0:
-                birth_time = mitosis_record.loc[mitosis_record['sis2_traj_label']
-                                                == d_label, 'sis2_i_n'].values
+                birth_time = mitosis_record.loc[mitosis_record["sis2_traj_label"] == d_label, "sis2_i_n"].values
 
-            match_list = mitosis_record[mitosis_record['mother_traj_label']
-                                        == d_label].index.tolist()
+            match_list = mitosis_record[mitosis_record["mother_traj_label"] == d_label].index.tolist()
 
             for ind in match_list:
-                give_birth_time = mitosis_record.loc[ind, 'mother_i_n']
-                give_birth_obj = mitosis_record.loc[ind, 'mother_o_n']
+                give_birth_time = mitosis_record.loc[ind, "mother_i_n"]
+                give_birth_obj = mitosis_record.loc[ind, "mother_o_n"]
                 if (give_birth_time - birth_time) < mature_time:
                     wrong_mitosis_inds.append(ind)
-    mitosis_record = mitosis_record.drop(
-        np.unique(np.array(wrong_mitosis_inds)))
+    mitosis_record = mitosis_record.drop(np.unique(np.array(wrong_mitosis_inds)))
     return mitosis_record
 
 
 # return numpy record of each traj start and traj end. [img_num obj_num]
 def traj_start_end_info(df):
-    traj_labels = df['Cell_TrackObjects_Label'].values
+    traj_labels = df["Cell_TrackObjects_Label"].values
     traj_labels = np.sort(np.unique(traj_labels[traj_labels > 0]))
     traj_quan = len(traj_labels)  # the quantity of trajectories
-    print('traj quantity', traj_quan)
+    print("traj quantity", traj_quan)
 
     traj_start = []
     traj_start_xy = []
@@ -1727,18 +1694,32 @@ def traj_start_end_info(df):
     traj_end_xy = []
     traj_end_area = []
     for cur_traj_label in traj_labels:
-        traj_start.append(df.loc[df['Cell_TrackObjects_Label'] == cur_traj_label, [
-                          'ImageNumber', 'ObjectNumber']].values[0].tolist())
-        traj_end.append(df.loc[df['Cell_TrackObjects_Label'] == cur_traj_label, [
-                        'ImageNumber', 'ObjectNumber']].values[-1].tolist())
-        traj_start_xy.append(df.loc[df['Cell_TrackObjects_Label'] == cur_traj_label, [
-                             'Cell_AreaShape_Center_X', 'Cell_AreaShape_Center_Y']].values[0].tolist())
-        traj_end_xy.append(df.loc[df['Cell_TrackObjects_Label'] == cur_traj_label, [
-                           'Cell_AreaShape_Center_X', 'Cell_AreaShape_Center_Y']].values[-1].tolist())
-        traj_start_area.append(df.loc[df['Cell_TrackObjects_Label'] ==
-                                      cur_traj_label, 'Cell_AreaShape_Area'].values[0].tolist())
-        traj_end_area.append(df.loc[df['Cell_TrackObjects_Label'] ==
-                                    cur_traj_label, 'Cell_AreaShape_Area'].values[-1].tolist())
+        traj_start.append(
+            df.loc[df["Cell_TrackObjects_Label"] == cur_traj_label, ["ImageNumber", "ObjectNumber"]].values[0].tolist()
+        )
+        traj_end.append(
+            df.loc[df["Cell_TrackObjects_Label"] == cur_traj_label, ["ImageNumber", "ObjectNumber"]].values[-1].tolist()
+        )
+        traj_start_xy.append(
+            df.loc[
+                df["Cell_TrackObjects_Label"] == cur_traj_label, ["Cell_AreaShape_Center_X", "Cell_AreaShape_Center_Y"]
+            ]
+            .values[0]
+            .tolist()
+        )
+        traj_end_xy.append(
+            df.loc[
+                df["Cell_TrackObjects_Label"] == cur_traj_label, ["Cell_AreaShape_Center_X", "Cell_AreaShape_Center_Y"]
+            ]
+            .values[-1]
+            .tolist()
+        )
+        traj_start_area.append(
+            df.loc[df["Cell_TrackObjects_Label"] == cur_traj_label, "Cell_AreaShape_Area"].values[0].tolist()
+        )
+        traj_end_area.append(
+            df.loc[df["Cell_TrackObjects_Label"] == cur_traj_label, "Cell_AreaShape_Area"].values[-1].tolist()
+        )
     traj_start = np.array(traj_start)
     traj_end = np.array(traj_end)
     traj_start_xy = np.array(traj_start_xy)
@@ -1749,7 +1730,7 @@ def traj_start_end_info(df):
 
 
 def calculate_area_penalty(a1, a2):
-    '''Calculate a penalty for areas that don't match
+    """Calculate a penalty for areas that don't match
     Ideally, area should be conserved while tracking. We divide the larger
     of the two by the smaller of the two to get the area penalty
     which is then multiplied by the distance.
@@ -1757,7 +1738,7 @@ def calculate_area_penalty(a1, a2):
     penalty (sqrt((a1 + a2) / b) for a1+a2 > b and b / (a1 + a2) for
     a1+a2 < b. I can't think of a good reason why they should be
     asymmetric.
-    '''
+    """
     result = a1 / a2
     result[result < 1] = 1 / result[result < 1]
     result[np.isnan(result)] = np.inf
@@ -1765,7 +1746,7 @@ def calculate_area_penalty(a1, a2):
 
 
 def get_gap_pair_scores(F, L, max_gap):
-    '''Compute scores for matching last frame with first to close gaps
+    """Compute scores for matching last frame with first to close gaps
     F - an N x 3 (or more) array giving X, Y and frame # of the first object
         in each track
     L - an N x 3 (or more) array giving X, Y and frame # of the last object
@@ -1775,7 +1756,7 @@ def get_gap_pair_scores(F, L, max_gap):
              is the index of the track whose last frame is to be joined to
              the track whose index is the second element of the array.
              an M-element vector of scores.
-    '''
+    """
     #
     # There have to be at least two things to match
     #
@@ -1807,15 +1788,13 @@ def get_gap_pair_scores(F, L, max_gap):
     #
     # The lowest possible F for each L is 1+L
     #
-    j_self = np.minimum(np.arange(len(i_counts)),
-                        len(j_counts) - 1)
+    j_self = np.minimum(np.arange(len(i_counts)), len(j_counts) - 1)
     j_first_idx = j_indexes.fwd_idx[j_self] + j_counts[j_self]
     #
     # The highest possible F for each L is L + max_gap. j_end is the
     # first illegal value... just past that.
     #
-    j_last = np.minimum(np.arange(len(i_counts)) + max_gap,
-                        len(j_counts) - 1)
+    j_last = np.minimum(np.arange(len(i_counts)) + max_gap, len(j_counts) - 1)
     j_end_idx = j_indexes.fwd_idx[j_last] + j_counts[j_last]
     #
     # Structure the i and j block ranges
@@ -1835,39 +1814,32 @@ def get_gap_pair_scores(F, L, max_gap):
     #
     # The distances
     #
-    d = np.sqrt((L[ai, X] - F[aj, X]) ** 2 +
-                (L[ai, Y] - F[aj, Y]) ** 2)
+    d = np.sqrt((L[ai, X] - F[aj, X]) ** 2 + (L[ai, Y] - F[aj, Y]) ** 2)
     #
     # Rho... the area penalty
     #
     rho = calculate_area_penalty(L[ai, AIDX], F[aj, AIDX])
     return np.column_stack((ai, aj)), d * rho
 
+
 # ---high_traj_len_thres and low_traj_len_thres depend on the expriment time interval
 
 
-def cal_size_correlation(
-        df,
-        img_num,
-        sis1_o_n,
-        sis2_o_n,
-        high_traj_len_thres=4,
-        low_traj_len_thres=3):
-    sis1_traj_label = np.asscalar(df.loc[(df['ImageNumber'] == img_num) & (
-        df['ObjectNumber'] == sis1_o_n)]['Cell_TrackObjects_Label'].values)
-    sis1_size_arr = df.loc[df['Cell_TrackObjects_Label']
-                           == sis1_traj_label, 'Cell_AreaShape_Area'].values
+def cal_size_correlation(df, img_num, sis1_o_n, sis2_o_n, high_traj_len_thres=4, low_traj_len_thres=3):
+    sis1_traj_label = np.asscalar(
+        df.loc[(df["ImageNumber"] == img_num) & (df["ObjectNumber"] == sis1_o_n)]["Cell_TrackObjects_Label"].values
+    )
+    sis1_size_arr = df.loc[df["Cell_TrackObjects_Label"] == sis1_traj_label, "Cell_AreaShape_Area"].values
     sis1_traj_len = len(sis1_size_arr)
 
-    sis2_traj_label = np.asscalar(df.loc[(df['ImageNumber'] == img_num) & (
-        df['ObjectNumber'] == sis2_o_n)]['Cell_TrackObjects_Label'].values)
-    sis2_size_arr = df.loc[df['Cell_TrackObjects_Label']
-                           == sis2_traj_label, 'Cell_AreaShape_Area'].values
+    sis2_traj_label = np.asscalar(
+        df.loc[(df["ImageNumber"] == img_num) & (df["ObjectNumber"] == sis2_o_n)]["Cell_TrackObjects_Label"].values
+    )
+    sis2_size_arr = df.loc[df["Cell_TrackObjects_Label"] == sis2_traj_label, "Cell_AreaShape_Area"].values
     sis2_traj_len = len(sis2_size_arr)
 
     if sis1_traj_len > high_traj_len_thres and sis2_traj_len > high_traj_len_thres:
-        size_corr = pearsonr(
-            sis1_size_arr[:high_traj_len_thres], sis2_size_arr[:high_traj_len_thres])[0]
+        size_corr = pearsonr(sis1_size_arr[:high_traj_len_thres], sis2_size_arr[:high_traj_len_thres])[0]
 
     else:
         if sis1_traj_len < low_traj_len_thres or sis2_traj_len < low_traj_len_thres:
@@ -1875,8 +1847,7 @@ def cal_size_correlation(
         else:
             shorter_len = min(sis1_traj_len, sis2_traj_len)
             # print(sis1_size_arr,sis2_size_arr)
-            size_corr = pearsonr(
-                sis1_size_arr[:shorter_len], sis2_size_arr[:shorter_len])[0]
+            size_corr = pearsonr(sis1_size_arr[:shorter_len], sis2_size_arr[:shorter_len])[0]
     return size_corr
 
 

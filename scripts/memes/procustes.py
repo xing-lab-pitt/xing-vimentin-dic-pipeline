@@ -5,13 +5,10 @@
 # it under the terms of version 2 of the GNU General Public License as
 # published by the Free Software Foundation.
 
+
 def procustes_alignment(
-        points,
-        reference,
-        weights=None,
-        allow_reflection=False,
-        find_scale=True,
-        find_translation=True):
+    points, reference, weights=None, allow_reflection=False, find_scale=True, find_translation=True
+):
     """Find the rigid transformation that optimally aligns the given points to the
     reference points in a least-squares sense. The 'points' and 'references' parameters
     should both be NxD arrays of N corresponding D-dimensional points.
@@ -35,11 +32,11 @@ def procustes_alignment(
     # notational conventions after "Generalized Procrustes Analysis and its Applications in Photogrammetry"
     # by Devrim Akca
     import numpy.matlib
+
     A = numpy.matrix(points)
     B = numpy.matrix(reference)
     if points.shape != reference.shape:
-        raise TypeError(
-            'Cannot align point-sets in different dimensions, or with different numbers of points.')
+        raise TypeError("Cannot align point-sets in different dimensions, or with different numbers of points.")
     p = A.shape[0]
     k = A.shape[1]
     j = numpy.matlib.ones((p, 1), dtype=float)
