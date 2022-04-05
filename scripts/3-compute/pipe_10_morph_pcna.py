@@ -58,19 +58,18 @@ import pipe_util2
 
 # do not use StandarScaler on cell contour points
 # ----------cal cell_contour pca coordinates-------------------
-def morph_pca(all_datset_path, all_datsets, pattern="XY"):
+def morph_pca(all_dataset_path, all_dataset_names, pattern="XY"):
     """
 
     :param all_datset_path: string, including several output folders
     :param pattern: string, for indexing output folders
     :return:
     """
-    for datset_idx in range(len(all_datsets)):
-        all_data = np.array([])
-        curr_datset_path = pipe_util2.folder_verify(all_datset_path + all_datsets[datset_idx])
-        output_path_list = pipe_util2.folder_file_num(curr_datset_path, pattern)
-        i = 0
-        while i < len(output_path_list):
+    for dataset_idx in range(len(all_dataset_names)):
+        all_data = None
+        cur_dataset_path = pipe_util2.folder_verify(all_dataset_path + all_dataset_names[dataset_idx])
+        output_path_list = pipe_util2.folder_file_num(cur_dataset_path, pattern)
+        for i in range(len(output_path_list)):
             output_path = output_path_list[i]
             output_path = pipe_util2.folder_verify(output_path)
             cells_path = output_path + "cells/"
@@ -82,14 +81,12 @@ def morph_pca(all_datset_path, all_datsets, pattern="XY"):
                 [single_cell.cell_contour.points for single_cell in cells if hasattr(single_cell, "cell_contour")]
             )
 
-            if all_data.size == 0:
+            if all_data is None:
+                # first time initialization with data
                 all_data = data
             else:
                 all_data = np.vstack((all_data, data))
-            i = i + 1
 
-        # print(all_data.shape)
-        # mean = all_data.mean(axis = 0)
         X = all_data
         X, data_point_shape = utility_tools.flatten_data(X)
         X = X.astype(np.float)
@@ -99,12 +96,14 @@ def morph_pca(all_datset_path, all_datsets, pattern="XY"):
         Y = pca.fit_transform(X)
         print(pca.explained_variance_ratio_, sum(pca.explained_variance_ratio_))
 
+        # visualize  PC1 and PC2
+
         # plt.scatter(Y[:,0],Y[:,1],s=0.1)
         # plt.xlabel('PC1')
         # plt.ylabel('PC2')
         # plt.show()
 
-        with open(curr_datset_path + "morph_pca", "wb") as fp:
+        with open(cur_dataset_path + "morph_pca", "wb") as fp:
             pickle.dump(pca, fp)
 
         # do not use StandarScaler on cell contour points

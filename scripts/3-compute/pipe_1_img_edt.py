@@ -49,12 +49,13 @@ def patch_predict(input_folder, output_folder, weight_file):
         img = imread(img_list[i])
         img = img_transform(img)  # This step normalize and change dimention of images
         output = predict_image(img, autoencoder)
-        print("output dim: ", output.shape, output.sum())
+        print("output dim: ", output.shape)
+
         img = Image.fromarray(output[:, :, 0])
         img.save(output_folder + "reg_" + img_name)
 
 
-def single_predict(img_file, weight_file, model_mode="reg_seg"):
+def predict_single_image(img_file, weight_file, model_mode="reg_seg"):
 
     """
     This is a single picture prediction function.
@@ -85,11 +86,20 @@ def single_predict(img_file, weight_file, model_mode="reg_seg"):
 
 
 def folder_edt_predict(input_folder, output_folder, weight_file, DIC_chan_label, model_mode):
+    """Predicts edt for all DIC images in a folder directly using the trained
+    network.
 
-    """
-    Predict edt directly using the trained network (without a stacking prob. for patches).
-    Resize the image to nearest 32x.
-    After prediction, restore the picture size to original.
+    Resize the image to nearest 32x with optional background correction. After
+    prediction, restore the predicted EDT images to original size.
+
+    Args:
+        input_folder: Path string to the folder that contains the DIC images.
+        output_folder: Path string to the folder where an 'edt' sulfolder is
+        created. Predicted images are saved in the folder 'output_folder/edt/'
+        weight_file: File-path string to the trained CNN weights.
+        DIC_chan_label: String that denotes the DIC channel's labeling
+        model_mode: String that denotes the specific network architecture to be
+        loaded, described in models.py.
     """
 
     autoencoder = model(weight_file, model_mode)
