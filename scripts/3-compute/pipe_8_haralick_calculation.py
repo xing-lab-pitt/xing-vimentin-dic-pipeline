@@ -35,6 +35,7 @@ import multiprocessing
 from multiprocessing import Process
 import pipe_util2
 import sys
+import config
 
 # In[2]:
 
@@ -50,7 +51,7 @@ import sys
 # fluor_cells_path=main_path+'fluor_cells/'
 # # fluor_cells_path=main_path+'a549_tif/fluor/'
 
-fluor_interval = 6
+fluor_interval = config.fluor_interval
 
 
 def compute_fluor_info(seg, fluor_img):

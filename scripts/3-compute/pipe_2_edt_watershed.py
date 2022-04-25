@@ -387,6 +387,6 @@ if __name__ == "__main__":
     # stuff only to run when not called via 'import' here
     img_path = sys.argv[1]
     output_path = sys.argv[2]
-    DIC_chan_label = sys.argv[5]
+    dic_channel_label = sys.argv[5]
     small_obj_thres = int(sys.argv[7])
-    simple_edt_watershed(img_path, output_path, DIC_chan_label, small_obj_thres)
+    simple_edt_watershed(img_path, output_path, dic_channel_label, small_obj_thres)

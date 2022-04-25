@@ -59,7 +59,7 @@ output_path=$5
 icnn_seg_wts_file=$6
 
 # experiment settings
-DIC_chan_label=C1
+dic_channel_label=C1
 pcna_chan_label=C2
 vim_chan_label=C3
 
@@ -77,7 +77,7 @@ echo $img_path
 #conda deactivate
 source activate tf1
 
-#python pipe_3_traj_reorganize_1st.py $img_path $output_path $icnn_seg_wts_file $DIC_chan_label
+#python pipe_3_traj_reorganize_1st.py $img_path $output_path $icnn_seg_wts_file $dic_channel_label
 #echo 'step3 complete'
 #python pipe_4_traj_reorganize_2nd.py $output_path
 #echo 'step4 complete'

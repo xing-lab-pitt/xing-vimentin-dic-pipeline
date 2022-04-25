@@ -1,9 +1,13 @@
 import os
 import tensorflow as tf
+import os
+import argparse
+import pandas as pd
 
-config = tf.compat.v1.ConfigProto()
-config.gpu_options.allow_growth = True
-sess = tf.Session(config=config)
+# # some TF1 config
+# config = tf.compat.v1.ConfigProto()
+# config.gpu_options.allow_growth = True
+# sess = tf.Session(config=config)
 
 # main_path='/home/zoro/Desktop/experiment_data/2019-03-10_HK2_fucci/'
 # main_path = '/mnt/data0/Ke/weikang_exp_process/2019-05-05_A549_vim/'
@@ -47,3 +51,26 @@ sample_path = main_path + "/output/seg_sample"
 
 ###### traj analysis paths #####
 sct_path = main_path + "single_cell_traj/"
+args = None
+
+
+def run_arg_parser():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--img_path", type=str, required=True)
+    parser.add_argument("--output_path", type=str, default="./pipeline_results/")
+    parser.add_argument("--icnn_seg_weights_path", type=str, default="C0")
+    parser.add_argument("--mean_contour_path", type=str, default="./data/mean_contour")
+    parser.add_argument("--vim_chan_label", type=str, default="C1")
+    parser.add_argument("--pcna_chan_label", type=str, default="C2")
+    parser.add_argument("--segmentation_weights_path", type=str, required=True)
+
+    global args
+    args = parser.parse_args()
+    update_globals_by_args(args)
+
+
+def update_globals_by_args(args):
+    print(">>>>> updating globals according to the following args:")
+    print(args)
+    # TODO
+    pass

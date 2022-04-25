@@ -63,7 +63,7 @@ icnn_am_wts_file=$9
 icnn_seg_wts_file=${10}
 
 # experiment settings
-DIC_chan_label=C1
+dic_channel_label=C1
 pcna_chan_label=C2
 vim_chan_label=C3
 
@@ -81,13 +81,13 @@ source activate tf1
 
 ### 1_img_edt ###
 model_mode='reg_seg'
-python pipe_1_img_edt.py $img_path $output_path $reg_seg_wts_file $DIC_chan_label $model_mode 
+python pipe_1_img_edt.py $img_path $output_path $reg_seg_wts_file $dic_channel_label $model_mode 
 echo 'step1 complete'
 
 ### 2_edt_watershed ###
 model_obj_d=128
 small_obj_thres=1500
-python pipe_2_edt_watershed.py $img_path $output_path $icnn_am_wts_file $icnn_seg_wts_file $DIC_chan_label $model_obj_d $small_obj_thres
+python pipe_2_edt_watershed.py $img_path $output_path $icnn_am_wts_file $icnn_seg_wts_file $dic_channel_label $model_obj_d $small_obj_thres
 echo 'step2 complete'
 
 
