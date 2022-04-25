@@ -32,6 +32,8 @@ output_path = main_path + "output/"
 if not os.path.exists(output_path):
     os.makedirs(output_path)
 
+
+# TODO: remove in next version: deprecated
 posi_start = 1
 posi_end = 6
 
@@ -44,13 +46,28 @@ vim_input_path = main_path + "vimentin/"
 fluor_cells_path = main_path + "cells/"
 fluor_interval = 3
 
-
 # mean_cell_contour_path = output_path+'mean_cell_contour'
 mean_cell_contour_path = "./A549_emt_mean_cell_contour"
 sample_path = main_path + "/output/seg_sample"
 
-###### traj analysis paths #####
+# ----traj parameter setting -----------
 sct_path = main_path + "single_cell_traj/"
+
+# depend on: cell type, time interval-------
+# 1/2 max distance between two trajectory ends: cell type and time interval
+mitosis_max_dist = 75
+# size_similarity=1-abs(size1-size2)/(size1+size2) size similarity between
+# two possible sister cells
+size_similarity_threshold = 0.7
+# for judging possible mitosis, if exceed this value, probably a single
+# cell: time interval
+traj_len_threshold = 6
+# size correlation between two sister cells, if exceed this value
+# ,probably mitosis
+size_corr_threshold = 0.5
+mature_time = 60  # time from the cell born to divide: depend on cell type and time interval
+
+
 args = None
 
 

@@ -319,6 +319,8 @@ def simple_edt_watershed(img_path, out_path, chan_label, small_obj_thres):
         img_name = os.path.basename(img_list[i])[0 : len(img_list[i]) - 4]
 
         reg_flat = reg[reg != 0.0].reshape(-1)
+
+        # TODO refactor: threshold percentage as hyperparam
         THRESHOLDS = np.quantile(reg_flat, [0.35, 0.97])
 
         mask_h = 0.02
