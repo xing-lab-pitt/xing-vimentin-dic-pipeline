@@ -9,6 +9,7 @@ import pandas as pd
 # config.gpu_options.allow_growth = True
 # sess = tf.Session(config=config)
 
+# TODO: remove in next version
 # main_path='/home/zoro/Desktop/experiment_data/2019-03-10_HK2_fucci/'
 # main_path = '/mnt/data0/Ke/weikang_exp_process/2019-05-05_A549_vim/'
 # main_path = '/net/dali/home/mscbio/ken67/weikang_exp_process/2019-06-21_A549_vim_tgf4ng_3d/'
@@ -18,9 +19,10 @@ import pandas as pd
 # main_path = '/media/weikang_data/rpe_pcna_p21_72_hr_imaging/tiff_files/rpe_pcna_p21_72hr_time_lapse/'
 # main_path = '/media/weikang_data/rpe_pcna_p21_72_hr_imaging/tiff_files/c1_raw_tiffs/'
 main_path = "/net/capricorn/home/xing/huijing/Segmentation/data/1-13-Incucyte/"
-weight_file = (
-    "/net/capricorn/home/xing/huijing/Segmentation/scripts/vimentin_DIC_segmentation_pipeline/models/dld1.hdf5"
-)
+# weight_file = (
+#     "/net/capricorn/home/xing/huijing/Segmentation/scripts/vimentin_DIC_segmentation_pipeline/models/dld1.hdf5"
+# )
+weight_file = None
 
 # input path should be path of dic
 # input_path=main_path+'a549_tif/dic/' # 'img/'
@@ -84,16 +86,22 @@ args = None
 def run_arg_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument("--img_path", type=str, required=True)
-    parser.add_argument("--output_path", type=str, default="./pipeline_results/")
+    parser.add_argument("--output_path", type=str, required=True)
     parser.add_argument("--icnn_seg_weights_path", type=str, default="C0")
     parser.add_argument("--mean_contour_path", type=str, default="./data/mean_contour")
-    parser.add_argument("--vim_chan_label", type=str, default="C1")
-    parser.add_argument("--pcna_chan_label", type=str, default="C2")
-    parser.add_argument("--segmentation_weights_path", type=str, required=True)
+    parser.add_argument("--vim_channel_label", type=str, default="C1")
+    parser.add_argument("--pcna_channel_label", type=str, default=None)
+    parser.add_argument("--segmentation_weights_path", type=str, default=None)
 
+    # TODO: add hyperparameters (global variables above)
     global args
     args = parser.parse_args()
     update_globals_by_args(args)
+
+
+def save_hyperparameters(path):
+    # TODO implement
+    pass
 
 
 def update_globals_by_args(args):
