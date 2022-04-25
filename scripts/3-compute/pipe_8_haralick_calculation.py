@@ -37,26 +37,11 @@ import pipe_util2
 import sys
 import config
 
-# In[2]:
-
-
-# main_path='/home/zoro/Desktop/experiment_data/2019-03-22_a549_tgf4ng_2d/'
-# main_path = '/mnt/data0/Ke/weikang_exp_process/2019-05-05_A549_vim/'
-
-# cell_output_path=main_path+'output/'
-# # vim_input_path=main_path+'vimentin/'
-# vim_input_path=main_path+'a549_tif/vimentin/'
-
-# cells_path=main_path+'cells/'
-# fluor_cells_path=main_path+'fluor_cells/'
-# # fluor_cells_path=main_path+'a549_tif/fluor/'
-
 fluor_interval = config.fluor_interval
 
 
 def compute_fluor_info(seg, fluor_img):
     rps = regionprops(seg)
-
     mean_intensity = np.zeros((len(rps)))
     std_intensity = np.zeros((len(rps)))
     intensity_range = np.zeros((len(rps)))
@@ -113,7 +98,7 @@ def compute_fluor_info(seg, fluor_img):
 # In[7]:
 
 
-feature_list = ["mean_intensity", "std_intensity", "intensity_range", "haralick", "norm_haralick"]
+fluor_feature_list = config.fluor_feature_list
 
 
 def single_folder_run(img_folder, output_path, vim_chan_label):
@@ -173,7 +158,7 @@ def single_folder_run(img_folder, output_path, vim_chan_label):
                 norm_fluor_haralick[obj_num - 1, :],
             ]
 
-            cells[ind].set_fluor_features("vimentin", feature_list, vim_features)
+            cells[ind].set_fluor_features("vimentin", fluor_feature_list, vim_features)
 
     with open(fluor_cells_path + "fluor_cells", "wb") as fp:
         pickle.dump(cells, fp)

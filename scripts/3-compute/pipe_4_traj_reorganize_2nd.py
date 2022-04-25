@@ -73,6 +73,7 @@ mature_time = config.mature_time  # time from the cell born to divide: depend on
 # output_path=main_path+'/output/'
 
 
+# TODO: what it recognizes? add docs
 def traj_reconganize2(output_path):
     dir_path = pipe_util2.folder_verify(output_path)
     seg_path = dir_path + "seg/"

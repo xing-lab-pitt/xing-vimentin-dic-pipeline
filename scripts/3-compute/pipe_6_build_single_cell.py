@@ -43,7 +43,7 @@ def build_single_cell(output_path):
     df = pd.read_csv(dir_path + "Per_Object_relink" + ".csv")
     am_record = pd.read_csv(dir_path + "am_record" + ".csv")
     traj_df = pd.read_csv(dir_path + "traj_object_num" + ".csv")
-    # todo: add tritc#/fitc# nucleus info
+    # TODO: add tritc#/fitc# nucleus info
     # DIC cell info: image# segmentation mask channel, object# cell id in a single mask, pixelCoord
     # Cell_TrackObjects_Label: consistent cell id in trajectory
     cells = [single_cell(img_num=df.loc[i, "ImageNumber"], obj_num=df.loc[i, "ObjectNumber"]) for i in range(len(df))]

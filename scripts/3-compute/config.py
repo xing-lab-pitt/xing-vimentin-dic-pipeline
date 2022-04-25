@@ -53,7 +53,7 @@ sample_path = main_path + "/output/seg_sample"
 # ----traj parameter setting -----------
 sct_path = main_path + "single_cell_traj/"
 
-# depend on: cell type, time interval-------
+# # pipe4
 # 1/2 max distance between two trajectory ends: cell type and time interval
 mitosis_max_dist = 75
 # size_similarity=1-abs(size1-size2)/(size1+size2) size similarity between
@@ -66,6 +66,16 @@ traj_len_threshold = 6
 # ,probably mitosis
 size_corr_threshold = 0.5
 mature_time = 60  # time from the cell born to divide: depend on cell type and time interval
+
+# # pipe5
+# the maximum allowed # of frames between the traj end and traj start:
+# time interval
+max_frame_difference = 5
+# distance*proporation between large cell area/small cell area of traj end
+# and start : time interval
+max_gap_score = 100
+
+fluor_feature_list = ["mean_intensity", "std_intensity", "intensity_range", "haralick", "norm_haralick"]
 
 
 args = None
