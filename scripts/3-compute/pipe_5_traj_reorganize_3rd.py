@@ -51,15 +51,16 @@ from track_module import (
 )
 import pipe_util2
 import sys
+import config
 
 # ----parameter setting -----------
 # depend on: cell type, time interval-------
 # the maximum allowed # of frames between the traj end and traj start:
 # time interval
-max_frame_difference = 5
+max_frame_difference = config.max_frame_difference
 # distance*proporation between large cell area/small cell area of traj end
 # and start : time interval
-max_gap_score = 100
+max_gap_score = config.max_gap_score
 
 
 # In[18]:'
@@ -70,9 +71,8 @@ max_gap_score = 100
 # input_path=main_path+'a549_tif/vimentin/' # 'img/'
 # output_path=main_path+'output/'
 
-
+# TODO: what it recognizes? add docs
 def traj_reconganize3(output_path):
-
     output_path = pipe_util2.folder_verify(output_path)
     dir_path = output_path
     seg_path = pipe_util2.folder_verify(output_path + "seg")

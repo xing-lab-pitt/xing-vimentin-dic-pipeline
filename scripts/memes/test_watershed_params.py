@@ -159,5 +159,5 @@ if __name__ == "__main__":
     main_path = "C:/Users/14432/OneDrive/Research/Projects/a549_pcna/data"
     img_path = main_path + "/ori/test_batch"
     output_path = main_path + "/out/01-13-22_72hr_no-treat/XY1_test"
-    DIC_chan_label = "C1"
-    quick_edt_watershed(img_path, output_path, DIC_chan_label)
+    dic_channel_label = "C1"
+    quick_edt_watershed(img_path, output_path, dic_channel_label)

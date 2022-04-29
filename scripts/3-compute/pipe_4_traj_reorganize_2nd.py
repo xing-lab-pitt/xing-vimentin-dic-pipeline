@@ -47,22 +47,22 @@ from track_module import (
 )
 
 import pipe_util2
-
+import config
 
 # ----parameter setting -----------
 # depend on: cell type, time interval-------
 # 1/2 max distance between two trajectory ends: cell type and time interval
-mitosis_max_dist = 75
+mitosis_max_dist = config.mitosis_max_dist
 # size_similarity=1-abs(size1-size2)/(size1+size2) size similarity between
 # two possible sister cells
-simi_thres = 0.7
+size_similarity_threshold = config.size_similarity_threshold
 # for judging possible mitosis, if exceed this value, probably a single
 # cell: time interval
-traj_len_thres = 6
+traj_len_threshold = config.traj_len_threshold
 # size correlation between two sister cells, if exceed this value
 # ,probably mitosis
-size_corr_thres = 0.5
-mature_time = 60  # time from the cell born to divide: depend on cell type and time interval
+size_corr_threshold = config.size_corr_threshold
+mature_time = config.mature_time  # time from the cell born to divide: depend on cell type and time interval
 
 
 # In[13]:
@@ -73,6 +73,7 @@ mature_time = 60  # time from the cell born to divide: depend on cell type and t
 # output_path=main_path+'/output/'
 
 
+# TODO: what it recognizes? add docs
 def traj_reconganize2(output_path):
     dir_path = pipe_util2.folder_verify(output_path)
     seg_path = dir_path + "seg/"
@@ -90,7 +91,7 @@ def traj_reconganize2(output_path):
     L = np.column_stack((traj_end_xy, traj_end, np.expand_dims(traj_end_area[:], axis=1)))
 
     mitoses, m_dist, size_simi = get_mitotic_triple_scores(
-        F, L, mitosis_max_distance=mitosis_max_dist, size_simi_thres=simi_thres
+        F, L, mitosis_max_distance=mitosis_max_dist, size_simi_thres=size_similarity_threshold
     )
     n_mitoses = len(m_dist)
 
@@ -190,19 +191,23 @@ def traj_reconganize2(output_path):
             flag = 0
             if (
                 (mother_am_flag[i] == 2 and (sis1_am_flag[i] > 0 or sis2_am_flag[i] > 0))
-                or (mother_am_flag[i] == 2 and sis1_traj_len[i] > traj_len_thres and sis2_traj_len[i] > traj_len_thres)
+                or (
+                    mother_am_flag[i] == 2
+                    and sis1_traj_len[i] > traj_len_threshold
+                    and sis2_traj_len[i] > traj_len_threshold
+                )
                 or (
                     sis1_am_flag[i] == 2
                     and sis1_am_flag[i] == 2
-                    and sis1_traj_len[i] > traj_len_thres
-                    and sis2_traj_len[i] > traj_len_thres
+                    and sis1_traj_len[i] > traj_len_threshold
+                    and sis2_traj_len[i] > traj_len_threshold
                 )
                 or (
-                    mother_traj_len[i] > traj_len_thres
-                    and sis1_traj_len[i] > traj_len_thres
-                    and sis2_traj_len[i] > traj_len_thres
+                    mother_traj_len[i] > traj_len_threshold
+                    and sis1_traj_len[i] > traj_len_threshold
+                    and sis2_traj_len[i] > traj_len_threshold
                 )
-                or mitoses_size_corr[i] > size_corr_thres
+                or mitoses_size_corr[i] > size_corr_threshold
             ):
                 flag = 1
                 mother_cells.append([mitoses[i][0], mitoses[i][1]])

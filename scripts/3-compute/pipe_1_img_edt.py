@@ -14,8 +14,7 @@ import hj_util as util
 import sys
 
 
-def model(weight_file, mode="reg_seg"):
-
+def assemble_model(weight_file, mode="reg_seg"):
     """Selecting the model to be used."""
     if mode == "reg_seg":
         model = reg_seg()
@@ -36,7 +35,7 @@ def patch_predict(input_folder, output_folder, weight_file):
     Then summing up the prediction.
     """
 
-    autoencoder = model(weight_file)
+    autoencoder = assemble_model(weight_file)
 
     input_folder = util.folder_verify(input_folder)
     output_folder = util.folder_verify(output_folder)
@@ -65,7 +64,7 @@ def predict_single_image(img_file, weight_file, model_mode="reg_seg"):
     folder = os.path.dirname(img_file)
     name = os.path.basename(img_file)
 
-    autoencoder = model(weight_file, model_mode)
+    autoencoder = assemble_model(weight_file, model_mode)
     img = imread(img_file)
 
     x_adjust = int(round(img.shape[0] / 32.0) * 32)
@@ -85,7 +84,7 @@ def predict_single_image(img_file, weight_file, model_mode="reg_seg"):
     return output
 
 
-def folder_edt_predict(input_folder, output_folder, weight_file, DIC_chan_label, model_mode):
+def folder_edt_predict(img_path, output_path, reg_seg_wts_path, dic_channel_label, model_mode):
     """Predicts edt for all DIC images in a folder directly using the trained
     network.
 
@@ -93,24 +92,24 @@ def folder_edt_predict(input_folder, output_folder, weight_file, DIC_chan_label,
     prediction, restore the predicted EDT images to original size.
 
     Args:
-        input_folder: Path string to the folder that contains the DIC images.
-        output_folder: Path string to the folder where an 'edt' sulfolder is
+        img_path: Path string to the folder that contains the DIC images.
+        output_path: Path string to the folder where an 'edt' sulfolder is
         created. Predicted images are saved in the folder 'output_folder/edt/'
-        weight_file: File-path string to the trained CNN weights.
-        DIC_chan_label: String that denotes the DIC channel's labeling
+        reg_seg_wts_path:filepath string to the trained CNN weights.
+        dic_channel_label: String that denotes the DIC channel's labeling
         model_mode: String that denotes the specific network architecture to be
         loaded, described in models.py.
     """
 
-    autoencoder = model(weight_file, model_mode)
+    autoencoder = assemble_model(reg_seg_wts_path, model_mode)
 
-    input_folder = util.folder_verify(input_folder)
-    output_folder = util.folder_verify(output_folder)
+    img_path = util.folder_verify(img_path)
+    output_path = util.folder_verify(output_path)
 
-    edt_folder = output_folder + "edt/"
+    edt_folder = output_path + "edt/"
     util.create_folder(edt_folder)
 
-    img_list = sorted(glob.glob(input_folder + "*" + DIC_chan_label + "*"))
+    img_list = sorted(glob.glob(img_path + "*" + dic_channel_label + "*"))
 
     for i in range(len(img_list)):
         img_name = os.path.basename(img_list[i])
@@ -151,18 +150,10 @@ if __name__ == "__main__":
     print(img_path)
     output_path = sys.argv[2]
     print(output_path)
-    reg_seg_wts_file = sys.argv[3]
-    print(reg_seg_wts_file)
-    DIC_chan_label = sys.argv[4]
-    print(DIC_chan_label)
+    reg_seg_wts_path = sys.argv[3]
+    print(reg_seg_wts_path)
+    dic_channel_label = sys.argv[4]
+    print(dic_channel_label)
     model_mode = sys.argv[5]
     print(model_mode)
-    folder_edt_predict(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5])
-
-
-# input folder
-# output folder
-# weight file
-# multi_chan
-# targ_chan
-# model_mode
+    folder_edt_predict(img_path, output_path, reg_seg_wts_path, dic_channel_label, model_mode)

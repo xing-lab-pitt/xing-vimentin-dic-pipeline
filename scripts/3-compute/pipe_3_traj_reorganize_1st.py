@@ -99,7 +99,7 @@ def icnn_seg_load_weight(icnn_seg_weights):
     return icnn_seg
 
 
-def traj_reconganize1(img_path, output_path, icnn_seg_weights, DIC_chan_label, obj_h=128, obj_w=128):
+def traj_reconganize1(img_path, output_path, icnn_seg_weights, DIC_channel_label, obj_h=128, obj_w=128):
 
     """
 
@@ -113,7 +113,7 @@ def traj_reconganize1(img_path, output_path, icnn_seg_weights, DIC_chan_label, o
     # preparing paths
     print("processing %s" % (img_path), flush=True)
     img_path = pipe_util2.folder_verify(img_path)
-    img_list = sorted(glob.glob(img_path + "*" + DIC_chan_label + "*"))
+    img_list = sorted(glob.glob(img_path + "*" + DIC_channel_label + "*"))
     for i in range(len(img_list)):
         img_list[i] = os.path.basename(img_list[i])
 
@@ -488,5 +488,5 @@ if __name__ == "__main__":
     img_path = sys.argv[1]
     output_path = sys.argv[2]
     icnn_seg_wts = sys.argv[3]
-    DIC_chan_label = sys.argv[4]
-    traj_reconganize1(img_path, output_path, icnn_seg_wts, DIC_chan_label)
+    DIC_channel_label = sys.argv[4]
+    traj_reconganize1(img_path, output_path, icnn_seg_wts, DIC_channel_label)
