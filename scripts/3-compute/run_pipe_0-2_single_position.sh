@@ -43,6 +43,10 @@ echo
 echo $SLURM_JOB_NODELIST
 echo
 
+# check GPU
+nvidia-smi -L
+
+
 # define paths & files
 script_dir=$1
 tools_dir=$2
@@ -85,11 +89,14 @@ source activate tf1
 model_mode='reg_seg'
 python pipe_1_img_edt.py $img_path $output_path $reg_seg_wts_file $dic_channel_label $model_mode 
 echo 'step1 complete'
+tree $output_path
+
 
 ### 2_edt_watershed ###
 model_obj_d=128
 small_obj_thres=1500
 python pipe_2_edt_watershed.py $img_path $output_path $icnn_am_wts_file $icnn_seg_wts_file $dic_channel_label $model_obj_d $small_obj_thres
 echo 'step2 complete'
+tree $output_path
 
 

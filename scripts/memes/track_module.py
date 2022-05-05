@@ -119,11 +119,11 @@ def compute_overlap_single(img_path, img_list, img_num_1, obj_num_1, img_num_2):
 def relabel_traj(df):
     traj_labels = df["Cell_TrackObjects_Label"].values
     traj_labels = np.sort(np.unique(traj_labels[traj_labels > 0]))
-    traj_quan = len(traj_labels)  # the quantity of trajectories
-    print("traj quantity", traj_quan)
+    traj_quantity = len(traj_labels)  # the quantity of trajectories
+    print("traj quantity", traj_quantity)
     # -------------relabel all traj from 1,sort base on start time of each traj
     traj_label_st = []  # record traj start time and traj label
-    for i in range(traj_quan):
+    for i in range(traj_quantity):
         cur_traj_label = traj_labels[i]
         traj_st = np.asscalar(df.loc[df["Cell_TrackObjects_Label"] == cur_traj_label, "ImageNumber"].values[0])
         traj_label_st.append([traj_st, cur_traj_label])
@@ -132,7 +132,7 @@ def relabel_traj(df):
     # -------------relabel must be careful because the dataframe is modified every loop
     # --------------use a copy to modify by index
     df_relabel = df.copy()
-    for traj_i in range(traj_quan):
+    for traj_i in range(traj_quantity):
         cur_traj_label = traj_label_st[traj_i, 1]
         cur_traj_inds = df[df["Cell_TrackObjects_Label"] == cur_traj_label].index
         df_relabel.loc[cur_traj_inds, "Cell_TrackObjects_Label"] = int(traj_i + 1)

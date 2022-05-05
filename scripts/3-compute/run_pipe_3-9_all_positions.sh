@@ -6,7 +6,7 @@ job_outdir=${date}_${desc}
 # define paths & files
 script_dir=./scripts/3-compute
 tools_dir=./scripts/memes
-dat_dir=/net/capricorn/home/xing/ken67/xing-vimentin-dic-pipeline/test_datasets/thomas_test_data
+dat_dir=/net/capricorn/home/xing/ken67/xing-vimentin-dic-pipeline/test_datasets/thomas_test_data_gap1
 out_dir=${dat_dir}/out/
 ori_dir=${dat_dir}
 
