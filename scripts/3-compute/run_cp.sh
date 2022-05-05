@@ -22,7 +22,7 @@
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 #!/bin/bash
-job_outdir_path=$1
+output_path=$1
 tools_dir=$2
 
 eval "$(conda shell.bash hook)"
@@ -30,6 +30,6 @@ module load anaconda/3-cluster
 source activate cp4
 
 cellprofiler -c -r -i \
-	${job_outdir_path}/seg/ -o \
-	$job_outdir_path -p \
-	${tools_dir}/cell_track_HK2_5min_interval_temporal_gap5.cppipe
+	${output_path}/seg/ -o \
+	$output_path -p \
+	cell_track_HK2_5min_interval_temporal_gap5.cppipe
