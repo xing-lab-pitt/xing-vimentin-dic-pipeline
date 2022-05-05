@@ -1,7 +1,5 @@
 from keras.applications.resnet50 import ResNet50
 
-# from classification_model import *
-
 import os
 import skimage.io as io
 import skimage.transform as trans
