@@ -4,11 +4,11 @@ desc=72hr_no-treat
 job_outdir=${date}_${desc}
 
 # define paths & files
-script_dir=/net/capricorn/home/xing/tch42/projects/emt/scripts/3-compute
-tools_dir=/net/capricorn/home/xing/tch42/projects/emt/scripts/memes
-dat_dir=/net/capricorn/home/xing/tch42/projects/emt/data
+script_dir=./scripts/3-compute
+tools_dir=./scripts/3-compute/memes
+dat_dir=./test_datasets/thomas_test_data
 out_dir=${dat_dir}/out/
-ori_dir=${dat_dir}/ori/pcna/${job_outdir}
+ori_dir=${dat_dir}
 
 icnn_seg_wts_file=${dat_dir}/wts/icnn_seg/icnn_seg_dc_comb_wk.hdf5
 
