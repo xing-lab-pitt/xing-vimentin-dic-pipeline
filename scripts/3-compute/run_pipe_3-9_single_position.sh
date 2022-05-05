@@ -7,14 +7,12 @@
 # job name
 #SBATCH --job-name=pcna_step_single_pos
 
-#SBATCH --gres=gpu:1
-#SBATCH --exclude=g019,g102,g104,g122,g012,g013,g018
 #SBATCH --cpus-per-task=32
 
 #SBATCH --mem=32G
 
 # partition (queue) declaration
-#SBATCH --partition=any_gpu
+#SBATCH --partition=dept_cpu
 
 # number of requested nodes
 #SBATCH --nodes=1

@@ -32,5 +32,6 @@ source activate cp4
 cellprofiler -c -r -i \
 	${output_path}/seg/ -o \
 	$output_path -p \
+	cell_track_HK2_5min_interval.cppipe\
 	# cell_track_HK2_5min_interval_temporal_gap5.cppipe
-	cell_track_HK2_5min_interval.cppipe
+	

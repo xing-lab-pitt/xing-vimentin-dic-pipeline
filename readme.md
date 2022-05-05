@@ -3,9 +3,7 @@
 
 ## User guide
 
-
 ### Products after each step
-
 #### step1: Segmentation 
 ```
 /net/capricorn/home/xing/ken67/xing-vimentin-dic-pipeline/test_datasets/sample_test_data/out//XY1
