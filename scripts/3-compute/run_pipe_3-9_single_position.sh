@@ -5,16 +5,14 @@
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 # job name
-#SBATCH --job-name=pcna_72hr_no-treat_3-9
+#SBATCH --job-name=pcna_step_single_pos
 
-#SBATCH --gres=gpu:1
-#SBATCH --exclude=g019,g102,g104,g122,g012,g013,g018
-#SBATCH --cpus-per-task=16
+#SBATCH --cpus-per-task=32
 
 #SBATCH --mem=32G
 
 # partition (queue) declaration
-#SBATCH --partition=any_gpu
+#SBATCH --partition=dept_cpu
 
 # number of requested nodes
 #SBATCH --nodes=1
@@ -44,12 +42,6 @@ echo
 echo $SLURM_JOB_NODELIST
 echo
 
-# creating directory on /scr folder of compute node & cd into it
-user=$(whoami)
-job_dir=${user}_${SLURM_JOB_NAME}_${SLURM_JOB_ID}.dcb.private.net
-mkdir /scr/$job_dir
-cd /scr/$job_dir
-
 # define paths & files
 script_dir=$1
 tools_dir=$2
@@ -58,50 +50,77 @@ img_path=$4
 output_path=$5
 icnn_seg_wts_file=$6
 
+# creating directory on /scr folder of compute node & cd into it
+user=$(whoami)
+job_dir=${user}_${SLURM_JOB_NAME}_${SLURM_JOB_ID}.dcb.private.net
+mkdir /scr/$job_dir
+rsync -ra ${script_dir}/* /scr/$job_dir
+rsync -ra ${tools_dir}/* /scr/$job_dir
+
+cd /scr/$job_dir
+
+
+
 # experiment settings
 dic_channel_label=C1
-pcna_chan_label=C2
-vim_chan_label=C3
+pcna_channel_label=C2
+vim_channel_label=C3
 
 # initialize
-rsync -ra ${script_dir}/* .
-rsync -ra ${tools_dir}/* .
 module load anaconda/3-cluster
 module load cuda/11.1
 
 echo $img_path
 
 ### cell_profiler ###
-#bash run_cp.sh $output_path $tools_dir
-#echo 'step cell profiler complete'
+bash run_cp.sh $output_path $tools_dir
+echo 'step cell profiler complete'
+
+source activate tf1
+tree $output_path
+
 #conda deactivate
 source activate tf1
 
-#python pipe_3_traj_reorganize_1st.py $img_path $output_path $icnn_seg_wts_file $dic_channel_label
-#echo 'step3 complete'
-#python pipe_4_traj_reorganize_2nd.py $output_path
-#echo 'step4 complete'
-#python pipe_5_traj_reorganize_3rd.py $output_path
-#echo 'step5 complete'
-#python pipe_6_build_single_cell.py $output_path
-#echo 'step6 complete'
-#
-## remember to modify file names in this script
-## move segmentation results to different folders
-#
-##### calculate mean contours and pca modes ###
-##python pipe_meancontour_and_pcamodes.py $output_path
-##mkdir -p ${output_path}/contour
-##cp /net/capricorn/home/xing/weikang/wwk/210309_2ng_tgf_a549/g1/data/mean_cell_contour ${output_path}/contour
-#
-## after calculate mean contours
-#mean_contour_path=${dat_dir}/stats/mean_cell_contour
-#python pipe_7_cell_contours_calculation.py $output_path $mean_contour_path 
-#echo 'step7 complete'
-#
-## modify fluor_interval: check visually or in README.md
-#python pipe_8_haralick_calculation.py $img_path $output_path $vim_chan_label
-#echo 'step8 complete'
+python pipe_3_traj_reorganize_1st.py $img_path $output_path $icnn_seg_wts_file $dic_channel_label
+echo 'step3 complete'
+tree $output_path
 
-python pipe_9_pcna_calculations.py $img_path $output_path $pcna_chan_label
-echo 'step9 complete'
+python pipe_4_traj_reorganize_2nd.py $output_path
+echo 'step4 complete'
+tree $output_path
+
+
+python pipe_5_traj_reorganize_3rd.py $output_path
+echo 'step5 complete'
+tree $output_path
+
+
+python pipe_6_build_single_cell.py $output_path
+echo 'step6 complete'
+tree $output_path
+
+
+# remember to modify file names in this script
+# move segmentation results to different folders
+
+#### calculate mean contours and pca modes ###
+#python pipe_meancontour_and_pcamodes.py $output_path
+#mkdir -p ${output_path}/contour
+#cp /net/capricorn/home/xing/weikang/wwk/210309_2ng_tgf_a549/g1/data/mean_cell_contour ${output_path}/contour
+
+# after calculate mean contours
+mean_contour_path=${dat_dir}/stats/mean_cell_contour
+python pipe_7_cell_contours_calculation.py $output_path $mean_contour_path 
+echo 'step7 complete'
+tree $output_path
+
+
+# modify fluor_interval: check visually or in README.md
+python pipe_8_haralick_calculation.py $img_path $output_path $vim_channel_label
+echo 'step8 complete'
+tree $output_path
+
+
+# python pipe_9_pcna_calculations.py $img_path $output_path $pcna_channel_label
+# echo 'step9 complete'

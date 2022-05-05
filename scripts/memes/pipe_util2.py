@@ -35,7 +35,7 @@ def create_folder(folder):
         os.makedirs(folder)
     else:
         os.makedirs(folder)
-    print("%s folder is freshly created. \n" % folder)
+    print("%s folder is created. \n" % folder)
 
     return folder
 

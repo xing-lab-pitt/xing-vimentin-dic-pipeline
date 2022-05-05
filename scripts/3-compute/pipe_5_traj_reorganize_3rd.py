@@ -85,7 +85,7 @@ def traj_reconganize3(output_path):
         mother_cells = pickle.load(fp)
     with open(dir_path + "/daughter_cells", "rb") as fp:
         daughter_cells = pickle.load(fp)
-    mitoses = np.load(dir_path + "/mitoses.npy")
+    mitoses = np.load(dir_path + "/mitoses.npy", allow_pickle=True)
     mother_cells = np.array(mother_cells)
     daughter_cells = np.array(daughter_cells)
 

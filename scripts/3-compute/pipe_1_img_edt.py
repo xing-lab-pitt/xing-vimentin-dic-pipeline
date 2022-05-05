@@ -12,7 +12,7 @@ from skimage.io import imread
 from skimage.transform import resize
 import hj_util as util
 import sys
-
+from tqdm import tqdm
 
 def assemble_model(weight_file, mode="reg_seg"):
     """Selecting the model to be used."""
@@ -110,8 +110,9 @@ def folder_edt_predict(img_path, output_path, reg_seg_wts_path, dic_channel_labe
     util.create_folder(edt_folder)
 
     img_list = sorted(glob.glob(img_path + "*" + dic_channel_label + "*"))
-
-    for i in range(len(img_list)):
+    print("img path:", img_path)
+    print("image list:", img_list)
+    for i in tqdm(range(len(img_list))):
         img_name = os.path.basename(img_list[i])
         print(img_name)
         img = imread(img_list[i])

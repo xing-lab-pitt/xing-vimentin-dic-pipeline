@@ -413,16 +413,6 @@ def traj_reconganize1(img_path, output_path, icnn_seg_weights, DIC_channel_label
     traj_start, traj_end = record_traj_start_end(df)
 
 
-# -------------judge fuse type-----------
-# two fuse types:
-# 1 undersegmentation:two or more cells fuse together:
-# (1) two or more normal cells
-# (2) one or more mitosis cell with one or more normal cell
-# (3) one or more apoptosis cell with one or more normal cell
-# (4) two or more mitosis cells
-# 2 oversegmentation:several pieces of a cell join together
-
-
 # -------------judge split type-----------
 # three split types:
 # 1 undersegmentation before split: two or more cells fuse and split:
@@ -433,8 +423,6 @@ def traj_reconganize1(img_path, output_path, icnn_seg_weights, DIC_channel_label
 # 2 oversegmentation of a cell
 # 3 cell mitosis
 
-
-# In[ ]:
 
 
 #     np.save(dir_path+'/postfuse_cells.npy',np.array(postfuse_cells))
