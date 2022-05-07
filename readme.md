@@ -7,6 +7,7 @@
 
 ```
 conda create -n yourEnv python=3.7
+conda activate yourEnv
 pip install -U -r envs/tf1_requirements.txt
 ```
 Note that python=3.7 is necesssary to support tensorflow 1.15 version. Higer versions of python do not exist when tensorflow==1.15.0 was released.
