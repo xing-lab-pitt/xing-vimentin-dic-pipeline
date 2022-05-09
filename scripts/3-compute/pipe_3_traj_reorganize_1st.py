@@ -106,8 +106,8 @@ def traj_reconganize1(img_path, output_path, icnn_seg_weights, DIC_channel_label
     print("processing %s" % (img_path), flush=True)
     img_path = pipe_util2.folder_verify(img_path)
     img_list = sorted(glob.glob(img_path + "*" + DIC_channel_label + "*"))
-    for i in range(len(img_list)):
-        img_list[i] = os.path.basename(img_list[i])
+    for presplit_cell_index in range(len(img_list)):
+        img_list[presplit_cell_index] = os.path.basename(img_list[presplit_cell_index])
 
     seg_path = pipe_util2.folder_verify(output_path) + "seg/"
     seg_img_list = sorted(listdir(seg_path))
@@ -275,24 +275,24 @@ def traj_reconganize1(img_path, output_path, icnn_seg_weights, DIC_channel_label
     relation_df.to_csv(dir_path + "Per_Relationships_break.csv", index=False, encoding="utf-8")
     traj_start, traj_end = record_traj_start_end(cell_track_db_df)
 
-    # judge fuse,split type and find candi_mitosis
+    # judge fuse,split type and find candidate_mitosis
     false_traj_label = []
     candidate_mitosis_label = []
     false_mitosis_obj = []
 
     # TODO: add documentation: what is mitosis and fuse cell cases? notebook or image
     # dealing with mitosis and then fuse cells
-    candi_mitosis_fc_label = []
-    candi_mitosis_fp_label = []
-    candi_mitosis_fp_group = []
-    candi_mitosis_fp_group_xy = []
+    candidate_mitosis_fc_label = []
+    candidate_mitosis_fp_label = []
+    candidate_mitosis_fp_group = []
+    candidate_mitosis_fp_group_xy = []
 
     mitosis_fuse_fp_label = []
     mitosis_fuse_sc_label = []
     mitosis_fuse_link_pairs = []
 
-    for i in range(len(postfuse_cells)):
-        fc_cell = postfuse_cells[i]
+    for presplit_cell_index in range(len(postfuse_cells)):
+        fc_cell = postfuse_cells[presplit_cell_index]
         fc_i_n, fc_o_n = fc_cell[0], fc_cell[1]
         fc_img = generate_single_cell_img_edt(img_path, seg_path, img_list, seg_img_list, obj_h, obj_w, fc_i_n, fc_o_n)
         fc_prob = icnn.predict(fc_img)[0]
@@ -300,7 +300,7 @@ def traj_reconganize1(img_path, output_path, icnn_seg_weights, DIC_channel_label
             cell_track_db_df, am_record, fc_i_n, fc_o_n, judge_later=True, t_range=t_search_range
         )
 
-        fp_group = prefuse_group[i]
+        fp_group = prefuse_group[presplit_cell_index]
         fp_group_prob = []
         fp_group_am_flag = []
         for [fp_i_n, fp_o_n] in fp_group:
@@ -320,32 +320,37 @@ def traj_reconganize1(img_path, output_path, icnn_seg_weights, DIC_channel_label
         false_traj_label.extend(f_label)
 
         if len(m_fc_label) > 0:
-            candi_mitosis_fc_label.extend(m_fc_label)
-            candi_mitosis_fp_label.append(m_fp_group_label)
-            candi_mitosis_fp_group.append(m_fp_group)
-            candi_mitosis_fp_group_xy.append(m_fp_group_xy)
+            candidate_mitosis_fc_label.extend(m_fc_label)
+            candidate_mitosis_fp_label.append(m_fp_group_label)
+            candidate_mitosis_fp_group.append(m_fp_group)
+            candidate_mitosis_fp_group_xy.append(m_fp_group_xy)
 
     # TODO: understand the following code.
-    for i in range(len(presplit_cells)):
-        sp_cell = presplit_cells[i]
-        sp_i_n, sp_o_n = sp_cell[0], sp_cell[1]
+    for presplit_cell_index in range(len(presplit_cells)):
+        sp_cell = presplit_cells[presplit_cell_index]
+        sp_image_index, sp_object_index = sp_cell[0], sp_cell[1]
         sp_label = np.asscalar(
             cell_track_db_df.loc[
-                (cell_track_db_df["ImageNumber"] == sp_i_n) & (cell_track_db_df["ObjectNumber"] == sp_o_n),
+                (cell_track_db_df["ImageNumber"] == sp_image_index)
+                & (cell_track_db_df["ObjectNumber"] == sp_object_index),
                 "Cell_TrackObjects_Label",
             ].values
         )
-        sp_img = generate_single_cell_img_edt(img_path, seg_path, img_list, seg_img_list, obj_h, obj_w, sp_i_n, sp_o_n)
+        sp_img = generate_single_cell_img_edt(
+            img_path, seg_path, img_list, seg_img_list, obj_h, obj_w, sp_image_index, sp_object_index
+        )
         sp_prob = icnn.predict(sp_img)[0]
 
         mitosis_fuse_flag = 0
 
-        sc_group = postsplit_group[i]
-        if sp_label in candi_mitosis_fc_label and len(sc_group) == 2:
+        sc_group = postsplit_group[presplit_cell_index]
+        if sp_label in candidate_mitosis_fc_label and len(sc_group) == 2:
             mitosis_fuse_flag = 1
-            ind = candi_mitosis_fc_label.index(sp_label)
-            mitosis_fuse_fp_label.extend(candi_mitosis_fp_label[ind])
+            ind = candidate_mitosis_fc_label.index(sp_label)
+            mitosis_fuse_fp_label.extend(candidate_mitosis_fp_label[ind])
 
+        # TODO: modularize: BIG IF, split based on case
+        # TODO: describe what it does
         if mitosis_fuse_flag == 1:
             if sp_label not in false_traj_label:
                 false_traj_label.append(sp_label)
@@ -373,15 +378,15 @@ def traj_reconganize1(img_path, output_path, icnn_seg_weights, DIC_channel_label
             d_matrix = np.zeros((2, 2))
             for m in range(2):
                 for n in range(2):
-                    x1, y1 = candi_mitosis_fp_group_xy[ind][m][0], candi_mitosis_fp_group_xy[ind][m][1]
+                    x1, y1 = candidate_mitosis_fp_group_xy[ind][m][0], candidate_mitosis_fp_group_xy[ind][m][1]
                     x2, y2 = sc_group_xy[n][0], sc_group_xy[n][1]
                     d_matrix[m, n] = np.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
             r_ind, c_ind = linear_sum_assignment(d_matrix)
             for r, c in zip(r_ind, c_ind):
                 mitosis_fuse_link_pairs.append(
                     [
-                        candi_mitosis_fp_group[ind][r][0],
-                        candi_mitosis_fp_group[ind][r][1],
+                        candidate_mitosis_fp_group[ind][r][0],
+                        candidate_mitosis_fp_group[ind][r][1],
                         sc_group[c][0],
                         sc_group[c][1],
                     ]
@@ -389,7 +394,6 @@ def traj_reconganize1(img_path, output_path, icnn_seg_weights, DIC_channel_label
 
         else:
             sc_group_prob = []
-
             for [sc_image_index, sc_object_index] in sc_group:
                 sc_img = generate_single_cell_img_edt(
                     img_path, seg_path, img_list, seg_img_list, obj_h, obj_w, sc_image_index, sc_object_index
@@ -397,7 +401,7 @@ def traj_reconganize1(img_path, output_path, icnn_seg_weights, DIC_channel_label
                 sc_prob = icnn.predict(sc_img)[0]
                 sc_group_prob.append(sc_prob.tolist())
 
-            candi_mitosis_flag, f_label, cm_label, fm_obj, sp_type, sc_group_type = judge_split_type(
+            candidate_mitosis_flag, f_label, cm_label, fm_obj, sp_type, sc_group_type = judge_split_type(
                 cell_track_db_df,
                 am_record,
                 sp_cell,
@@ -407,7 +411,7 @@ def traj_reconganize1(img_path, output_path, icnn_seg_weights, DIC_channel_label
                 tracklet_len_thres=traj_len_thres,
             )
 
-            if candi_mitosis_flag == 0:
+            if candidate_mitosis_flag == 0:
                 if len(f_label) > 0:
                     false_traj_label.extend(f_label)
 
@@ -423,7 +427,7 @@ def traj_reconganize1(img_path, output_path, icnn_seg_weights, DIC_channel_label
     # false_mitosis_obj: list of object
     with open(dir_path + "false_traj_label", "wb") as fp:
         pickle.dump(false_traj_label, fp)
-    with open(dir_path + "candi_mitosis_label", "wb") as fp:
+    with open(dir_path + "candidate_mitosis_label", "wb") as fp:
         pickle.dump(candidate_mitosis_label, fp)
     with open(dir_path + "false_mitosis_obj", "wb") as fp:
         pickle.dump(false_mitosis_obj, fp)
