@@ -1,8 +1,8 @@
 ## User guide
+
 ### Required script modifications
 
-
-### Usage
+### Sample Usage
 
 On cluster:
 ```
