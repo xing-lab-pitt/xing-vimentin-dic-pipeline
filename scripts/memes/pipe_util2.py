@@ -9,7 +9,7 @@ from datetime import datetime
 from skimage import filters
 import pickle
 
-
+# TODO: rename function
 def folder_verify(folder):
     """Verify if the folder string is ended with '/' """
     if folder[-1] != "/":
