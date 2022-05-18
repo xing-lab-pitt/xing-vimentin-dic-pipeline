@@ -1,28 +1,29 @@
+import math
 import os
 import subprocess
 import uuid
-import math
-import numpy as np
-import cv2 as cv
+
 import cv2
-from matplotlib import pyplot as plt
-import utils
-from skimage import measure, feature
+import cv2 as cv
+import matplotlib.cm
+import numpy as np
+import PIL
+import scipy
 import skimage
+import skimage.segmentation
 import sklearn
+import utils
+from matplotlib import pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D, axes3d
+from PIL import Image, ImageEnhance
+from scipy import interpolate
+from scipy import ndimage as ndi
+from skimage import feature, measure
+from skimage.feature import blob_dog, blob_doh, blob_log
+from skimage.filters import threshold_local
 from sklearn import mixture
 from sklearn.mixture import GaussianMixture
-from skimage.filters import threshold_local
-from mpl_toolkits.mplot3d import axes3d, Axes3D
-import matplotlib.cm
-import scipy
-from skimage.feature import blob_dog, blob_log, blob_doh
-import PIL
-from scipy import interpolate
-import skimage.segmentation
 from utils import distance
-from scipy import ndimage as ndi
-from PIL import Image, ImageEnhance
 
 
 def denoise_images(images, win_size=21):

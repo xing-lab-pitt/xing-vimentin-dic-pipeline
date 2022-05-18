@@ -7,27 +7,27 @@ import os
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
-import cv2
-from matplotlib import pyplot as plt
-import numpy as np
 from os import listdir
 
+import cv2
 import keras
-from keras.preprocessing.image import ImageDataGenerator, array_to_img, img_to_array, load_img
+import numpy as np
+import tensorflow as tf
+import utils
+from cnn_prep_data import (keep_aspect_resize, obj_transform,
+                           prep_icnn_am_train_data, prep_icnn_seg_train_data)
+from keras.optimizers import adam
+from keras.preprocessing.image import (ImageDataGenerator, array_to_img,
+                                       img_to_array, load_img)
+from matplotlib import pyplot as plt
+from resnet50 import res_model
 from skimage.exposure import equalize_adapthist, rescale_intensity
 from skimage.filters import gaussian
 from skimage.io import imread
 from sklearn.utils import class_weight
-import tensorflow as tf
-from tensorflow.python.client import device_lib
 from tensorflow.keras.callbacks import EarlyStopping
-import utils
-
-from cnn_prep_data import prep_icnn_am_train_data, prep_icnn_seg_train_data, keep_aspect_resize, obj_transform
-from resnet50 import res_model
+from tensorflow.python.client import device_lib
 from unsharp_mask import unsharp_mask
-
-from keras.optimizers import adam
 
 # In[1]: define
 

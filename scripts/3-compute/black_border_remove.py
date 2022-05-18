@@ -1,10 +1,12 @@
 # In[0]: import
 import argparse
-import os
-import numpy as np
-import matplotlib.pyplot as plt
-import cv2
 import glob
+import os
+
+import cv2
+import matplotlib.pyplot as plt
+import numpy as np
+
 
 # In[1]: main
 def main(crop):

@@ -1,13 +1,13 @@
-from keras.applications.resnet50 import ResNet50
-
 import os
+
+import keras.backend as K
+import numpy as np
 import skimage.io as io
 import skimage.transform as trans
-import numpy as np
-from keras.models import *
+from keras.applications.resnet50 import ResNet50
 from keras.layers import *
+from keras.models import *
 from keras.optimizers import *
-import keras.backend as K
 
 """
 Including several models:

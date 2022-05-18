@@ -1,8 +1,8 @@
-import os
-import tensorflow as tf
-import os
 import argparse
+import os
+
 import pandas as pd
+import tensorflow as tf
 
 # # some TF1 config
 # config = tf.compat.v1.ConfigProto()

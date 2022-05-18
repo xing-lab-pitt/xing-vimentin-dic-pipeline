@@ -3,15 +3,15 @@
 # In[18]:
 
 
+import sys
+
+import cv2
 import numpy as np
 import pandas as pd
-
-import sys
-import cv2
-
-from keras.models import Model
 from keras import optimizers
-from keras.layers import Input, Activation, Conv2D, MaxPooling2D, UpSampling2D, BatchNormalization, Dropout
+from keras.layers import (Activation, BatchNormalization, Conv2D, Dropout,
+                          Input, MaxPooling2D, UpSampling2D)
+from keras.models import Model
 
 
 def conv_block(input_tensor, kernel, filters):

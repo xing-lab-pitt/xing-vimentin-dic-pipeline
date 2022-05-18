@@ -1,29 +1,28 @@
-import numpy as np
-from skimage.io import imread
-import pandas as pd
-import math
-from math import pi
-import scipy
-from skimage.measure import label, regionprops
-from skimage.color import label2rgb
-from os import listdir
-from PIL import Image, ImageDraw, ImageFont
-from skimage import morphology
-from scipy import ndimage
-import cv2
-
-from scipy.spatial.distance import euclidean, cosine
-
-from resnet50 import res_model
-import time
-from skimage.segmentation import clear_border
-import pickle
-from matplotlib import pyplot as plt
 import itertools
-from scipy.optimize import linear_sum_assignment
+import math
+import pickle
+import time
+from math import pi
+from os import listdir
+
+import cv2
+import numpy as np
+import pandas as pd
+import scipy
 from index import Indexes
+from matplotlib import pyplot as plt
+from PIL import Image, ImageDraw, ImageFont
+from resnet50 import res_model
+from scipy import ndimage
+from scipy.optimize import linear_sum_assignment
+from scipy.spatial.distance import cosine, euclidean
 from scipy.stats import pearsonr
+from skimage import morphology
+from skimage.color import label2rgb
 from skimage.exposure import equalize_adapthist
+from skimage.io import imread
+from skimage.measure import label, regionprops
+from skimage.segmentation import clear_border
 
 # this is faster than the one from lineage mapper,only with matrix calculation
 

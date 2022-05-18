@@ -4,32 +4,30 @@
 # In[1]:
 
 
-import numpy as np
-import pandas as pd
-
-import sys
-import cv2
-from skimage.io import imread, imread_collection
-from scipy import signal
-from scipy.ndimage import filters, distance_transform_edt
-from PIL import Image
-from skimage.filters import gaussian
+import glob
 import os
+import sys
 from os import listdir
 
-from keras.models import Model
-from keras import optimizers
-from keras.layers import Input, Activation, Conv2D, MaxPooling2D, UpSampling2D, BatchNormalization, Dropout
-from reg_seg_model import reg_seg
-import glob
-from skimage.exposure import equalize_adapthist
-from matplotlib import pyplot as plt
-
-from mpl_toolkits.mplot3d import Axes3D
-from matplotlib import cm
-from scipy.interpolate import bisplrep, bisplev
+import cv2
+import numpy as np
+import pandas as pd
 from cnn_prep_data import prep_fluor_data
-
+from keras import optimizers
+from keras.layers import (Activation, BatchNormalization, Conv2D, Dropout,
+                          Input, MaxPooling2D, UpSampling2D)
+from keras.models import Model
+from matplotlib import cm
+from matplotlib import pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+from PIL import Image
+from reg_seg_model import reg_seg
+from scipy import signal
+from scipy.interpolate import bisplev, bisplrep
+from scipy.ndimage import distance_transform_edt, filters
+from skimage.exposure import equalize_adapthist
+from skimage.filters import gaussian
+from skimage.io import imread, imread_collection
 
 # In[2]:
 

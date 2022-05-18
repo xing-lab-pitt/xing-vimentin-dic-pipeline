@@ -10,30 +10,29 @@
 # In[37]:
 
 
-import numpy as np
-from skimage.segmentation import watershed, clear_border
-import scipy.misc
-from skimage.io import imread
-from matplotlib import pyplot as plt
-import scipy.ndimage as ndi
-import pickle
-import os
-from os import listdir
-from skimage.feature import peak_local_max
-from skimage.morphology import remove_small_objects, local_maxima, h_maxima
-from skimage.measure import regionprops, label
-from skimage.color import label2rgb
-from PIL import Image, ImageDraw, ImageFont
-from math import pi
-import cv2
 import glob
-import pandas as pd
-from skimage.filters import gaussian
-from scipy.interpolate import bisplrep, bisplev
-from mpl_toolkits.mplot3d import Axes3D
-from matplotlib import cm
-from skimage.filters import gaussian
+import os
+import pickle
+from math import pi
+from os import listdir
 
+import cv2
+import numpy as np
+import pandas as pd
+import scipy.misc
+import scipy.ndimage as ndi
+from matplotlib import cm
+from matplotlib import pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+from PIL import Image, ImageDraw, ImageFont
+from scipy.interpolate import bisplev, bisplrep
+from skimage.color import label2rgb
+from skimage.feature import peak_local_max
+from skimage.filters import gaussian
+from skimage.io import imread
+from skimage.measure import label, regionprops
+from skimage.morphology import h_maxima, local_maxima, remove_small_objects
+from skimage.segmentation import clear_border, watershed
 
 # In[38]:
 

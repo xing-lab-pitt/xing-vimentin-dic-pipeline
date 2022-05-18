@@ -9,26 +9,25 @@ warnings.filterwarnings("ignore")
 
 import glob
 import math
-import numpy as np
 import os
 import random
 import shutil
+import sys
+from os import listdir
 
 import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
-from os import listdir
+import numpy as np
+import skimage.morphology
+import utils
+from black_border_remove import main as bbr
 from PIL import Image as PImage
-from scipy.ndimage.morphology import distance_transform_edt
+from pilutil import toimage
 from scipy.ndimage import binary_fill_holes as fill_holes
+from scipy.ndimage.morphology import distance_transform_edt
 from skimage.color import label2rgb
 from skimage.io import imread
 from skimage.measure import label, regionprops
-import skimage.morphology
-
-from black_border_remove import main as bbr
-import utils
-import sys
-from pilutil import toimage
 
 # In[1]: define
 

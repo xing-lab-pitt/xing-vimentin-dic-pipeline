@@ -6,6 +6,7 @@
 # published by the Free Software Foundation.
 
 import bisect
+
 import numpy
 import utils
 

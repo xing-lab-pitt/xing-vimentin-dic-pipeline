@@ -4,38 +4,39 @@
 # In[1]:
 
 
-import numpy as np
-from skimage.segmentation import watershed, clear_border
-import scipy.misc
-from skimage.io import imread
-from matplotlib import pyplot as plt
-import scipy.ndimage as ndi
-import pickle
-import os
-from os import listdir
-from skimage.feature import peak_local_max
-from skimage.morphology import remove_small_objects, local_maxima, h_maxima, disk, dilation
-from skimage.measure import regionprops, label
-from skimage.color import label2rgb
-from PIL import Image, ImageDraw, ImageFont
-from math import pi
-import cv2
 import glob
-import pandas as pd
-from cell_class import single_cell, fluor_single_cell
-from skimage.filters import frangi, gabor
-import mahotas.features.texture as mht
-from scipy.signal import medfilt
-from scipy.interpolate import bisplrep, bisplev
-from mpl_toolkits.mplot3d import Axes3D
-from matplotlib import cm
-from sklearn.preprocessing import RobustScaler, StandardScaler
-
 import multiprocessing
-from multiprocessing import Process
-import pipe_util2
+import os
+import pickle
 import sys
+from math import pi
+from multiprocessing import Process
+from os import listdir
+
 import config
+import cv2
+import mahotas.features.texture as mht
+import numpy as np
+import pandas as pd
+import pipe_util2
+import scipy.misc
+import scipy.ndimage as ndi
+from cell_class import fluor_single_cell, single_cell
+from matplotlib import cm
+from matplotlib import pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+from PIL import Image, ImageDraw, ImageFont
+from scipy.interpolate import bisplev, bisplrep
+from scipy.signal import medfilt
+from skimage.color import label2rgb
+from skimage.feature import peak_local_max
+from skimage.filters import frangi, gabor
+from skimage.io import imread
+from skimage.measure import label, regionprops
+from skimage.morphology import (dilation, disk, h_maxima, local_maxima,
+                                remove_small_objects)
+from skimage.segmentation import clear_border, watershed
+from sklearn.preprocessing import RobustScaler, StandardScaler
 
 fluor_interval = config.fluor_interval
 

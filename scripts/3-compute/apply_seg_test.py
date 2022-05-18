@@ -4,34 +4,34 @@
 # In[1]:
 
 
-import numpy as np
-import pandas as pd
-
-import sys
-import cv2
-from skimage.io import imread, imread_collection
-from scipy import signal
-from scipy.ndimage import filters, distance_transform_edt
-from PIL import Image
-from skimage.exposure import equalize_adapthist
+import glob
 import os
+import sys
 from os import listdir
 
-from keras.models import Model
-from keras import optimizers
-from keras.layers import Input, Activation, Conv2D, MaxPooling2D, UpSampling2D, BatchNormalization, Dropout
-from reg_seg_model import reg_seg
-import glob
-from skimage import morphology
-from skimage.morphology import remove_small_objects, h_maxima, h_minima, opening
-from skimage.measure import regionprops, label, find_contours
-from skimage.segmentation import watershed, clear_border
-from matplotlib import pyplot as plt
-from skimage.color import label2rgb
-from PIL import Image, ImageDraw, ImageFont
+import cv2
+import numpy as np
+import pandas as pd
 from cla_seg_model_loss import cla_seg
-from reg_seg_lin_model import reg_seg_lin
+from keras import optimizers
+from keras.layers import (Activation, BatchNormalization, Conv2D, Dropout,
+                          Input, MaxPooling2D, UpSampling2D)
+from keras.models import Model
+from matplotlib import pyplot as plt
+from PIL import Image, ImageDraw, ImageFont
 from pilutil import toimage
+from reg_seg_lin_model import reg_seg_lin
+from reg_seg_model import reg_seg
+from scipy import signal
+from scipy.ndimage import distance_transform_edt, filters
+from skimage import morphology
+from skimage.color import label2rgb
+from skimage.exposure import equalize_adapthist
+from skimage.io import imread, imread_collection
+from skimage.measure import find_contours, label, regionprops
+from skimage.morphology import (h_maxima, h_minima, opening,
+                                remove_small_objects)
+from skimage.segmentation import clear_border, watershed
 
 # In[8]:
 

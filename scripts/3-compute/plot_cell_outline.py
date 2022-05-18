@@ -4,14 +4,14 @@
 # In[1]:
 
 
-import numpy as np
-from skimage.measure import label, regionprops, find_contours
-from skimage.segmentation import find_boundaries
-from skimage.morphology import opening, closing, dilation, disk
-from skimage.io import imread
-from matplotlib import pyplot as plt
 from os import listdir
 
+import numpy as np
+from matplotlib import pyplot as plt
+from skimage.io import imread
+from skimage.measure import find_contours, label, regionprops
+from skimage.morphology import closing, dilation, disk, opening
+from skimage.segmentation import find_boundaries
 
 # In[2]:
 

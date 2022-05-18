@@ -1,24 +1,26 @@
 import csv
-import nd2reader
-from nd2reader import ND2Reader
-from pims import ImageSequenceND
+import gc
+import math
 import os
+import random
+import shutil
+
+import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
+import nd2reader
 import numpy as np
+import pandas as pd
+import PIL
+import png
+import scipy.stats
 import skimage
 import skimage.io
 import skimage.transform
-import scipy.stats
-import PIL
-from skimage.restoration import denoise_wavelet, estimate_sigma, denoise_nl_means, denoise_bilateral
-import png
-import gc
-import shutil
-import random
-import matplotlib.patches as mpatches
-from skimage.measure import regionprops
-import pandas as pd
-import math
-from skimage.io import imread
-from io_utils import *
 from celltool_utils import *
+from io_utils import *
+from nd2reader import ND2Reader
+from pims import ImageSequenceND
+from skimage.io import imread
+from skimage.measure import regionprops
+from skimage.restoration import (denoise_bilateral, denoise_nl_means,
+                                 denoise_wavelet, estimate_sigma)

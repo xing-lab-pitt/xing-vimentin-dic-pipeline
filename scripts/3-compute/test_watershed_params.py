@@ -3,33 +3,32 @@ import sys
 
 sys.path.insert(1, "C:/Users/14432/OneDrive/Research/Projects/a549_pcna/scripts/memes/")
 
-import numpy as np
-from skimage.segmentation import watershed, clear_border
-from skimage.io import imread
-from matplotlib import pyplot as plt
-import scipy.ndimage as ndi
-import pickle
-import os
-from os import listdir
-from skimage.feature import peak_local_max
-from skimage.morphology import remove_small_objects, local_maxima, h_maxima, disk, dilation
-from skimage.measure import regionprops, label
-from skimage.color import label2rgb
-from PIL import Image, ImageDraw, ImageFont
-from resnet50 import res_model
-from math import pi
-import cv2
 import glob
-from skimage.exposure import equalize_adapthist
-from pilutil import toimage
-from cnn_prep_data import keep_aspect_resize, obj_transform
-
-import pandas as pd
-from scipy import ndimage
+import os
+import pickle
 import sys
-import hj_util
-from skimage.segmentation import clear_border
+from math import pi
+from os import listdir
 
+import cv2
+import hj_util
+import numpy as np
+import pandas as pd
+import scipy.ndimage as ndi
+from cnn_prep_data import keep_aspect_resize, obj_transform
+from matplotlib import pyplot as plt
+from PIL import Image, ImageDraw, ImageFont
+from pilutil import toimage
+from resnet50 import res_model
+from scipy import ndimage
+from skimage.color import label2rgb
+from skimage.exposure import equalize_adapthist
+from skimage.feature import peak_local_max
+from skimage.io import imread
+from skimage.measure import label, regionprops
+from skimage.morphology import (dilation, disk, h_maxima, local_maxima,
+                                remove_small_objects)
+from skimage.segmentation import clear_border, watershed
 from tensorflow.python.client import device_lib
 
 print(device_lib.list_local_devices())

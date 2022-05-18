@@ -1,50 +1,39 @@
-import numpy as np
-from skimage import measure
-from skimage.segmentation import find_boundaries
-from skimage.morphology import opening, closing
-from skimage.io import imread
-from matplotlib import pyplot as plt
-import os
-from os import listdir
-import pandas as pd
-from scipy.stats import kde
-import seaborn as sns
 import copy
-from math import exp, log
+import os
 import pickle
-import scipy.ndimage as ndimage
-import scipy.interpolate.fitpack as fitpack
-from sklearn import (
-    manifold,
-    decomposition,
-    random_projection,
-    cluster,
-    metrics,
-    preprocessing,
-    mixture,
-    model_selection,
-)
-from sklearn.neighbors import kneighbors_graph, BallTree
-from hmmlearn import hmm
-from persim import PersImage
-import scipy.io as sio
-from mpl_toolkits.mplot3d import Axes3D
-from cell_class import single_cell, fluor_single_cell
-import contour_class
-import utils
-import image_warp
-from contour_tool import (
-    df_find_contour_points,
-    find_contour_points,
-    generate_contours,
-    align_contour_to,
-    align_contours,
-)
-from scipy.signal import medfilt
-from traj_class import single_cell_traj, fluor_single_cell_traj
-from skimage.measure import label, regionprops
-from matplotlib import animation
 from collections import OrderedDict
+from math import exp, log
+from os import listdir
+
+import contour_class
+import image_warp
+import numpy as np
+import pandas as pd
+import scipy.interpolate.fitpack as fitpack
+import scipy.io as sio
+import scipy.ndimage as ndimage
+import seaborn as sns
+import utils
+from cell_class import fluor_single_cell, single_cell
+from contour_tool import (align_contour_to, align_contours,
+                          df_find_contour_points, find_contour_points,
+                          generate_contours)
+from hmmlearn import hmm
+from matplotlib import animation
+from matplotlib import pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+from persim import PersImage
+from scipy.signal import medfilt
+from scipy.stats import kde
+from skimage import measure
+from skimage.io import imread
+from skimage.measure import label, regionprops
+from skimage.morphology import closing, opening
+from skimage.segmentation import find_boundaries
+from sklearn import (cluster, decomposition, manifold, metrics, mixture,
+                     model_selection, preprocessing, random_projection)
+from sklearn.neighbors import BallTree, kneighbors_graph
+from traj_class import fluor_single_cell_traj, single_cell_traj
 
 
 def generate_single_cell_img(img, seg, img_num, obj_num):

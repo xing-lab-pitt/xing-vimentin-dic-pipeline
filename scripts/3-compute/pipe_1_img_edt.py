@@ -1,18 +1,18 @@
-from PIL import Image
-from os import listdir
 import glob
 import os
-import numpy as np
-import keras.backend as K
+import sys
+from os import listdir
 
+import keras.backend as K
+import numpy as np
+import utils as util
+from cnn_prep_data import dic_bg_correction, img_transform, prep_dic_data
 from models import reg_seg, unet
-from cnn_prep_data import prep_dic_data, img_transform, dic_bg_correction
-from train_rotation_ver import predict_image
+from PIL import Image
 from skimage.io import imread
 from skimage.transform import resize
-import utils as util
-import sys
 from tqdm import tqdm
+from train_rotation_ver import predict_image
 
 
 def assemble_model(weight_file, mode="reg_seg"):

@@ -9,42 +9,38 @@ import warnings
 warnings.filterwarnings("ignore")
 
 import copy
-import numpy as np
-from skimage.segmentation import watershed, clear_border
-import scipy.misc
-from skimage.io import imread
-from matplotlib import pyplot as plt
-import scipy.ndimage as ndi
-import pickle
-import os
-from os import listdir
-from skimage.feature import peak_local_max
-from skimage.morphology import remove_small_objects, local_maxima, h_maxima, opening
-from skimage import measure
-from skimage.measure import regionprops, label
-from skimage.color import label2rgb
-from PIL import Image, ImageDraw, ImageFont
-from math import pi, sqrt
-import cv2
 import glob
-import pandas as pd
+import os
+import pickle
+from math import pi, sqrt
+from os import listdir
 
-from sklearn import decomposition, cluster, manifold
+import contour_class
+import cv2
+import image_warp
+import numpy as np
+import pandas as pd
+import pipe_util2
+import scipy.misc
+import scipy.ndimage as ndi
+import utils
+from cell_class import single_cell
+from contour_tool import (align_contour_to, align_contours,
+                          df_find_contour_points, find_contour_points,
+                          generate_contours)
+from matplotlib import pyplot as plt
+from PIL import Image, ImageDraw, ImageFont
+from skimage import measure
+from skimage.color import label2rgb
+from skimage.feature import peak_local_max
+from skimage.io import imread
+from skimage.measure import label, regionprops
+from skimage.morphology import (h_maxima, local_maxima, opening,
+                                remove_small_objects)
+from skimage.segmentation import clear_border, watershed
+from sklearn import cluster, decomposition, manifold
 from sklearn.neighbors import KernelDensity
 from sklearn.preprocessing import StandardScaler
-from cell_class import single_cell
-import contour_class
-import utils
-
-import image_warp
-from contour_tool import (
-    df_find_contour_points,
-    find_contour_points,
-    generate_contours,
-    align_contour_to,
-    align_contours,
-)
-import pipe_util2
 
 # In[2]:
 

@@ -3,27 +3,21 @@
 - [Deep Residual Learning for Image Recognition](https://arxiv.org/abs/1512.03385)
 Adapted from code contributed by BigMoyan.
 """
-from __future__ import print_function
-from __future__ import absolute_import
+from __future__ import absolute_import, print_function
 
 import warnings
 
-from keras.layers import Input
-from keras import layers
-from keras.layers import Dense, Dropout
-from keras.layers import Activation
-from keras.layers import Flatten
-from keras.layers import Conv2D
-from keras.layers import MaxPooling2D
-from keras.layers import AveragePooling2D
-from keras.layers import GlobalAveragePooling2D
-from keras.layers import GlobalMaxPooling2D
-from keras.layers import BatchNormalization
-from keras.models import Model
 from keras import backend as K
+from keras import layers
+from keras.layers import (Activation, AveragePooling2D, BatchNormalization,
+                          Conv2D, Dense, Dropout, Flatten,
+                          GlobalAveragePooling2D, GlobalMaxPooling2D, Input,
+                          MaxPooling2D)
+from keras.models import Model
+from keras.preprocessing.image import (ImageDataGenerator, array_to_img,
+                                       img_to_array, load_img)
 from keras.utils import layer_utils
 from keras.utils.data_utils import get_file
-from keras.preprocessing.image import ImageDataGenerator, array_to_img, img_to_array, load_img
 
 
 def identity_block(input_tensor, kernel_size, filters, stage, block):

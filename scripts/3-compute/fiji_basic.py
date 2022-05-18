@@ -6,14 +6,16 @@
 
 
 # pattern = '''/Volumes/Fusion0_dat/dante_weikang_imaging_data/rpe_pcna_p21_72hr_time_lapse/TRITC_data/rpe_pcna_p21_72hr_time_lapse_T{time}_XY{tile}_{channel}.tif'''
-import BaSiC_ as Basic
-from ij.macro import Interpreter
-from ij.io import Opener
-from ij import IJ, WindowManager, ImagePlus, ImageStack
 import collections
-import re
 import os
+import re
 import sys
+
+import BaSiC_ as Basic
+from ij import IJ, ImagePlus, ImageStack, WindowManager
+from ij.io import Opener
+from ij.macro import Interpreter
+
 MAX_IMG_IN_MEM = 100
 DEFAULT_CHANNEL = 0
 

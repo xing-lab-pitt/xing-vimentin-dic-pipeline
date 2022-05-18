@@ -1,9 +1,8 @@
-from models import reg_seg
-from cnn_prep_data import prep_train_data
-from tensorflow.keras.callbacks import EarlyStopping
-
 import sys
+
 import utils
+from cnn_prep_data import prep_train_data
+from models import reg_seg
 from tensorflow.keras.callbacks import EarlyStopping
 
 train_input_path = sys.argv[1]

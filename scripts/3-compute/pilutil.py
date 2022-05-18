@@ -12,18 +12,15 @@ available on systems that don't have PIL installed.
 
 """
 
-from __future__ import division, print_function, absolute_import
-
-
-# Functions which need the PIL
-
-
-import numpy
+from __future__ import absolute_import, division, print_function
 
 import tempfile
 
+import numpy
+from numpy import (amax, amin, arange, array, asarray, iscomplexobj,
+                   issubdtype, newaxis, ones, ravel, transpose, uint8)
 
-from numpy import amin, amax, ravel, asarray, arange, ones, newaxis, transpose, iscomplexobj, uint8, issubdtype, array
+# Functions which need the PIL
 
 
 try:
@@ -33,7 +30,6 @@ try:
 except ImportError:
 
     import Image
-
     import ImageFilter
 
 

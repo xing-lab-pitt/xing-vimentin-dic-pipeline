@@ -4,22 +4,20 @@
 # In[5]:
 
 
-import numpy as np
+import glob
 import os
+import random
+import sys
 from os import listdir
+
+import numpy as np
+import pandas as pd
+import utils as util
 from PIL import Image as PImage
 from pilutil import toimage
 from skimage.io import imread
-import glob
-import random
-
-from pilutil import toimage
-import pandas as pd
-
 # import opencv
 from skimage.transform import resize
-import sys
-import utils as util
 
 input_path = sys.argv[1]
 crop_path = sys.argv[2]

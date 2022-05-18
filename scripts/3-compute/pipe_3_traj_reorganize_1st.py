@@ -4,67 +4,48 @@
 # In[1]:
 
 
+import glob
+import itertools
+import math
+import os
+import pickle
+import sqlite3
+import sys
+import time
+from datetime import datetime
+from math import pi
+from os import listdir
+
+import config
+import cv2
 import numpy as np
 import pandas as pd
-import sys
-from scipy.spatial.distance import euclidean, cosine
-import math
-from math import pi
+import pipe_util2
 import scipy
+from cnn_prep_data import generate_single_cell_img_edt
+from matplotlib import pyplot as plt
+from PIL import Image, ImageDraw, ImageFont
+from resnet50 import res_model
+from scipy import ndimage
+from scipy.optimize import linear_sum_assignment
+from scipy.spatial.distance import cosine, euclidean
+from skimage import morphology
+from skimage.color import label2rgb
 from skimage.io import imread
 from skimage.measure import label, regionprops
-from skimage.color import label2rgb
-import os
-from os import listdir
-from PIL import Image, ImageDraw, ImageFont
-
-from resnet50 import res_model
-from skimage import morphology
-from scipy import ndimage
-import cv2
-import time
 from skimage.segmentation import clear_border
-import pickle
-from matplotlib import pyplot as plt
-import itertools
-from datetime import datetime
-
-from scipy.optimize import linear_sum_assignment
-import sqlite3
-from track_module import (
-    compute_overlap_matrix,
-    compute_overlap_pair,
-    compute_overlap_single,
-    generate_traj_seri,
-    relabel_traj,
-    record_traj_start_end,
-    judge_mol_type,
-    search_false_link,
-    judge_border,
-    find_border_obj,
-    break_link,
-    connect_link,
-    false_seg_mark,
-    judge_traj_am,
-    judge_apoptosis_tracklet,
-    traj_start_end_info,
-    am_obj_info,
-    compute_specific_overlap,
-    compute_cost,
-    calculate_area_penalty,
-    find_am_sisters,
-    cal_cell_fusion,
-    cal_cell_split,
-    find_mitosis_pairs_to_break,
-    find_fuse_pairs_to_break,
-    find_split_pairs_to_break,
-    judge_fuse_type,
-    judge_split_type,
-)
-from cnn_prep_data import generate_single_cell_img_edt
-import glob
-import pipe_util2
-import config
+from track_module import (am_obj_info, break_link, cal_cell_fusion,
+                          cal_cell_split, calculate_area_penalty, compute_cost,
+                          compute_overlap_matrix, compute_overlap_pair,
+                          compute_overlap_single, compute_specific_overlap,
+                          connect_link, false_seg_mark, find_am_sisters,
+                          find_border_obj, find_fuse_pairs_to_break,
+                          find_mitosis_pairs_to_break,
+                          find_split_pairs_to_break, generate_traj_seri,
+                          judge_apoptosis_tracklet, judge_border,
+                          judge_fuse_type, judge_mol_type, judge_split_type,
+                          judge_traj_am, record_traj_start_end, relabel_traj,
+                          search_false_link, traj_start_end_info)
 
 # ----parameter setting -----------
 # depend on: cell type, time interval-------

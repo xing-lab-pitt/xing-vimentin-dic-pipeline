@@ -1,13 +1,15 @@
 import glob
 import os
-import shutil
-import matplotlib.pyplot as plt
-from skimage.io import imread
-import numpy as np
-from itertools import chain
-from datetime import datetime
-from skimage import filters
 import pickle
+import shutil
+from datetime import datetime
+from itertools import chain
+
+import matplotlib.pyplot as plt
+import numpy as np
+from skimage import filters
+from skimage.io import imread
+
 
 # TODO: rename function
 def correct_folder_str(folder):

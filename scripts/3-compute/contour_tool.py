@@ -1,13 +1,13 @@
 import contour_class
-import utils as utils
-import scipy.ndimage as ndimage
-import scipy.interpolate.fitpack as fitpack
-import numpy
 import image_warp as image_warp
+import numpy
 import pandas as pd
+import scipy.interpolate.fitpack as fitpack
+import scipy.ndimage as ndimage
+import utils as utils
 from skimage import measure
 from skimage.io import imread
-from skimage.morphology import opening, closing
+from skimage.morphology import closing, opening
 
 
 def find_contour_points(img_path, img_list, contour_value=0.5):

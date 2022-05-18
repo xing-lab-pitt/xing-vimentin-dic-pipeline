@@ -18,14 +18,14 @@ class CentralAxisContour
 !!! and functions from from_file() need further test
 """
 
-import numpy
-import scipy.interpolate.fitpack as fitpack
-import copy
-
 # import exceptions #for python 2
 import builtins as exceptions  # for python 3
-import utils as utils
+import copy
+
+import numpy
 import procustes as procustes
+import scipy.interpolate.fitpack as fitpack
+import utils as utils
 
 # import path as path
 # import numpy_compat as numpy_compat

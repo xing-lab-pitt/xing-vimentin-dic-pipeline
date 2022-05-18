@@ -1,11 +1,12 @@
-from utils import *
+import math
+
+import Augmentor
+import keras
+import tensorflow as tf
+import train_config as config
 from cv_analysis import *
 from models import *
-import tensorflow as tf
-import keras
-import Augmentor
-import train_config as config
-import math
+from utils import *
 
 prediction_result_dir = "./train_pred_results_rpe_DIC"
 train_DEBUG = False

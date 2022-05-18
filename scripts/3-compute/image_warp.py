@@ -5,8 +5,8 @@
 # it under the terms of version 2 of the GNU General Public License as
 # published by the Free Software Foundation.
 
-import scipy.ndimage as ndimage
 import numpy
+import scipy.ndimage as ndimage
 
 
 def warp_images(from_points, to_points, images, output_region, interpolation_order=1, approximate_grid=2):

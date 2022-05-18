@@ -4,27 +4,26 @@
 # In[12]:
 
 
+import glob
 import itertools
-import numpy as np
-import pandas as pd
-
-import sys
-import cv2
-from skimage.io import imread, imread_collection
-from scipy import signal
-from scipy.ndimage import filters, distance_transform_edt
-from PIL import Image
-from matplotlib import pyplot as plt
 import os
+import sys
 from os import listdir
 
-from keras.models import Model
+import cv2
+import numpy as np
+import pandas as pd
 from keras import optimizers
-from keras.layers import Input, Activation, Conv2D, MaxPooling2D, UpSampling2D, BatchNormalization, Dropout
+from keras.layers import (Activation, BatchNormalization, Conv2D, Dropout,
+                          Input, MaxPooling2D, UpSampling2D)
+from keras.models import Model
+from matplotlib import pyplot as plt
+from PIL import Image
 from reg_seg_model import reg_seg
-import glob
+from scipy import signal
+from scipy.ndimage import distance_transform_edt, filters
 from skimage.exposure import equalize_adapthist
-
+from skimage.io import imread, imread_collection
 
 # In[7]:
 

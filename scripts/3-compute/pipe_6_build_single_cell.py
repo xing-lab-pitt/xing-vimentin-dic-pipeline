@@ -4,37 +4,33 @@
 # In[1]:
 
 
-import numpy as np
-from skimage import measure
-from skimage.segmentation import find_boundaries
-from skimage.morphology import opening, closing
-from skimage.io import imread
-from matplotlib import pyplot as plt
-import os
-from os import listdir
-import pandas as pd
-from scipy.stats import kde
-import seaborn as sns
 import copy
+import os
 import pickle
-from cell_class import single_cell
+import sys
+from os import listdir
 
 import contour_class
-import utils as utils
-import scipy.ndimage as ndimage
-import scipy.interpolate.fitpack as fitpack
 import image_warp as image_warp
-from contour_tool import (
-    df_find_contour_points,
-    find_contour_points,
-    generate_contours,
-    align_contour_to,
-    align_contours,
-)
-
+import numpy as np
+import pandas as pd
 # from . import pipe_util2
 import pipe_util2
-import sys
+import scipy.interpolate.fitpack as fitpack
+import scipy.ndimage as ndimage
+import seaborn as sns
+import utils as utils
+from cell_class import single_cell
+from contour_tool import (align_contour_to, align_contours,
+                          df_find_contour_points, find_contour_points,
+                          generate_contours)
+from matplotlib import pyplot as plt
+from scipy.stats import kde
+from skimage import measure
+from skimage.io import imread
+from skimage.morphology import closing, opening
+from skimage.segmentation import find_boundaries
+
 
 # -------------initiate all cells--------------------
 def build_single_cell(output_path):

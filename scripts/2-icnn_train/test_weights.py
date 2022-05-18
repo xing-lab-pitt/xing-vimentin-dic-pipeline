@@ -3,16 +3,14 @@ import sys
 
 sys.path.insert(0, "C:/Users/14432/OneDrive/Research/Projects/A549_144hr/scripts/memes/")
 
-import numpy as np
 import os
 from os import listdir
 
-from skimage.io import imread
-
 import matplotlib.pyplot as plt
-
+import numpy as np
 from cnn_prep_data import keep_aspect_resize, obj_transform
 from resnet50 import res_model
+from skimage.io import imread
 
 # In[1]: initiate
 

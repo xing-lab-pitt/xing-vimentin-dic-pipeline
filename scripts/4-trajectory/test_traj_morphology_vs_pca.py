@@ -1,77 +1,64 @@
 # In[1]:
 
-import numpy as np
-from skimage import measure
-from skimage.segmentation import find_boundaries
-from skimage.morphology import opening, closing
-from skimage.io import imread
-from matplotlib import pyplot as plt
-import os
-from os import listdir
-import pandas as pd
-from scipy.stats import kde
-import seaborn as sns
 import copy
-from math import exp, log
+import glob
+import os
 import pickle
-import scipy.ndimage as ndimage
+from itertools import product
+from math import exp, log
+from os import listdir
+
+import contour_class
+import image_warp
+import numpy as np
+import pandas as pd
 import scipy.interpolate.fitpack as fitpack
-from sklearn import (
-    manifold,
-    decomposition,
-    random_projection,
-    cluster,
-    metrics,
-    preprocessing,
-    mixture,
-    model_selection,
-)
-from sklearn.neighbors import kneighbors_graph, BallTree
-from hmmlearn import hmm
-
-# from pymc import MCMC,flib,Model,MAP
-# from ripser import Rips,ripser,plot_dgms
-from persim import PersImage
 import scipy.io as sio
-
+import scipy.ndimage as ndimage
+import seaborn as sns
+import utils
+from cell_class import fluor_single_cell, single_cell
+from contour_tool import (align_contour_to, align_contours,
+                          df_find_contour_points, find_contour_points,
+                          generate_contours)
+from hmmlearn import hmm
+from matplotlib import pyplot as plt
+from matplotlib.patches import Circle, Rectangle, Wedge
 # import kmapper as km
 # from kmapper import jupyter
 from mpl_toolkits.mplot3d import Axes3D
-from cell_class import single_cell, fluor_single_cell
-import contour_class
-import utils
-import image_warp
-from contour_tool import (
-    df_find_contour_points,
-    find_contour_points,
-    generate_contours,
-    align_contour_to,
-    align_contours,
-)
+# from pymc import MCMC,flib,Model,MAP
+# from ripser import Rips,ripser,plot_dgms
+from persim import PersImage
+from scipy import signal, stats
 from scipy.signal import medfilt, wiener
-from traj_class import single_cell_traj, fluor_single_cell_traj
-
-# import bnpy
-from sklearn.preprocessing import MinMaxScaler, StandardScaler, RobustScaler, QuantileTransformer
-from itertools import product
+from scipy.stats import kde
+from skimage import measure
+from skimage.io import imread
+from skimage.morphology import closing, opening
+from skimage.segmentation import find_boundaries
+from sklearn import (cluster, decomposition, manifold, metrics, mixture,
+                     model_selection, preprocessing, random_projection)
 from sklearn.cluster import DBSCAN, KMeans
-from sklearn.metrics import silhouette_score, davies_bouldin_score
-import glob
-
+from sklearn.manifold import MDS
+from sklearn.metrics import davies_bouldin_score, silhouette_score
+from sklearn.neighbors import BallTree, kneighbors_graph
+# import bnpy
+from sklearn.preprocessing import (MinMaxScaler, QuantileTransformer,
+                                   RobustScaler, StandardScaler)
+from statsmodels import robust
+# import sparse
+from statsmodels.tsa.stattools import grangercausalitytests
+from traj_class import fluor_single_cell_traj, single_cell_traj
+from traj_scale import sp_traj_scaling, ssp_traj_scaling
+from tslearn.barycenters import dtw_barycenter_averaging, softdtw_barycenter
+from tslearn.clustering import (GlobalAlignmentKernelKMeans, KShape,
+                                TimeSeriesKMeans, silhouette_score)
+from tslearn.metrics import (cdist_dtw, cdist_gak, dtw_path,
+                             dtw_subsequence_path)
 # from pykalman import KalmanFilter
 # from neupy import algorithms, utils
 from tslearn.utils import to_time_series, to_time_series_dataset
-from tslearn.clustering import TimeSeriesKMeans, KShape, GlobalAlignmentKernelKMeans, silhouette_score
-from tslearn.metrics import dtw_path, dtw_subsequence_path, cdist_gak, cdist_dtw
-from tslearn.barycenters import dtw_barycenter_averaging, softdtw_barycenter
-from sklearn.manifold import MDS
-
-# import sparse
-from statsmodels.tsa.stattools import grangercausalitytests
-from scipy import signal, stats
-from statsmodels import robust
-from matplotlib.patches import Circle, Wedge, Rectangle
-from traj_scale import sp_traj_scaling, ssp_traj_scaling
 
 # In[2]
 

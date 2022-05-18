@@ -1,19 +1,18 @@
 # In[0] import
-import numpy as np
-import pandas as pd
-from scipy.spatial.distance import euclidean, cosine
-import matplotlib.pyplot as plt
-
-import scipy
-from imageio import imread
-from skimage.measure import regionprops
-from skimage.color import label2rgb
 import os
-from os import listdir
-from PIL import Image, ImageDraw, ImageFont
-
 # from track_module import color_label_LAP,color_label_overlap
 import sqlite3
+from os import listdir
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import scipy
+from imageio import imread
+from PIL import Image, ImageDraw, ImageFont
+from scipy.spatial.distance import cosine, euclidean
+from skimage.color import label2rgb
+from skimage.measure import regionprops
 
 # In[1] color_label_LAP function
 

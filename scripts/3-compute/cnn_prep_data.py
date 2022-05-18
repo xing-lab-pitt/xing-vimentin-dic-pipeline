@@ -1,18 +1,17 @@
+import itertools
+from os import listdir
+
 import cv2
 import numpy as np
-from skimage.io import imread
-from skimage.exposure import equalize_adapthist
-from skimage.measure import label, regionprops
-import itertools
-from scipy.interpolate import bisplrep, bisplev
-from skimage.filters import gaussian
-from skimage import filters
-from unsharp_mask import unsharp_mask
 from matplotlib import pyplot as plt
-from os import listdir
-from skimage import morphology
-from skimage.measure import label, regionprops
 from scipy import ndimage
+from scipy.interpolate import bisplev, bisplrep
+from skimage import filters, morphology
+from skimage.exposure import equalize_adapthist
+from skimage.filters import gaussian
+from skimage.io import imread
+from skimage.measure import label, regionprops
+from unsharp_mask import unsharp_mask
 
 
 def transform_matrix_offset_center(matrix, x, y):
