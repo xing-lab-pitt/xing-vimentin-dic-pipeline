@@ -16,7 +16,7 @@ import scipy.stats
 import skimage
 import skimage.io
 import skimage.transform
-from celltool_utils import *
+from cellTool_utils import *
 from io_utils import *
 from nd2reader import ND2Reader
 from pims import ImageSequenceND

@@ -34,3 +34,4 @@ conda env create -f envs/cp4.yml
 
 ## Development guide
 ### Avoid copying code files and push identical code
+### Avoid copying other package's python code directly
