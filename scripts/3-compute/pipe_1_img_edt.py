@@ -1,18 +1,19 @@
-from PIL import Image
-from os import listdir
 import glob
 import os
-import numpy as np
-import keras.backend as K
+import sys
+from os import listdir
 
+import keras.backend as K
+import numpy as np
+import utils as util
+from cnn_prep_data import dic_bg_correction, img_transform, prep_dic_data
 from models import reg_seg, unet
-from cnn_prep_data import prep_dic_data, img_transform, dic_bg_correction
-from train_rotation_ver import predict_image
+from PIL import Image
 from skimage.io import imread
 from skimage.transform import resize
-import hj_util as util
-import sys
 from tqdm import tqdm
+from train_rotation_ver import predict_image
+
 
 def assemble_model(weight_file, mode="reg_seg"):
     """Selecting the model to be used."""
@@ -37,8 +38,8 @@ def patch_predict(input_folder, output_folder, weight_file):
 
     autoencoder = assemble_model(weight_file)
 
-    input_folder = util.folder_verify(input_folder)
-    output_folder = util.folder_verify(output_folder)
+    input_folder = util.correct_folder_str(input_folder)
+    output_folder = util.correct_folder_str(output_folder)
     util.create_folder(output_folder)
 
     img_list = sorted(glob.glob(input_folder + "*"))
@@ -103,8 +104,8 @@ def folder_edt_predict(img_path, output_path, reg_seg_wts_path, dic_channel_labe
 
     autoencoder = assemble_model(reg_seg_wts_path, model_mode)
 
-    img_path = util.folder_verify(img_path)
-    output_path = util.folder_verify(output_path)
+    img_path = util.correct_folder_str(img_path)
+    output_path = util.correct_folder_str(output_path)
 
     edt_folder = output_path + "edt/"
     util.create_folder(edt_folder)

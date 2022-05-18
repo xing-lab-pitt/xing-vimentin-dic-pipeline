@@ -4,49 +4,49 @@
 # In[1]:
 
 
-import numpy as np
-from skimage.segmentation import watershed, clear_border
-import scipy.misc
-from skimage.io import imread
-from matplotlib import pyplot as plt
-import scipy.ndimage as ndi
-import pickle
-import os
-from os import listdir
-from skimage.feature import peak_local_max
-from skimage.morphology import (
-    opening,
-    closing,
-    remove_small_holes,
-    remove_small_objects,
-    local_maxima,
-    h_maxima,
-    disk,
-    dilation,
-)
-from skimage.measure import regionprops, label
-from skimage.color import label2rgb
-from PIL import Image, ImageDraw, ImageFont
-from math import ceil, pi, sqrt
-import cv2
 import glob
+import multiprocessing
+import os
+import pickle
+import sys
+from math import ceil, pi, sqrt
+from multiprocessing import Process
+from os import listdir
+
+import config
+import cv2
+import mahotas.features.texture as mht
+import numpy as np
 import pandas as pd
-from cell_class import single_cell, fluor_single_cell
+import pipe_util2
+import scipy.misc
+import scipy.ndimage as ndi
+from cell_class import fluor_single_cell, single_cell
+from matplotlib import cm
+from matplotlib import pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+from PIL import Image, ImageDraw, ImageFont
+from scipy.interpolate import bisplev, bisplrep
+from scipy.signal import medfilt
+from scipy.stats import kurtosis, skew
+from skimage.color import label2rgb
+from skimage.feature import peak_local_max
 from skimage.filters import frangi, gabor
 from skimage.filters.rank import otsu
-import mahotas.features.texture as mht
-from scipy.signal import medfilt
-from scipy.interpolate import bisplrep, bisplev
-from mpl_toolkits.mplot3d import Axes3D
-from matplotlib import cm
-from scipy.stats import skew, kurtosis
+from skimage.io import imread
+from skimage.measure import label, regionprops
+from skimage.morphology import (
+    closing,
+    dilation,
+    disk,
+    h_maxima,
+    local_maxima,
+    opening,
+    remove_small_holes,
+    remove_small_objects,
+)
+from skimage.segmentation import clear_border, watershed
 from sklearn.preprocessing import RobustScaler, StandardScaler
-
-import multiprocessing
-from multiprocessing import Process
-import pipe_util2
-import sys
-import config
 
 # In[2]:
 
@@ -97,11 +97,11 @@ def compute_nuc_fluor_info(seg, fluor_img):
             # smoothening + dilation
             nuc_mask = closing(nuc_mask, disk(round(nuc_radius / 3)))
             nuc_mask = opening(nuc_mask, disk(round(nuc_radius / 3)))
-            curr_nuc_area = np.sum(nuc_mask)
-            if curr_nuc_area < ori_nuc_area:
-                while curr_nuc_area < ori_nuc_area:
+            cur_nuc_area = np.sum(nuc_mask)
+            if cur_nuc_area < ori_nuc_area:
+                while cur_nuc_area < ori_nuc_area:
                     nuc_mask = dilation(nuc_mask)
-                    curr_nuc_area = np.sum(nuc_mask)
+                    cur_nuc_area = np.sum(nuc_mask)
             nuc_mask = nuc_mask * cell_mask[r.bbox[0] : r.bbox[2], r.bbox[1] : r.bbox[3]]
 
             nuc_img = nuc_mask * cell_img
@@ -141,11 +141,11 @@ feature_list = ["histogram_features", "haralick", "norm_haralick"]
 
 def single_folder_run(img_folder, output_path, pcna_chan_label):
 
-    output_path = pipe_util2.folder_verify(output_path)
+    output_path = pipe_util2.correct_folder_str(output_path)
     cells_path = output_path + "cells/"
     fluor_cells_path = cells_path
     cell_seg_path = output_path + "seg/"
-    pcna_img_path = pipe_util2.folder_verify(img_folder)
+    pcna_img_path = pipe_util2.correct_folder_str(img_folder)
 
     cell_seg_list = sorted(listdir(cell_seg_path))
     print(pcna_img_path)

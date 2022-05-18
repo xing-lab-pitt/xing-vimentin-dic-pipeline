@@ -1,13 +1,14 @@
-from skimage.transform import resize
-import os
 import argparse
-import cv2 as cv
 import glob
-from math import comb
-from PIL import Image as PImage
 import itertools
+import os
+from math import comb
+
+import cv2 as cv
 import matplotlib.pyplot as plt
 import numpy as np
+from PIL import Image as PImage
+from skimage.transform import resize
 
 parser = argparse.ArgumentParser(
     description="Takes in a tiled image and separates them into its individual tiles. This currently only works with square images (3x3,5x5,etc.)"

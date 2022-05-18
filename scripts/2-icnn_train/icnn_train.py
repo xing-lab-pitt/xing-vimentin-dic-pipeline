@@ -7,26 +7,25 @@ import os
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
-import cv2
-from matplotlib import pyplot as plt
-import numpy as np
 from os import listdir
 
+import cv2
 import keras
-from keras.preprocessing.image import ImageDataGenerator, array_to_img, img_to_array, load_img
-
+import numpy as np
+import tensorflow as tf
+import utils
+from cnn_prep_data import prep_icnn_am_train_data, prep_icnn_seg_train_data
+from keras.optimizers import adam
+from keras.preprocessing.image import (ImageDataGenerator, array_to_img,
+                                       img_to_array, load_img)
+from matplotlib import pyplot as plt
+from resnet50 import res_model
 # from keras.optimizers import adam
 from skimage.exposure import equalize_adapthist, rescale_intensity
 from skimage.filters import gaussian
 from skimage.io import imread
 from sklearn.utils import class_weight
-import tensorflow as tf
-from keras.optimizers import adam
 from tensorflow.python.client import device_lib
-
-from cnn_prep_data import prep_icnn_am_train_data, prep_icnn_seg_train_data
-import hj_util
-from resnet50 import res_model
 from unsharp_mask import unsharp_mask
 
 # In[1]: initialize
@@ -40,8 +39,8 @@ nb_class = int(sys.argv[6])
 
 train_mode = sys.argv[7]
 
-train_path = hj_util.folder_verify(train_path)
-wts_path = hj_util.folder_verify(wts_path)
+train_path = utils.correct_folder_str(train_path)
+wts_path = utils.correct_folder_str(wts_path)
 
 print(device_lib.list_local_devices())
 

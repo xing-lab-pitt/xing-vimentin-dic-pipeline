@@ -17,6 +17,11 @@ Create conda environment for cellprofiler4. Note that currently cellprofiler4 on
 conda env create -f envs/cp4.yml 
 ```
 
+## Slurm Script Usage
+- Use script paths relative to this repository root
+  - submit sample slurm jobs at root directory of this repository
+
+
 ## Install Precommit Hook  
 **You would like to ensure that the code you push has good code style**  
 **This step enables pre-commit to check and auto-format your style before every git commit.**
@@ -28,3 +33,5 @@ conda env create -f envs/cp4.yml
 
 
 ## Development guide
+### Avoid copying code files and push identical code
+### Avoid copying other package's python code directly

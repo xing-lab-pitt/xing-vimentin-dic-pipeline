@@ -1,53 +1,33 @@
+import pickle
+import sys
+from os import listdir
+
+import config
 import numpy as np
 import numpy.ma
-from scipy.ndimage import distance_transform_edt
+import pandas as pd
+import pipe_util2
 import scipy.ndimage
 import scipy.sparse
 from index import Indexes
-import pandas as pd
-from os import listdir
-from skimage.io import imread
+from scipy.ndimage import distance_transform_edt
 from scipy.optimize import linear_sum_assignment
-import pickle
-import sys
-
-from track_module import (
-    compute_overlap_matrix,
-    compute_overlap_pair,
-    compute_overlap_single,
-    generate_traj_seri,
-    relabel_traj,
-    record_traj_start_end,
-    judge_mol_type,
-    search_false_link,
-    judge_border,
-    find_border_obj,
-    break_link,
-    connect_link,
-    false_seg_mark,
-    judge_traj_am,
-    judge_apoptosis_tracklet,
-    traj_start_end_info,
-    am_obj_info,
-    compute_specific_overlap,
-    compute_cost,
-    calculate_area_penalty,
-    find_am_sisters,
-    cal_cell_fusion,
-    cal_cell_split,
-    find_mitosis_pairs_to_break,
-    find_fuse_pairs_to_break,
-    find_split_pairs_to_break,
-    judge_fuse_type,
-    judge_split_type,
-    find_uni,
-    get_mitotic_triple_scores,
-    cal_size_correlation,
-    search_wrong_mitosis,
-)
-
-import pipe_util2
-import config
+from skimage.io import imread
+from track_module import (am_obj_info, break_link, cal_cell_fusion,
+                          cal_cell_split, cal_size_correlation,
+                          calculate_area_penalty, compute_cost,
+                          compute_overlap_matrix, compute_overlap_pair,
+                          compute_overlap_single, compute_specific_overlap,
+                          connect_link, false_seg_mark, find_am_sisters,
+                          find_border_obj, find_fuse_pairs_to_break,
+                          find_mitosis_pairs_to_break,
+                          find_split_pairs_to_break, find_uni,
+                          generate_traj_seri, get_mitotic_triple_scores,
+                          judge_apoptosis_tracklet, judge_border,
+                          judge_fuse_type, judge_mol_type, judge_split_type,
+                          judge_traj_am, record_traj_start_end, relabel_traj,
+                          search_false_link, search_wrong_mitosis,
+                          traj_start_end_info)
 
 # ----parameter setting -----------
 # depend on: cell type, time interval-------
@@ -75,7 +55,7 @@ mature_time = config.mature_time  # time from the cell born to divide: depend on
 
 # TODO: what it recognizes? add docs
 def traj_reconganize2(output_path):
-    dir_path = pipe_util2.folder_verify(output_path)
+    dir_path = pipe_util2.correct_folder_str(output_path)
     seg_path = dir_path + "seg/"
     seg_img_list = sorted(listdir(seg_path))
     df = pd.read_csv(dir_path + "Per_Object_modify.csv")

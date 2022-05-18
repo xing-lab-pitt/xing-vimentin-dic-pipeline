@@ -1,5 +1,5 @@
-import numpy as np
 import contour_class
+import numpy as np
 
 
 class single_cell(object):

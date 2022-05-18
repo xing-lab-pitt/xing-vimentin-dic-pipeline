@@ -9,32 +9,31 @@ warnings.filterwarnings("ignore")
 
 import glob
 import math
-import numpy as np
 import os
 import random
 import shutil
+import sys
+from os import listdir
 
 import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
-from os import listdir
+import numpy as np
+import skimage.morphology
+import utils
+from black_border_remove import main as bbr
 from PIL import Image as PImage
-from scipy.ndimage.morphology import distance_transform_edt
+from pilutil import toimage
 from scipy.ndimage import binary_fill_holes as fill_holes
+from scipy.ndimage.morphology import distance_transform_edt
 from skimage.color import label2rgb
 from skimage.io import imread
 from skimage.measure import label, regionprops
-import skimage.morphology
-
-from black_border_remove import main as bbr
-import hj_util
-from pilutil import toimage
-import sys
 
 # In[1]: define
 
-reg_path = hj_util.folder_verify(sys.argv[1])
-label_path = hj_util.folder_verify(reg_path + "seg/mixer/")
-patch_path = hj_util.folder_verify(reg_path + "patch/" + sys.argv[2])
+reg_path = utils.correct_folder_str(sys.argv[1])
+label_path = utils.correct_folder_str(reg_path + "seg/mixer/")
+patch_path = utils.correct_folder_str(reg_path + "patch/" + sys.argv[2])
 
 # This will remove smaller images.
 im_num = len(glob.glob(label_path + "*crop*"))
@@ -53,19 +52,19 @@ patch_trial_thres = 100
 
 # generate regression and mask train_test data=patch_path+'bib/'
 train_bib_path = patch_path + "bib/"
-hj_util.create_folder(train_bib_path)
+utils.create_folder(train_bib_path)
 
 train_boundary_path = patch_path + "boundary/"
-hj_util.create_folder(train_boundary_path)
+utils.create_folder(train_boundary_path)
 
 train_reg_path = patch_path + "bwdist/"
-hj_util.create_folder(train_reg_path)
+utils.create_folder(train_reg_path)
 
 train_img_path = patch_path + "img/"
-hj_util.create_folder(train_img_path)
+utils.create_folder(train_img_path)
 
 train_interior_path = patch_path + "interior/"
-hj_util.create_folder(train_interior_path)
+utils.create_folder(train_interior_path)
 
 # random crop image into patches
 bib_str = sorted(glob.glob(label_path + "BIB*.png"))

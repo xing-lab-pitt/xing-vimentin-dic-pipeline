@@ -4,31 +4,32 @@ import sys
 sys.path.insert(1, "/home/thomas/research/projects/emt/scripts/memes/")
 
 import copy
-import numpy as np
-from skimage.segmentation import watershed, clear_border
-import scipy.misc
-from skimage.io import imread
-from matplotlib import pyplot as plt
-import scipy.ndimage as ndi
-import pickle
-import os
-from os import listdir
-from skimage.feature import peak_local_max
-from skimage.morphology import remove_small_objects, local_maxima, h_maxima, opening
-from skimage import measure
-from skimage.measure import regionprops, label
-from skimage.color import label2rgb
-from PIL import Image, ImageDraw, ImageFont
-from math import pi, sqrt
-import cv2
 import glob
-import pandas as pd
+import os
+import pickle
+from math import pi, sqrt
+from os import listdir
 
-from sklearn import decomposition, cluster, manifold
-from sklearn.neighbors import KernelDensity
-from sklearn.preprocessing import StandardScaler, RobustScaler, Normalizer
-from cell_class import single_cell, fluor_single_cell
+import cv2
+import numpy as np
+import pandas as pd
 import pipe_util2
+import scipy.misc
+import scipy.ndimage as ndi
+from cell_class import fluor_single_cell, single_cell
+from matplotlib import pyplot as plt
+from PIL import Image, ImageDraw, ImageFont
+from skimage import measure
+from skimage.color import label2rgb
+from skimage.feature import peak_local_max
+from skimage.io import imread
+from skimage.measure import label, regionprops
+from skimage.morphology import h_maxima, local_maxima, opening, remove_small_objects
+from skimage.segmentation import clear_border, watershed
+from sklearn import cluster, decomposition, manifold
+from sklearn.neighbors import KernelDensity
+from sklearn.preprocessing import Normalizer, RobustScaler, StandardScaler
+
 
 # In[2]: function
 def pcna_haralick_pca(all_datset_path, all_datsets, norm, pattern="XY"):
@@ -40,13 +41,13 @@ def pcna_haralick_pca(all_datset_path, all_datsets, norm, pattern="XY"):
     """
     for datset_idx in range(len(all_datsets)):
         all_data = np.array([])
-        curr_datset_path = pipe_util2.folder_verify(all_datset_path + all_datsets[datset_idx])
-        all_datset_path = pipe_util2.folder_verify(all_datset_path)
-        output_path_list = pipe_util2.folder_file_num(curr_datset_path, pattern)
+        cur_datset_path = pipe_util2.correct_folder_str(all_datset_path + all_datsets[datset_idx])
+        all_datset_path = pipe_util2.correct_folder_str(all_datset_path)
+        output_path_list = pipe_util2.count_pattern_in_folder(cur_datset_path, pattern)
         i = 0
         while i < len(output_path_list):
             output_path = output_path_list[i]
-            output_path = pipe_util2.folder_verify(output_path)
+            output_path = pipe_util2.correct_folder_str(output_path)
             cells_path = output_path + "cells/"
 
             with open(cells_path + "pcna_cells-02", "rb") as fp:
@@ -95,16 +96,16 @@ def pcna_haralick_pca(all_datset_path, all_datsets, norm, pattern="XY"):
         plt.show()
 
         if norm == False:
-            with open(curr_datset_path + "pcna_haralick_pca", "wb") as fp:
+            with open(cur_datset_path + "pcna_haralick_pca", "wb") as fp:
                 pickle.dump(pca, fp)
             fluor_feature_name = "pcna_haralick"
         else:
-            with open(curr_datset_path + "norm_pcna_haralick_pca", "wb") as fp:
+            with open(cur_datset_path + "norm_pcna_haralick_pca", "wb") as fp:
                 pickle.dump(pca, fp)
             fluor_feature_name = "norm_pcna_haralick"
 
         for output_path in output_path_list:
-            output_path = pipe_util2.folder_verify(output_path)
+            output_path = pipe_util2.correct_folder_str(output_path)
             cells_path = output_path + "cells/"
 
             with open(cells_path + "pcna_cells-02", "rb") as fp:

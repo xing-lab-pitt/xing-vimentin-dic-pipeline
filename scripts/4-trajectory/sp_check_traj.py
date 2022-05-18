@@ -4,70 +4,52 @@ import sys
 sys.path.insert(0, "C:/Users/14432/OneDrive/Research/Projects/A549_HMGA1/scripts/4_wk_trajectory/")
 sys.path.insert(1, "C:/Users/14432/OneDrive/Research/Projects/A549_HMGA1/scripts/memes/")
 
-from collections import OrderedDict
 import copy
-import cv2
 import glob
-from hmmlearn import hmm
-from math import pi, sqrt, exp, log
-from mpl_toolkits.mplot3d import Axes3D
-import numpy as np
-import pandas as pd
-from persim import PersImage
-import pickle
-from PIL import Image, ImageDraw, ImageFont
-import seaborn as sns
-
-from matplotlib import animation
-from matplotlib import cm
-from matplotlib import pyplot as plt
-from matplotlib.colors import ListedColormap, LinearSegmentedColormap
-
 import os
+import pickle
+from collections import OrderedDict
+from math import exp, log, pi, sqrt
 from os import listdir
 
+import contour_class
+import cv2
+import image_warp
+import numpy as np
+import pandas as pd
+import pipe_util2
+import scipy.interpolate.fitpack as fitpack
 import scipy.io as sio
 import scipy.misc
 import scipy.ndimage as ndimage
-from scipy.signal import medfilt, find_peaks
+import seaborn as sns
+import utils
+from cell_class import fluor_single_cell, single_cell
+from contour_tool import (align_contour_to, align_contours,
+                          df_find_contour_points, find_contour_points,
+                          generate_contours)
+from hmmlearn import hmm
+from matplotlib import animation, cm
+from matplotlib import pyplot as plt
+from matplotlib.colors import LinearSegmentedColormap, ListedColormap
+from mpl_toolkits.mplot3d import Axes3D
+from persim import PersImage
+from PIL import Image, ImageDraw, ImageFont
+from scipy.signal import find_peaks, medfilt
 from scipy.stats import kde
-import scipy.interpolate.fitpack as fitpack
-
-from skimage.feature import peak_local_max
 from skimage import measure
-from skimage.measure import regionprops, label
-from skimage.morphology import opening, closing
-from sklearn.neighbors import kneighbors_graph, BallTree
 from skimage.color import label2rgb
+from skimage.feature import peak_local_max
 from skimage.io import imread
+from skimage.measure import label, regionprops
+from skimage.morphology import closing, opening
 from skimage.segmentation import find_boundaries
-
-from sklearn import (
-    manifold,
-    decomposition,
-    random_projection,
-    cluster,
-    metrics,
-    preprocessing,
-    mixture,
-    model_selection,
-)
-from sklearn.neighbors import KernelDensity
+from sklearn import (cluster, decomposition, manifold, metrics, mixture,
+                     model_selection, preprocessing, random_projection)
+from sklearn.neighbors import BallTree, KernelDensity, kneighbors_graph
 from sklearn.preprocessing import StandardScaler
+from traj_class import fluor_single_cell_traj, single_cell_traj
 
-from cell_class import single_cell, fluor_single_cell
-import image_warp
-from contour_tool import (
-    df_find_contour_points,
-    find_contour_points,
-    generate_contours,
-    align_contour_to,
-    align_contours,
-)
-import pipe_util2
-import utility_tools
-import contour_class
-from traj_class import single_cell_traj, fluor_single_cell_traj
 
 # In[2]: functions
 def generate_single_cell_img(img, seg, img_num, obj_num):
