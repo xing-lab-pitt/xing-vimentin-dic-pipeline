@@ -499,9 +499,7 @@ def _get_descale_transform(contour, size, descale_only=True):
     a given size, after descaling the contour to be in pixel units."""
     new_bounds_center = numpy.asarray(size, dtype=float) / 2
     old_bounds_center = contour.bounds_center()
-    rotate_reflect, scale_shear, world_translation = utils.decompose_homogenous_transform(
-        contour.to_world_transform
-    )
+    rotate_reflect, scale_shear, world_translation = utils.decompose_homogenous_transform(contour.to_world_transform)
     old_bounds_center = numpy.dot([old_bounds_center], scale_shear)[0]
     translation = new_bounds_center - old_bounds_center
     return utils.make_homogenous_transform(transform=scale_shear, translation=translation)

@@ -358,9 +358,7 @@ class Contour(PointSet):
     def interpoint_distances(self, begin=None, end=None):
         """Calculate the distance from each point to the previous point, optionally over only the periodic slice specified by 'begin' and 'end'."""
         offsetcontour = numpy.roll(self.points, 1, axis=0)
-        return utils.inclusive_periodic_slice(
-            utils.norm(self.points - offsetcontour, axis=0), begin, end
-        )
+        return utils.inclusive_periodic_slice(utils.norm(self.points - offsetcontour, axis=0), begin, end)
 
     def spline_derivatives(self, begin, end, derivatives=1):
         """Calculate derivative or derivatives of the contour using a spline fit,
@@ -1437,9 +1435,7 @@ class CentralAxisContour(Contour):
         the positions of the extrema of that axis (in terms of deviation from the
         baseline determined by the endpoints). Extrema less than min_distance from
         the baseline are ignored."""
-        points, positions = utils.closest_points_to_line(
-            self.central_axis, self.central_axis[0], self.central_axis[-1]
-        )
+        points, positions = utils.closest_points_to_line(self.central_axis, self.central_axis[0], self.central_axis[-1])
         total_len = numpy.sqrt(((self.central_axis[0] - self.central_axis[-1]) ** 2).sum())
         positions *= total_len
         extrema_positions = positions[self.axis_extrema(min_distance)]

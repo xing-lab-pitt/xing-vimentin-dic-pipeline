@@ -31,6 +31,7 @@ from contour_tool import (
     align_contour_to,
     align_contours,
 )
+
 # from . import pipe_util2
 import pipe_util2
 import sys

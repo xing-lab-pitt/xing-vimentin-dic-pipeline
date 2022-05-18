@@ -14,6 +14,7 @@ import utils as util
 import sys
 from tqdm import tqdm
 
+
 def assemble_model(weight_file, mode="reg_seg"):
     """Selecting the model to be used."""
     if mode == "reg_seg":

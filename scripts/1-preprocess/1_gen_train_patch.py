@@ -29,6 +29,7 @@ from black_border_remove import main as bbr
 import utils
 import sys
 from pilutil import toimage
+
 # In[1]: define
 
 reg_path = utils.correct_folder_str(sys.argv[1])
