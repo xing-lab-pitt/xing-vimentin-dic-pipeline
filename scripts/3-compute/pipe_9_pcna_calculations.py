@@ -35,9 +35,16 @@ from skimage.filters import frangi, gabor
 from skimage.filters.rank import otsu
 from skimage.io import imread
 from skimage.measure import label, regionprops
-from skimage.morphology import (closing, dilation, disk, h_maxima,
-                                local_maxima, opening, remove_small_holes,
-                                remove_small_objects)
+from skimage.morphology import (
+    closing,
+    dilation,
+    disk,
+    h_maxima,
+    local_maxima,
+    opening,
+    remove_small_holes,
+    remove_small_objects,
+)
 from skimage.segmentation import clear_border, watershed
 from sklearn.preprocessing import RobustScaler, StandardScaler
 
@@ -90,11 +97,11 @@ def compute_nuc_fluor_info(seg, fluor_img):
             # smoothening + dilation
             nuc_mask = closing(nuc_mask, disk(round(nuc_radius / 3)))
             nuc_mask = opening(nuc_mask, disk(round(nuc_radius / 3)))
-            curr_nuc_area = np.sum(nuc_mask)
-            if curr_nuc_area < ori_nuc_area:
-                while curr_nuc_area < ori_nuc_area:
+            cur_nuc_area = np.sum(nuc_mask)
+            if cur_nuc_area < ori_nuc_area:
+                while cur_nuc_area < ori_nuc_area:
                     nuc_mask = dilation(nuc_mask)
-                    curr_nuc_area = np.sum(nuc_mask)
+                    cur_nuc_area = np.sum(nuc_mask)
             nuc_mask = nuc_mask * cell_mask[r.bbox[0] : r.bbox[2], r.bbox[1] : r.bbox[3]]
 
             nuc_img = nuc_mask * cell_img

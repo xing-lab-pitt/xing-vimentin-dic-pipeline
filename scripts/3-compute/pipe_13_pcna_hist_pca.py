@@ -24,8 +24,7 @@ from skimage.color import label2rgb
 from skimage.feature import peak_local_max
 from skimage.io import imread
 from skimage.measure import label, regionprops
-from skimage.morphology import (h_maxima, local_maxima, opening,
-                                remove_small_objects)
+from skimage.morphology import h_maxima, local_maxima, opening, remove_small_objects
 from skimage.segmentation import clear_border, watershed
 from sklearn import cluster, decomposition, manifold
 from sklearn.neighbors import KernelDensity
@@ -42,9 +41,9 @@ def pcna_haralick_pca(all_datset_path, all_datsets, pattern="XY"):
     """
     for datset_idx in range(len(all_datsets)):
         all_data = np.array([])
-        curr_datset_path = pipe_util2.correct_folder_str(all_datset_path + all_datsets[datset_idx])
+        cur_datset_path = pipe_util2.correct_folder_str(all_datset_path + all_datsets[datset_idx])
         all_datset_path = pipe_util2.correct_folder_str(all_datset_path)
-        output_path_list = pipe_util2.count_pattern_in_folder(curr_datset_path, pattern)
+        output_path_list = pipe_util2.count_pattern_in_folder(cur_datset_path, pattern)
         i = 0
         while i < len(output_path_list):
             output_path = output_path_list[i]
@@ -84,7 +83,7 @@ def pcna_haralick_pca(all_datset_path, all_datsets, pattern="XY"):
         # plt.scatter(Y[:,0],Y[:,1],s=0.1)
         # plt.savefig("pcna_histogram.png",dpi = 300)
 
-        with open(curr_datset_path + "pcna_histogram_pca", "wb") as fp:
+        with open(cur_datset_path + "pcna_histogram_pca", "wb") as fp:
             pickle.dump(pca, fp)
         fluor_feature_name = "pcna_histogram"
 

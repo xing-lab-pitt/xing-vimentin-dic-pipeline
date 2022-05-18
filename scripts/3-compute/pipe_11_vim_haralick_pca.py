@@ -27,8 +27,7 @@ from skimage.color import label2rgb
 from skimage.feature import peak_local_max
 from skimage.io import imread
 from skimage.measure import label, regionprops
-from skimage.morphology import (h_maxima, local_maxima, opening,
-                                remove_small_objects)
+from skimage.morphology import h_maxima, local_maxima, opening, remove_small_objects
 from skimage.segmentation import clear_border, watershed
 from sklearn import cluster, decomposition, manifold
 from sklearn.neighbors import KernelDensity
@@ -45,8 +44,8 @@ def vim_haralick_pca(all_datset_path, all_datsets, norm, pattern="XY"):
     """
     for datset_idx in range(len(all_datsets)):
         all_data = np.array([])
-        curr_datset_path = pipe_util2.correct_folder_str(all_datset_path + all_datsets[datset_idx])
-        output_path_list = pipe_util2.count_pattern_in_folder(curr_datset_path, pattern)
+        cur_datset_path = pipe_util2.correct_folder_str(all_datset_path + all_datsets[datset_idx])
+        output_path_list = pipe_util2.count_pattern_in_folder(cur_datset_path, pattern)
         i = 0
         while i < len(output_path_list):
             output_path = output_path_list[i]
@@ -97,11 +96,11 @@ def vim_haralick_pca(all_datset_path, all_datsets, norm, pattern="XY"):
         # plt.savefig("vim_haralic_1.png",dpi = 300)
         # plt.show()
         if norm == False:
-            with open(curr_datset_path + "vimentin_haralick_pca", "wb") as fp:
+            with open(cur_datset_path + "vimentin_haralick_pca", "wb") as fp:
                 pickle.dump(pca, fp)
             fluor_feature_name = "vimentin_haralick"
         else:
-            with open(curr_datset_path + "norm_vimentin_haralick_pca", "wb") as fp:
+            with open(cur_datset_path + "norm_vimentin_haralick_pca", "wb") as fp:
                 pickle.dump(pca, fp)
             fluor_feature_name = "norm_vimentin_haralick"
 
