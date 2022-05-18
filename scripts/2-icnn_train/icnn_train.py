@@ -25,7 +25,7 @@ from keras.optimizers import adam
 from tensorflow.python.client import device_lib
 
 from cnn_prep_data import prep_icnn_am_train_data, prep_icnn_seg_train_data
-import hj_util
+import utils
 from resnet50 import res_model
 from unsharp_mask import unsharp_mask
 
@@ -40,8 +40,8 @@ nb_class = int(sys.argv[6])
 
 train_mode = sys.argv[7]
 
-train_path = hj_util.folder_verify(train_path)
-wts_path = hj_util.folder_verify(wts_path)
+train_path = utils.correct_folder_str(train_path)
+wts_path = utils.correct_folder_str(wts_path)
 
 print(device_lib.list_local_devices())
 

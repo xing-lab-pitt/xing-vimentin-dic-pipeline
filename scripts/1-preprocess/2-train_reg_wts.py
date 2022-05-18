@@ -3,7 +3,7 @@ from cnn_prep_data import prep_train_data
 from tensorflow.keras.callbacks import EarlyStopping
 
 import sys
-import hj_util
+import utils
 from tensorflow.keras.callbacks import EarlyStopping
 
 train_input_path = sys.argv[1]
@@ -11,9 +11,9 @@ train_gt_path = sys.argv[2]
 wts_path = sys.argv[3]
 wts_file = sys.argv[4]
 
-train_input_path = hj_util.folder_verify(train_input_path)
-train_gt_path = hj_util.folder_verify(train_gt_path)
-wts_path = hj_util.folder_verify(wts_path)
+train_input_path = utils.correct_folder_str(train_input_path)
+train_gt_path = utils.correct_folder_str(train_gt_path)
+wts_path = utils.correct_folder_str(wts_path)
 
 n_epoch = 120
 batch_size = 16  # number of pictures to include for each epoch

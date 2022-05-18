@@ -22,7 +22,6 @@ import cv2
 import glob
 from pilutil import toimage
 
-
 # In[2]:
 
 

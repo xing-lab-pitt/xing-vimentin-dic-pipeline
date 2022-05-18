@@ -20,7 +20,7 @@ import pickle
 from cell_class import single_cell
 
 import contour_class
-import utility_tools as utility_tools
+import utils as utils
 import scipy.ndimage as ndimage
 import scipy.interpolate.fitpack as fitpack
 import image_warp as image_warp
@@ -37,7 +37,7 @@ import sys
 
 # -------------initiate all cells--------------------
 def build_single_cell(output_path):
-    output_path = pipe_util2.folder_verify(output_path)
+    output_path = pipe_util2.correct_folder_str(output_path)
     cells_path = pipe_util2.create_folder(output_path + "cells")
     dir_path = output_path
 

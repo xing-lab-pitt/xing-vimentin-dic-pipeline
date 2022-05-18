@@ -114,8 +114,6 @@ def compute_overlap_single(img_path, img_list, img_num_1, obj_num_1, img_num_2):
 
 
 # for relabel all traj based on traj start time
-
-
 def relabel_traj(df):
     traj_labels = df["Cell_TrackObjects_Label"].values
     traj_labels = np.sort(np.unique(traj_labels[traj_labels > 0]))

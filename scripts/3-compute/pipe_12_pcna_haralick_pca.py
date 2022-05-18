@@ -40,13 +40,13 @@ def pcna_haralick_pca(all_datset_path, all_datsets, norm, pattern="XY"):
     """
     for datset_idx in range(len(all_datsets)):
         all_data = np.array([])
-        curr_datset_path = pipe_util2.folder_verify(all_datset_path + all_datsets[datset_idx])
-        all_datset_path = pipe_util2.folder_verify(all_datset_path)
-        output_path_list = pipe_util2.folder_file_num(curr_datset_path, pattern)
+        curr_datset_path = pipe_util2.correct_folder_str(all_datset_path + all_datsets[datset_idx])
+        all_datset_path = pipe_util2.correct_folder_str(all_datset_path)
+        output_path_list = pipe_util2.count_pattern_in_folder(curr_datset_path, pattern)
         i = 0
         while i < len(output_path_list):
             output_path = output_path_list[i]
-            output_path = pipe_util2.folder_verify(output_path)
+            output_path = pipe_util2.correct_folder_str(output_path)
             cells_path = output_path + "cells/"
 
             with open(cells_path + "pcna_cells-02", "rb") as fp:
@@ -104,7 +104,7 @@ def pcna_haralick_pca(all_datset_path, all_datsets, norm, pattern="XY"):
             fluor_feature_name = "norm_pcna_haralick"
 
         for output_path in output_path_list:
-            output_path = pipe_util2.folder_verify(output_path)
+            output_path = pipe_util2.correct_folder_str(output_path)
             cells_path = output_path + "cells/"
 
             with open(cells_path + "pcna_cells-02", "rb") as fp:

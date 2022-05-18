@@ -82,6 +82,3 @@ for n, contour in enumerate(contours):
 
 ax.axis("image")
 plt.show()
-
-
-# In[ ]:

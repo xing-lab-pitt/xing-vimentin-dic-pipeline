@@ -31,7 +31,7 @@ import scipy.io as sio
 from mpl_toolkits.mplot3d import Axes3D
 from cell_class import single_cell, fluor_single_cell
 import contour_class
-import utility_tools
+import utils
 import image_warp
 from contour_tool import (
     df_find_contour_points,

@@ -10,14 +10,14 @@ from skimage import filters
 import pickle
 
 # TODO: rename function
-def folder_verify(folder):
+def correct_folder_str(folder):
     """Verify if the folder string is ended with '/' """
     if folder[-1] != "/":
         folder = folder + "/"
     return folder
 
 
-def folder_file_num(folder, pattern="*"):
+def count_pattern_in_folder(folder, pattern="*"):
     """How many files in the folder"""
     if folder[-1] != "/":
         folder = folder + "/"
@@ -28,7 +28,7 @@ def folder_file_num(folder, pattern="*"):
 
 def create_folder(folder):
     """Create a folder. If the folder exist, erase and re-create."""
-    folder = folder_verify(folder)
+    folder = correct_folder_str(folder)
 
     if os.path.exists(folder):  # recreate folder every time.
         shutil.rmtree(folder)
@@ -40,11 +40,11 @@ def create_folder(folder):
     return folder
 
 
-def file_copy(start_folder, pattern, num_of_files, end_folder):
+def copy_file(start_folder, pattern, num_of_files, end_folder):
     """
     Copy a list of files to destinated folder.
     """
-    file_list = folder_file_num(start_folder, pattern)[:num_of_files]
+    file_list = count_pattern_in_folder(start_folder, pattern)[:num_of_files]
 
     if end_folder[-1] != "/":
         end_folder = end_folder + "/"
@@ -85,11 +85,11 @@ def migrate_img_to_folder(img_folder, aim_folder, num):
     aim_folder - string
     num - int, number of images to migrate"""
 
-    img_folder = folder_verify(img_folder)
-    aim_folder = folder_verify(aim_folder)
+    img_folder = correct_folder_str(img_folder)
+    aim_folder = correct_folder_str(aim_folder)
     create_folder(aim_folder)
 
-    img_files = folder_file_num(img_folder)
+    img_files = count_pattern_in_folder(img_folder)
     ins_list = np.int32(np.linspace(0, len(img_files), num)[:-1])
 
     img_files = list_select_by_index(img_files, ins_list)
@@ -255,7 +255,7 @@ def folder_pattern(folder, start_posi, end_posi):
     Return a list of patterns.
     Notice the actual index is (start - 1, end)
     """
-    img_files = folder_file_num(folder)
+    img_files = count_pattern_in_folder(folder)
     pattern_list = []
     i = 0
     while i < len(img_files):
@@ -279,17 +279,17 @@ def to_subfolder(start_folder, end_folder, pattern, num_of_files=-1):
     """
     moving files in starting_folder to end_folder according to patterns
     """
-    start_folder = folder_verify(start_folder)
-    end_folder = folder_verify(end_folder)
+    start_folder = correct_folder_str(start_folder)
+    end_folder = correct_folder_str(end_folder)
     create_folder(end_folder)
     i = 0
     while i < len(pattern):
 
         p = pattern[i]  # current pattern
         p_name = pattern_polish(p)  # folder name without _
-        d = folder_verify(end_folder) + p_name  # current folder
+        d = correct_folder_str(end_folder) + p_name  # current folder
         create_folder(d)
-        file_copy(start_folder, p, num_of_files, d)
+        copy_file(start_folder, p, num_of_files, d)
         i = i + 1
     print("File move completed, please check your folder")
 
@@ -298,7 +298,7 @@ def incucyte_folder_sort(folder, pattern_start_ind, pattern_end_ind, num_of_file
     """Function for moving files from an incucyte folder."""
     p_list = folder_pattern(folder, pattern_start_ind, pattern_end_ind)
     print(p_list)
-    aim_folder = folder_verify(folder)[:-1] + "-sorted"
+    aim_folder = correct_folder_str(folder)[:-1] + "-sorted"
     to_subfolder(folder, aim_folder, p_list, num_of_files)
 
     print("The processes is done")

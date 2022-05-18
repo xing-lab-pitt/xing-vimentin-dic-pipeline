@@ -20,7 +20,7 @@ import scipy.ndimage as ndimage
 import scipy.interpolate.fitpack as fitpack
 
 import contour_class
-import utility_tools
+import utils
 
 import image_warp
 from contour_tool import (
@@ -119,7 +119,7 @@ plt.show()
 
 
 for i in range(len(cell_contours)):
-    scale_back = utility_tools.decompose_homogenous_transform(cell_contours[i].to_world_transform)[1]
+    scale_back = utils.decompose_homogenous_transform(cell_contours[i].to_world_transform)[1]
     cell_contours[i].scale(scale_back)
     points = cell_contours[i].points
     plt.plot(points[:, 0], points[:, 1], ".")

@@ -3,7 +3,6 @@ import numpy as np
 from skimage.io import imread
 from skimage.exposure import equalize_adapthist
 from skimage.measure import label, regionprops
-from pilutil import toimage
 import itertools
 from scipy.interpolate import bisplrep, bisplev
 from skimage.filters import gaussian
@@ -937,9 +936,6 @@ def generate_single_cell_img_env(img, rps, obj_h, obj_w, obj_num):
 
     crop_img = obj_transform(keep_aspect_resize(crop_img, obj_h, obj_w), random_eah=False)
     crop_img = np.expand_dims(crop_img, axis=0)
-
-    #     cell_img=toimage(crop_cell_img,high=np.max(crop_cell_img),low=np.min(crop_cell_img),mode='I')
-    #     cell_img.save(crop_path+'/i'+str(img_num)+'_o'+str(obj_num)+'.tif')
     return crop_img
 
 
@@ -961,8 +957,6 @@ def generate_single_cell_img_env_test(img, seg_img, obj_h, obj_w, obj_num):
     crop_img = obj_transform(keep_aspect_resize(crop_img, obj_h, obj_w), random_eah=False)
     crop_img = np.expand_dims(crop_img, axis=0)
 
-    #     cell_img=toimage(crop_cell_img,high=np.max(crop_cell_img),low=np.min(crop_cell_img),mode='I')
-    #     cell_img.save(crop_path+'/i'+str(img_num)+'_o'+str(obj_num)+'.tif')
     return crop_img
 
     # plt.imshow(img_unsharp[:,:,0])

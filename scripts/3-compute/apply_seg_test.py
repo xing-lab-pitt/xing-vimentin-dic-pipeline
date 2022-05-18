@@ -29,10 +29,9 @@ from skimage.segmentation import watershed, clear_border
 from matplotlib import pyplot as plt
 from skimage.color import label2rgb
 from PIL import Image, ImageDraw, ImageFont
-from pilutil import toimage
 from cla_seg_model_loss import cla_seg
 from reg_seg_lin_model import reg_seg_lin
-
+from pilutil import toimage
 
 # In[8]:
 

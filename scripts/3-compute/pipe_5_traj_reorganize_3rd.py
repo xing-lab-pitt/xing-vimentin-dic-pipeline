@@ -73,9 +73,9 @@ max_gap_score = config.max_gap_score
 
 # TODO: what it recognizes? add docs
 def traj_reconganize3(output_path):
-    output_path = pipe_util2.folder_verify(output_path)
+    output_path = pipe_util2.correct_folder_str(output_path)
     dir_path = output_path
-    seg_path = pipe_util2.folder_verify(output_path + "seg")
+    seg_path = pipe_util2.correct_folder_str(output_path + "seg")
     seg_img_list = sorted(listdir(seg_path))
     df = pd.read_csv(dir_path + "Per_Object_mitosis.csv")
     am_record = pd.read_csv(dir_path + "am_record" + ".csv")

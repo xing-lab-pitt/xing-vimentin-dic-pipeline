@@ -16,7 +16,7 @@ import scipy.ndimage as ndimage
 import scipy.interpolate.fitpack as fitpack
 
 import contour_class
-import utility_tools
+import utils
 
 import image_warp
 from contour_tool import (

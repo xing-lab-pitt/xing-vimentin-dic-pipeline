@@ -104,15 +104,15 @@ def traj_reconganize1(img_path, output_path, icnn_seg_weights, DIC_channel_label
 
     # preparing paths
     print("processing %s" % (img_path), flush=True)
-    img_path = pipe_util2.folder_verify(img_path)
+    img_path = pipe_util2.correct_folder_str(img_path)
     img_list = sorted(glob.glob(img_path + "*" + DIC_channel_label + "*"))
     for presplit_cell_index in range(len(img_list)):
         img_list[presplit_cell_index] = os.path.basename(img_list[presplit_cell_index])
 
-    seg_path = pipe_util2.folder_verify(output_path) + "seg/"
+    seg_path = pipe_util2.correct_folder_str(output_path) + "seg/"
     seg_img_list = sorted(listdir(seg_path))
 
-    dir_path = pipe_util2.folder_verify(output_path)
+    dir_path = pipe_util2.correct_folder_str(output_path)
 
     # TODO: Per_Object is generated in the current module later, remove following code
     #     df = pd.read_csv(dir_path + 'Per_Object.csv')
@@ -144,7 +144,7 @@ def traj_reconganize1(img_path, output_path, icnn_seg_weights, DIC_channel_label
         F_np_arr, mitosis_max_distance=mitosis_max_dist, size_simi_thres=size_similarity_threshold
     ).tolist()
     # ---------------------------------------
-    # hj_util.print_time()
+    # utils.print_time()
 
     # find fuse and split segmentation, border obj and false link
     prefuse_cells = []
@@ -280,7 +280,7 @@ def traj_reconganize1(img_path, output_path, icnn_seg_weights, DIC_channel_label
     candidate_mitosis_label = []
     false_mitosis_obj = []
 
-    # TODO: add documentation: what is mitosis and fuse cell cases? notebook or image
+    # TODO: add documentation: mitosis and fuse cell cases, notebook or image
     # dealing with mitosis and then fuse cells
     candidate_mitosis_fc_label = []
     candidate_mitosis_fp_label = []

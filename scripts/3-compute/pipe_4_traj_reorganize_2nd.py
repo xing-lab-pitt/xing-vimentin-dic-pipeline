@@ -75,7 +75,7 @@ mature_time = config.mature_time  # time from the cell born to divide: depend on
 
 # TODO: what it recognizes? add docs
 def traj_reconganize2(output_path):
-    dir_path = pipe_util2.folder_verify(output_path)
+    dir_path = pipe_util2.correct_folder_str(output_path)
     seg_path = dir_path + "seg/"
     seg_img_list = sorted(listdir(seg_path))
     df = pd.read_csv(dir_path + "Per_Object_modify.csv")

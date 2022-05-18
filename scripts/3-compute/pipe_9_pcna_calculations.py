@@ -141,11 +141,11 @@ feature_list = ["histogram_features", "haralick", "norm_haralick"]
 
 def single_folder_run(img_folder, output_path, pcna_chan_label):
 
-    output_path = pipe_util2.folder_verify(output_path)
+    output_path = pipe_util2.correct_folder_str(output_path)
     cells_path = output_path + "cells/"
     fluor_cells_path = cells_path
     cell_seg_path = output_path + "seg/"
-    pcna_img_path = pipe_util2.folder_verify(img_folder)
+    pcna_img_path = pipe_util2.correct_folder_str(img_folder)
 
     cell_seg_list = sorted(listdir(cell_seg_path))
     print(pcna_img_path)

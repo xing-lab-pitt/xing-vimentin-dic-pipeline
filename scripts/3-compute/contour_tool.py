@@ -1,5 +1,5 @@
 import contour_class
-import utility_tools as utility_tools
+import utils as utils
 import scipy.ndimage as ndimage
 import scipy.interpolate.fitpack as fitpack
 import numpy
@@ -136,12 +136,12 @@ def _should_allow_reverse(contours, allow_reflection):
 
 
 def _compatibility_check(contours):
-    if not utility_tools.all_same_shape([c.points for c in contours]):
+    if not utils.all_same_shape([c.points for c in contours]):
         raise RuntimeError("All contours must have the same number of points in order to align them.")
     if numpy.alltrue([isinstance(c, contour_class.ContourAndLandmarks) for c in contours]):
         # if they're all landmark'd contours
         all_landmarks = [c.landmarks for c in contours]
-        if not utility_tools.all_same_shape(all_landmarks):
+        if not utils.all_same_shape(all_landmarks):
             raise RuntimeError("If all contours have landmarks, they must all have the same number of landmarks.")
 
 
@@ -487,7 +487,7 @@ def _map_contour_coords_to_image(contour, image_array, position_getter, image_ty
         transform = _get_descale_transform(contour, image_array.shape)
     shape = positions.shape
     positions = positions.reshape((shape[0] * shape[1], shape[2]))
-    positions = utility_tools.homogenous_transform_points(positions, transform)
+    positions = utils.homogenous_transform_points(positions, transform)
     positions = positions.reshape(shape)
     positions = positions.transpose((2, 1, 0))
     mapped = ndimage.map_coordinates(image_array, positions, output=float, cval=numpy.nan, order=1)
@@ -499,12 +499,12 @@ def _get_descale_transform(contour, size, descale_only=True):
     a given size, after descaling the contour to be in pixel units."""
     new_bounds_center = numpy.asarray(size, dtype=float) / 2
     old_bounds_center = contour.bounds_center()
-    rotate_reflect, scale_shear, world_translation = utility_tools.decompose_homogenous_transform(
+    rotate_reflect, scale_shear, world_translation = utils.decompose_homogenous_transform(
         contour.to_world_transform
     )
     old_bounds_center = numpy.dot([old_bounds_center], scale_shear)[0]
     translation = new_bounds_center - old_bounds_center
-    return utility_tools.make_homogenous_transform(transform=scale_shear, translation=translation)
+    return utils.make_homogenous_transform(transform=scale_shear, translation=translation)
 
 
 def add_image_landmarks(contour, image_array, landmark_ranges, image_type="original", mask=True):
@@ -572,7 +572,7 @@ def add_image_landmarks(contour, image_array, landmark_ranges, image_type="origi
                     % (low, high, contour.simple_name())
                 )
         landmarks.append(indices.mean(axis=0))
-    landmarks = utility_tools.homogenous_transform_points(landmarks, to_contour_transform)
+    landmarks = utils.homogenous_transform_points(landmarks, to_contour_transform)
     if isinstance(contour, contour_class.ContourAndLandmarks):
         landmarks = numpy.concatenate(contour.landmarks, landmarks)
     landmark_contour = contour_class.ContourAndLandmarks(
@@ -626,7 +626,7 @@ def warp_images(
     """
     _compatibility_check([from_contour, to_contour])
     image_arrays = [numpy.asarray(image_array) for image_array in image_arrays]
-    if not utility_tools.all_same_shape(image_arrays):
+    if not utils.all_same_shape(image_arrays):
         raise ValueError("Input images for warp_images must all be the same size.")
     if from_type not in ("original", "aligned") or to_type not in ("original", "aligned"):
         raise RuntimeError("Image from_type or to_type %s is invalid. Must be 'original' or 'aligned'." % image_type)

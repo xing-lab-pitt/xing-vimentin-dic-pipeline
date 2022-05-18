@@ -65,7 +65,7 @@ from contour_tool import (
     align_contours,
 )
 import pipe_util2
-import utility_tools
+import utils
 import contour_class
 from traj_class import single_cell_traj, fluor_single_cell_traj
 

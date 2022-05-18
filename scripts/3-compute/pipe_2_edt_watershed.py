@@ -26,15 +26,16 @@ from math import pi
 import cv2
 import glob
 from skimage.exposure import equalize_adapthist
-from pilutil import toimage
 from cnn_prep_data import keep_aspect_resize, obj_transform
 
 import pandas as pd
 from scipy import ndimage
 import sys
-import hj_util
+import utils
 
 from tensorflow.python.client import device_lib
+from pilutil import toimage
+
 
 print(device_lib.list_local_devices())
 
@@ -292,19 +293,19 @@ def simple_edt_watershed(img_path, out_path, chan_label, small_obj_thres):
     :return:
     """
 
-    img_path = hj_util.folder_verify(img_path)
+    img_path = utils.correct_folder_str(img_path)
     img_list = sorted(glob.glob(img_path + "*" + chan_label + "*"))
 
-    out_path = hj_util.folder_verify(out_path)
-    reg_path = hj_util.folder_verify(out_path + "edt")
+    out_path = utils.correct_folder_str(out_path)
+    reg_path = utils.correct_folder_str(out_path + "edt")
     reg_list = sorted(
         os.listdir(reg_path)
     )  # this is the edt folder. # edt image path master_output_folder+#/reg/reg_xximgstring
     seg_path = out_path + "seg/"
-    hj_util.create_folder(seg_path)  # the folder will be re-created every time.
+    utils.create_folder(seg_path)  # the folder will be re-created every time.
 
     rgb_num_path = out_path + "rgb_num/"
-    hj_util.create_folder(rgb_num_path)  # the folder will be re-created every time.
+    utils.create_folder(rgb_num_path)  # the folder will be re-created every time.
 
     am_record = pd.DataFrame(columns=["ImageNumber", "ObjectNumber", "am_flag"])
     all_am_count = 0

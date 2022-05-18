@@ -24,7 +24,7 @@ import copy
 
 # import exceptions #for python 2
 import builtins as exceptions  # for python 3
-import utility_tools as utility_tools
+import utils as utils
 import procustes as procustes
 
 # import path as path
@@ -140,7 +140,7 @@ class PointSet(object):
     def alignment_angle(self):
         """Return the rotation (in degrees) needed to return the contour to its
         original alignment."""
-        rotate_reflect = utility_tools.decompose_homogenous_transform(self.to_world_transform)[0]
+        rotate_reflect = utils.decompose_homogenous_transform(self.to_world_transform)[0]
         theta = numpy.arctan2(rotate_reflect[0, 1], rotate_reflect[0, 0])
         return theta * 180 / numpy.pi
 
@@ -180,22 +180,22 @@ class PointSet(object):
         """
         inverse = numpy.linalg.inv(transform)
         self.to_world_transform = numpy.dot(inverse, self.to_world_transform)
-        self.points = utility_tools.homogenous_transform_points(self.points, transform)
+        self.points = utils.homogenous_transform_points(self.points, transform)
 
     def translate(self, translation):
         """Translate the points by the given [x,y] translation."""
-        self.transform(utility_tools.make_homogenous_transform(translation=translation))
+        self.transform(utils.make_homogenous_transform(translation=translation))
 
     def scale(self, scale):
         """Scale the points by the provide scaling factor (either a constant or an [x_scale, y_scale] pair)."""
-        self.transform(utility_tools.make_homogenous_transform(scale=scale))
+        self.transform(utils.make_homogenous_transform(scale=scale))
 
     def descale(self):
         """Remove any previously-applied scaling factors. If the contour is centered
         at the origin, it will remain so; if it is centered elsewhere then the descaling
         will be applied to its current location as well."""
-        rotate_reflect, scale_shear, translation = utility_tools.decompose_homogenous_transform(self.to_world_transform)
-        transform = utility_tools.make_homogenous_transform(transform=scale_shear)
+        rotate_reflect, scale_shear, translation = utils.decompose_homogenous_transform(self.to_world_transform)
+        transform = utils.make_homogenous_transform(transform=scale_shear)
         self.transform(transform)
 
     def rotate(self, rotation, in_radians=True):
@@ -204,7 +204,7 @@ class PointSet(object):
             rotation = numpy.pi * rotation / 180.0
         s = numpy.sin(rotation)
         c = numpy.cos(rotation)
-        self.transform(utility_tools.make_homogenous_transform(transform=[[c, s], [-s, c]]))
+        self.transform(utils.make_homogenous_transform(transform=[[c, s], [-s, c]]))
 
     def to_world(self):
         """Return the points to their original ('world') coordinates, undoing all transforms."""
@@ -246,7 +246,7 @@ class PointSet(object):
         T, c, t, new_A = procustes.procustes_alignment(
             self.points, reference.points, weights, allow_reflection, allow_scaling, allow_translation
         )
-        self.transform(utility_tools.make_homogenous_transform(T, c, t))
+        self.transform(utils.make_homogenous_transform(T, c, t))
 
     def axis_align(self):
         """Align the data points so that the major and minor axes of the best-fit ellpise are along the x and y axes, respectively."""
@@ -286,7 +286,7 @@ class PointSet(object):
             self.points, reference.points, weights, allow_reflection, allow_scaling, allow_translation
         )
         if apply_transform:
-            self.transform(utility_tools.make_homogenous_transform(T, c, t))
+            self.transform(utils.make_homogenous_transform(T, c, t))
         return numpy.sqrt(((new_A - reference.points) ** 2).mean())
 
     as_world = _copymethod(to_world)
@@ -343,7 +343,7 @@ class Contour(PointSet):
         """Get a periodic slice of the contour points from begin to end, inclusive.
 
         If 'begin' is after 'end', then the slice wraps around."""
-        return utility_tools.inclusive_periodic_slice(self.points, begin, end)
+        return utils.inclusive_periodic_slice(self.points, begin, end)
 
     def length(self, begin=None, end=None):
         """Calculate the length of the contour, optionally over only the periodic slice specified by 'begin' and 'end'."""
@@ -358,8 +358,8 @@ class Contour(PointSet):
     def interpoint_distances(self, begin=None, end=None):
         """Calculate the distance from each point to the previous point, optionally over only the periodic slice specified by 'begin' and 'end'."""
         offsetcontour = numpy.roll(self.points, 1, axis=0)
-        return utility_tools.inclusive_periodic_slice(
-            utility_tools.norm(self.points - offsetcontour, axis=0), begin, end
+        return utils.inclusive_periodic_slice(
+            utils.norm(self.points - offsetcontour, axis=0), begin, end
         )
 
     def spline_derivatives(self, begin, end, derivatives=1):
@@ -372,7 +372,7 @@ class Contour(PointSet):
             unpack = True
             derivatives = [derivatives]
         tck, uout = self.to_spline()
-        points = utility_tools.inclusive_periodic_slice(range(len(self.points)), begin, end)
+        points = utils.inclusive_periodic_slice(range(len(self.points)), begin, end)
         ret = [numpy.transpose(fitpack.splev(points, tck, der=d)) for d in derivatives]
         if unpack:
             ret = ret[0]
@@ -512,7 +512,7 @@ class Contour(PointSet):
             to_insert = numpy.setdiff1d(u, numpy.unique(tck[0]))
             for i in to_insert:
                 tck = fitpack.insert(i, tck, per=True)
-        return utility_tools.b_spline_to_bezier_series(tck, per=True)
+        return utils.b_spline_to_bezier_series(tck, per=True)
 
     def resample(self, num_points, smoothing=0, max_iters=500, min_rms_change=1e-6, step_size=0.2):
         """Resample the contour to the given number of points, which will be spaced as evenly as possible.
@@ -528,7 +528,7 @@ class Contour(PointSet):
         """
         # cache functions in inner loop as local vars for faster lookup
         splev = fitpack.splev
-        norm, roll, clip, mean = utility_tools.norm, numpy.roll, numpy.clip, numpy.mean
+        norm, roll, clip, mean = utils.norm, numpy.roll, numpy.clip, numpy.mean
         iters = 0
         ms_change = numpy.inf
         l = len(self.points)
@@ -759,7 +759,7 @@ class Contour(PointSet):
         point_numbers = []
         all_points = numpy.arange(len(self.points))
         for start, end in zip(ray_starts, ray_ends):
-            radii, positions = utility_tools.line_intersections(start, end, s0, s1)
+            radii, positions = utils.line_intersections(start, end, s0, s1)
             intersects_in_segment = (positions <= 1) & (positions >= 0)
             intersect_radii = radii[intersects_in_segment]
             intersect_positions = (all_points + positions)[intersects_in_segment]
@@ -807,7 +807,7 @@ class Contour(PointSet):
         the point on the contour nearest to the given point."""
         s0 = self.points
         s1 = numpy.roll(s0, -1, axis=0)
-        closest_points, positions = utility_tools.closest_point_to_lines(point, s0, s1)
+        closest_points, positions = utils.closest_point_to_lines(point, s0, s1)
         positions.clip(0, 1)
         positions += numpy.arange(len(self.points))
         square_distances = ((point[:, numpy.newaxis] - closest_points) ** 2).sum(axis=1)
@@ -992,15 +992,15 @@ class PCAContour(Contour):
         import pca as pca
 
         data = [c.points for c in contours]
-        if not utility_tools.all_same_shape(data):
+        if not utils.all_same_shape(data):
             raise ValueError("All contours must have the same number of points in order to perform PCA.")
         units = [c.units for c in contours]
         if not numpy.alltrue([u == units[0] for u in units]):
             raise ValueError("All contours must have the same units in order to produce a PCA shape model from them.")
         units = units[0]
-        scales = [utility_tools.decompose_homogenous_transform(c.to_world_transform)[1] for c in contours]
+        scales = [utils.decompose_homogenous_transform(c.to_world_transform)[1] for c in contours]
         if numpy.alltrue([numpy.allclose(scales[0], s) for s in scales[1:]]):
-            transform = utility_tools.make_homogenous_transform(transform=scales[0])
+            transform = utils.make_homogenous_transform(transform=scales[0])
         else:
             transform = numpy.eye(3)
         vals = pca.pca_dimensionality_reduce(numpy.array(data, dtype=numpy.float32), required_variance_explained)
@@ -1072,12 +1072,12 @@ class PCAContour(Contour):
         so far.
         """
         Contour.transform(self, transform)
-        self.mean = utility_tools.homogenous_transform_points(self.mean, transform)
+        self.mean = utils.homogenous_transform_points(self.mean, transform)
         # don't translate the modes -- just scale/rotate them as required
         # (translation being meaningless)
         scale_rotate = numpy.array(transform, copy=True)
         scale_rotate[2, :2] = 0
-        self.modes = numpy.array([utility_tools.homogenous_transform_points(mode, scale_rotate) for mode in self.modes])
+        self.modes = numpy.array([utils.homogenous_transform_points(mode, scale_rotate) for mode in self.modes])
 
     def offset_points(self, offset):
         """Offset the point ordering forward or backward.
@@ -1399,14 +1399,14 @@ class CentralAxisContour(Contour):
         return self.axis_interpoint_distances()[begin:end].sum()
 
     def axis_interpoint_distances(self):
-        return utility_tools.norm(self.central_axis[1:] - self.central_axis[:-1], axis=0)
+        return utils.norm(self.central_axis[1:] - self.central_axis[:-1], axis=0)
 
     def axis_baseline_distances(self):
         """Return the distances from each point along the central axis to the
         baseline determined by the axis endpoints.
         Distances are signed: positive is on one side of the baseline, negative
         the other."""
-        return utility_tools.signed_distances_to_line(self.central_axis, self.central_axis[0], self.central_axis[-1])
+        return utils.signed_distances_to_line(self.central_axis, self.central_axis[0], self.central_axis[-1])
 
     def axis_rmsd(self):
         """Return the root-mean-square deviation of the axis points from the
@@ -1425,8 +1425,8 @@ class CentralAxisContour(Contour):
         The endpoints themselves are always considered extrema; other extrema must be at
         least min_distance away from the baseline to be considered."""
         distances = self.axis_baseline_distances()
-        maxima = utility_tools.local_maxima(distances, endpoints_allowed=False)
-        minima = utility_tools.local_maxima(-distances, endpoints_allowed=False)
+        maxima = utils.local_maxima(distances, endpoints_allowed=False)
+        minima = utils.local_maxima(-distances, endpoints_allowed=False)
         indices = numpy.concatenate([maxima, minima])
         distances = numpy.absolute(distances[indices])
         indices = indices[distances > min_distance]
@@ -1437,7 +1437,7 @@ class CentralAxisContour(Contour):
         the positions of the extrema of that axis (in terms of deviation from the
         baseline determined by the endpoints). Extrema less than min_distance from
         the baseline are ignored."""
-        points, positions = utility_tools.closest_points_to_line(
+        points, positions = utils.closest_points_to_line(
             self.central_axis, self.central_axis[0], self.central_axis[-1]
         )
         total_len = numpy.sqrt(((self.central_axis[0] - self.central_axis[-1]) ** 2).sum())
@@ -1496,9 +1496,9 @@ class CentralAxisContour(Contour):
 
     def axis_normals(self):
         perpendiculars = numpy.empty(self.central_axis.shape, dtype=float)
-        perpendiculars[[0, -1]] = utility_tools.find_perp(self.central_axis[[0, -2]], self.central_axis[[1, -1]])
-        bisectors = utility_tools.find_bisector(self.central_axis[:-2], self.central_axis[1:-1], self.central_axis[2:])
-        perps = utility_tools.find_perp(self.central_axis[:-2], self.central_axis[2:])
+        perpendiculars[[0, -1]] = utils.find_perp(self.central_axis[[0, -2]], self.central_axis[[1, -1]])
+        bisectors = utils.find_bisector(self.central_axis[:-2], self.central_axis[1:-1], self.central_axis[2:])
+        perps = utils.find_perp(self.central_axis[:-2], self.central_axis[2:])
         dots = (bisectors * perps).sum(axis=1)
         perpendiculars[1:-1] = bisectors * numpy.sign(dots)[..., numpy.newaxis]
         return perpendiculars
@@ -1536,7 +1536,7 @@ class CentralAxisContour(Contour):
             to_insert = numpy.setdiff1d(u, numpy.unique(tck[0]))
             for i in to_insert:
                 tck = fitpack.insert(i, tck, per=False)
-        return utility_tools.b_spline_to_bezier_series(tck, per=False)
+        return utils.b_spline_to_bezier_series(tck, per=False)
 
     def axis_top_bottom_to_spline(self):
         """Return two splines, mapping position along the axis (in the range
@@ -1597,22 +1597,22 @@ def calculate_mean_contour(contours):
     scaling information, if possible. If all contours have associated landmarks,
     then the average will be such a contour as well."""
     all_points = [c.points for c in contours]
-    if not utility_tools.all_same_shape(all_points):
+    if not utils.all_same_shape(all_points):
         raise ContourError("Cannot calculate mean of contours with different numbers of points.")
     mean_points = numpy.mean(all_points, axis=0)
     units = [c.units for c in contours]
     if not numpy.alltrue([u == units[0] for u in units]):
         raise ContourError("All contours must have the same units in order calculate their mean.")
     units = contours[0].units
-    scales = [utility_tools.decompose_homogenous_transform(c.to_world_transform)[1] for c in contours]
+    scales = [utils.decompose_homogenous_transform(c.to_world_transform)[1] for c in contours]
     if numpy.alltrue([numpy.allclose(scales[0], s) for s in scales[1:]]):
-        transform = utility_tools.make_homogenous_transform(transform=scales[0])
+        transform = utils.make_homogenous_transform(transform=scales[0])
     else:
         transform = numpy.eye(3)
     if numpy.alltrue([isinstance(c, ContourAndLandmarks) for c in contours]):
         # if they're all landmark'd contours
         all_landmarks = [c.landmarks for c in contours]
-        if not utility_tools.all_same_shape(all_landmarks):
+        if not utils.all_same_shape(all_landmarks):
             raise ContourError("Cannot calculate mean of contours with different numbers of landmarks.")
         mean_landmarks = numpy.mean(all_landmarks, axis=0)
         mean_weights = numpy.mean([c.weights for c in contours], axis=0)
@@ -1677,7 +1677,7 @@ def _compatibility_filter_data(data, desired_class=None):
 def _filter_old_contour(data):
     new_data = {}
     new_data["points"] = numpy.array(data["points"])
-    new_data["to_world_transform"] = utility_tools.make_homogenous_transform(
+    new_data["to_world_transform"] = utils.make_homogenous_transform(
         transform=data["to_world_transform"], translation=data["to_world_translation"]
     )
     new_data["units"] = ""

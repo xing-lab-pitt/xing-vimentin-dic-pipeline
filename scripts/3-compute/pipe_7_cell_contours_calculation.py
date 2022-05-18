@@ -15,7 +15,7 @@ import copy
 import pickle
 
 import contour_class
-import utility_tools as utility_tools
+import utils as utils
 import scipy.ndimage as ndimage
 import scipy.interpolate.fitpack as fitpack
 import numpy
@@ -38,9 +38,9 @@ def cell_contours_calculation(output_path, mean_contour_path):
     :param mean_contour_path: path to the calculated mean_contour.
     :return:
     """
-    output_path = pipe_util2.folder_verify(output_path)
+    output_path = pipe_util2.correct_folder_str(output_path)
     dir_path = output_path
-    seg_path = pipe_util2.folder_verify(output_path + "seg")
+    seg_path = pipe_util2.correct_folder_str(output_path + "seg")
     seg_img_list = sorted(listdir(seg_path))
     df = pd.read_csv(dir_path + "Per_Object_relink" + ".csv")
 
@@ -62,7 +62,7 @@ def cell_contours_calculation(output_path, mean_contour_path):
         cell_contours[i].resample(num_points=150)
         cell_contours[i].axis_align()
         align_contour_to(cell_contours[i], mean_contour, allow_reflection=True, allow_scaling=True)
-        scale_back = utility_tools.decompose_homogenous_transform(cell_contours[i].to_world_transform)[1]
+        scale_back = utils.decompose_homogenous_transform(cell_contours[i].to_world_transform)[1]
         cell_contours[i].scale(scale_back)
         cells[ind].set_cell_contour(cell_contours[i])
 

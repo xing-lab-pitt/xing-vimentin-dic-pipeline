@@ -103,11 +103,11 @@ fluor_feature_list = config.fluor_feature_list
 
 def single_folder_run(img_folder, output_path, vim_chan_label):
 
-    output_path = pipe_util2.folder_verify(output_path)
+    output_path = pipe_util2.correct_folder_str(output_path)
     cells_path = output_path + "cells/"
     fluor_cells_path = cells_path
     cell_seg_path = output_path + "seg/"
-    vim_img_path = pipe_util2.folder_verify(img_folder)
+    vim_img_path = pipe_util2.correct_folder_str(img_folder)
 
     cell_seg_list = sorted(listdir(cell_seg_path))
     print("vim_img_path: " + vim_img_path)

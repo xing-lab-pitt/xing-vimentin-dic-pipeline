@@ -34,7 +34,7 @@ from sklearn.neighbors import KernelDensity
 from sklearn.preprocessing import StandardScaler
 from cell_class import single_cell
 import contour_class
-import utility_tools
+import utils
 
 import image_warp
 from contour_tool import (
@@ -67,11 +67,11 @@ def morph_pca(all_dataset_path, all_dataset_names, pattern="XY"):
     """
     for dataset_idx in range(len(all_dataset_names)):
         all_data = None
-        cur_dataset_path = pipe_util2.folder_verify(all_dataset_path + all_dataset_names[dataset_idx])
-        output_path_list = pipe_util2.folder_file_num(cur_dataset_path, pattern)
+        cur_dataset_path = pipe_util2.correct_folder_str(all_dataset_path + all_dataset_names[dataset_idx])
+        output_path_list = pipe_util2.count_pattern_in_folder(cur_dataset_path, pattern)
         for i in range(len(output_path_list)):
             output_path = output_path_list[i]
-            output_path = pipe_util2.folder_verify(output_path)
+            output_path = pipe_util2.correct_folder_str(output_path)
             cells_path = output_path + "cells/"
 
             with open(cells_path + "cells", "rb") as fp:
@@ -88,7 +88,7 @@ def morph_pca(all_dataset_path, all_dataset_names, pattern="XY"):
                 all_data = np.vstack((all_data, data))
 
         X = all_data
-        X, data_point_shape = utility_tools.flatten_data(X)
+        X, data_point_shape = utils.flatten_data(X)
         X = X.astype(np.float)
         print(X.shape)
 
@@ -109,7 +109,7 @@ def morph_pca(all_dataset_path, all_dataset_names, pattern="XY"):
         # do not use StandarScaler on cell contour points
         # ----------cal cell_contour pca coordinates-------------------
         for output_path in output_path_list:
-            output_path = pipe_util2.folder_verify(output_path)
+            output_path = pipe_util2.correct_folder_str(output_path)
             cells_path = output_path + "cells/"
 
             with open(cells_path + "pcna_cells-02", "rb") as fp:
@@ -117,7 +117,7 @@ def morph_pca(all_dataset_path, all_dataset_names, pattern="XY"):
             for i in range(len(cells)):
                 if hasattr(cells[i], "cell_contour"):
                     data = np.expand_dims(cells[i].cell_contour.points, axis=0)
-                    X, X_shape = utility_tools.flatten_data(data)
+                    X, X_shape = utils.flatten_data(data)
                     Y = pca.transform(X)[0]
                     cells[i].set_pca_cord(Y)
             print("dumping " + cells_path + "pcna_cells-02")

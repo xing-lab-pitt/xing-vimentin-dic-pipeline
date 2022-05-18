@@ -21,7 +21,7 @@ from sklearn.utils import class_weight
 import tensorflow as tf
 from tensorflow.python.client import device_lib
 from tensorflow.keras.callbacks import EarlyStopping
-import hj_util
+import utils
 
 from cnn_prep_data import prep_icnn_am_train_data, prep_icnn_seg_train_data, keep_aspect_resize, obj_transform
 from resnet50 import res_model
@@ -43,8 +43,8 @@ nb_class = int(sys.argv[6])
 
 train_mode = sys.argv[7]
 
-train_path = hj_util.folder_verify(train_path)
-wts_path = hj_util.folder_verify(wts_path)
+train_path = utils.correct_folder_str(train_path)
+wts_path = utils.correct_folder_str(wts_path)
 
 input_shape = (obj_h, obj_w, 1)
 model = res_model(input_shape, nb_class)

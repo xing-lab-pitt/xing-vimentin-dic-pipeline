@@ -6,7 +6,7 @@
 # published by the Free Software Foundation.
 
 import bisect, numpy
-import utility_tools
+import utils
 
 
 def pca(data):
@@ -22,11 +22,11 @@ def pca(data):
     data = numpy.asarray(data)
     mean = data.mean(axis=0)
     centered = data - mean
-    flat, data_point_shape = utility_tools.flatten_data(centered)
+    flat, data_point_shape = utils.flatten_data(centered)
     # could use _flat_pca_svd, but that appears empirically slower...
     pcs, variances, stds, positions, norm_positions = _flat_pca_eig(flat)
-    norm_pcs = utility_tools.fatten_data(pcs * stds[:, numpy.newaxis], data_point_shape)
-    pcs = utility_tools.fatten_data(pcs, data_point_shape)
+    norm_pcs = utils.fatten_data(pcs * stds[:, numpy.newaxis], data_point_shape)
+    pcs = utils.fatten_data(pcs, data_point_shape)
     return mean, pcs, norm_pcs, variances, positions, norm_positions
 
 
@@ -117,13 +117,13 @@ def pca_dimensionality_reduce(data, required_variance_explained):
 
 def pca_reconstruct(scores, pcs, mean):
     # scores and pcs are indexed along axis zero
-    flat, data_point_shape = utility_tools.flatten_data(pcs)
-    return mean + utility_tools.fatten_data(numpy.dot(scores, flat), data_point_shape)
+    flat, data_point_shape = utils.flatten_data(pcs)
+    return mean + utils.fatten_data(numpy.dot(scores, flat), data_point_shape)
 
 
 def pca_decompose(data, pcs, mean, variances=None):
-    flat_pcs, data_point_shape = utility_tools.flatten_data(pcs)
-    flat_data, data_point_shape = utility_tools.flatten_data(data - mean)
+    flat_pcs, data_point_shape = utils.flatten_data(pcs)
+    flat_data, data_point_shape = utils.flatten_data(data - mean)
     projection = numpy.dot(flat_data, flat_pcs.transpose())
     if variances is not None:
         normalized_projection = projection / numpy.sqrt(variances)

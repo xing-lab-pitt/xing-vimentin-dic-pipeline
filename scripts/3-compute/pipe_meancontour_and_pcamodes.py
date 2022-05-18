@@ -15,7 +15,7 @@ import scipy.ndimage as ndimage
 import scipy.interpolate.fitpack as fitpack
 
 import contour_class
-import utility_tools
+import utils
 
 import image_warp
 from contour_tool import (
@@ -26,18 +26,18 @@ from contour_tool import (
     align_contours,
 )
 
-import hj_util
+import utils
 import sys
 
 output_path = sys.argv[1]
 
-output_path = hj_util.folder_verify(output_path)
+output_path = utils.correct_folder_str(output_path)
 
 seg_path = output_path + "seg/"
 seg_img_list = sorted(listdir(seg_path))
 
 contour_path = output_path + "contour/"
-hj_util.create_folder(contour_path)
+utils.create_folder(contour_path)
 
 
 def list_sub_group(list_len, num):
@@ -75,7 +75,7 @@ with open("mean_cell_contour", "wb") as fp:
     pickle.dump(mean_contour, fp)
 
 for i in range(len(cell_contours)):
-    scale_back = utility_tools.decompose_homogenous_transform(cell_contours[i].to_world_transform)[1]
+    scale_back = utils.decompose_homogenous_transform(cell_contours[i].to_world_transform)[1]
     cell_contours[i].scale(scale_back)
     points = cell_contours[i].points
 
