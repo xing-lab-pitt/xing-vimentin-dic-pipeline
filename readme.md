@@ -28,3 +28,4 @@ conda env create -f envs/cp4.yml
 
 
 ## Development guide
+### Avoid copying code files and push identical code
