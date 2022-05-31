@@ -5,6 +5,7 @@ import uuid
 
 import cv2
 import cv2 as cv
+import cv_configs
 import matplotlib.cm
 import numpy as np
 import PIL
