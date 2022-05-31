@@ -1,10 +1,10 @@
-import contour_class
-import image_warp as image_warp
+import legacy_utils.contour_class as contour_class
+import legacy_utils.image_warp as image_warp
 import numpy
 import pandas as pd
 import scipy.interpolate.fitpack as fitpack
 import scipy.ndimage as ndimage
-import utils as utils
+import legacy_utils.utils as utils
 from skimage import measure
 from skimage.io import imread
 from skimage.morphology import closing, opening

@@ -11,7 +11,7 @@ from skimage.exposure import equalize_adapthist
 from skimage.filters import gaussian
 from skimage.io import imread
 from skimage.measure import label, regionprops
-from unsharp_mask import unsharp_mask
+from legacy_utils.unsharp_mask import unsharp_mask
 
 
 def transform_matrix_offset_center(matrix, x, y):
@@ -339,8 +339,7 @@ def prep_dic_single_img(img, bg_corrction_flag=True):
         # img0 = np.array(imread(img_path+img_list[0]))
         bg0 = dic_bg_correction(img, ordr=1)
         bg = bg0 - np.mean(bg0)
-
-    img = imread(img_path + img_list[img_num - 1])
+    
     # print('raw img shape:', img.shape)
     if bg_corrction_flag:
         img = img - bg

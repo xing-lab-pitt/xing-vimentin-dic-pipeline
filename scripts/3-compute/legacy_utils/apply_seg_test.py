@@ -12,16 +12,16 @@ from os import listdir
 import cv2
 import numpy as np
 import pandas as pd
-from cla_seg_model_loss import cla_seg
+from legacy_utils.cla_seg_model_loss import cla_seg
 from keras import optimizers
 from keras.layers import (Activation, BatchNormalization, Conv2D, Dropout,
                           Input, MaxPooling2D, UpSampling2D)
 from keras.models import Model
 from matplotlib import pyplot as plt
 from PIL import Image, ImageDraw, ImageFont
-from pilutil import toimage
-from reg_seg_lin_model import reg_seg_lin
-from reg_seg_model import reg_seg
+from legacy_utils.pilutil import toimage
+from legacy_utils.reg_seg_lin_model import reg_seg_lin
+from legacy_utils.reg_seg_model import reg_seg
 from scipy import signal
 from scipy.ndimage import distance_transform_edt, filters
 from skimage import morphology

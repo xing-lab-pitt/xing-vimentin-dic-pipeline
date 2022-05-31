@@ -23,9 +23,9 @@ import builtins as exceptions  # for python 3
 import copy
 
 import numpy
-import procustes as procustes
+import legacy_utils.procustes as procustes
 import scipy.interpolate.fitpack as fitpack
-import utils as utils
+import legacy_utils.utils as utils
 
 # import path as path
 # import numpy_compat as numpy_compat

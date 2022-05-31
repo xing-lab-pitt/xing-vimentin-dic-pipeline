@@ -18,7 +18,7 @@ import scipy.ndimage as ndi
 from cnn_prep_data import keep_aspect_resize, obj_transform
 from matplotlib import pyplot as plt
 from PIL import Image, ImageDraw, ImageFont
-from pilutil import toimage
+from legacy_utils.pilutil import toimage
 from resnet50 import res_model
 from scipy import ndimage
 from skimage.color import label2rgb

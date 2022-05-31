@@ -15,7 +15,7 @@ import numpy as np
 import scipy.ndimage as ndi
 from matplotlib import pyplot as plt
 from PIL import Image, ImageDraw, ImageFont
-from pilutil import toimage
+from legacy_utils.pilutil import toimage
 from skimage.color import label2rgb
 from skimage.feature import peak_local_max
 from skimage.io import imread

@@ -5,7 +5,7 @@ import uuid
 
 import cv2
 import cv2 as cv
-import cv_configs
+import legacy_utils.cv_configs as cv_configs
 import matplotlib.cm
 import numpy as np
 import PIL
@@ -13,18 +13,15 @@ import scipy
 import skimage
 import skimage.segmentation
 import sklearn
-import utils
+import legacy_utils.utils as utils
 from matplotlib import pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D, axes3d
-from PIL import Image, ImageEnhance
-from scipy import interpolate
 from scipy import ndimage as ndi
 from skimage import feature, measure
 from skimage.feature import blob_dog, blob_doh, blob_log
 from skimage.filters import threshold_local
 from sklearn import mixture
 from sklearn.mixture import GaussianMixture
-from utils import distance
+from legacy_utils.utils import distance
 
 
 def denoise_images(images, win_size=21):

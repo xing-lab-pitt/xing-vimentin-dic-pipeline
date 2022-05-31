@@ -3,10 +3,10 @@ import math
 import Augmentor
 import keras
 import tensorflow as tf
-import train_config as config
-from cv_analysis import *
-from models import *
-from utils import *
+import legacy_utils.train_config as config
+from legacy_utils.cv_analysis import *
+from legacy_utils.models import *
+from legacy_utils.utils import *
 
 prediction_result_dir = "./train_pred_results_rpe_DIC"
 train_DEBUG = False

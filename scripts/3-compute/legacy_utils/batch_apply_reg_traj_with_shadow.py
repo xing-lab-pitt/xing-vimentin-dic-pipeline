@@ -19,7 +19,7 @@ from keras.layers import (Activation, BatchNormalization, Conv2D, Dropout,
 from keras.models import Model
 from matplotlib import pyplot as plt
 from PIL import Image
-from reg_seg_model import reg_seg
+from legacy_utils.reg_seg_model import reg_seg
 from scipy import signal
 from scipy.ndimage import distance_transform_edt, filters
 from skimage.exposure import equalize_adapthist

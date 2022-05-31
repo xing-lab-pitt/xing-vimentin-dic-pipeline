@@ -12,7 +12,7 @@ from os import listdir
 import cv2
 import numpy as np
 import pandas as pd
-from cnn_prep_data import prep_fluor_data
+from .cnn_prep_data import prep_fluor_data
 from keras import optimizers
 from keras.layers import (Activation, BatchNormalization, Conv2D, Dropout,
                           Input, MaxPooling2D, UpSampling2D)
@@ -21,7 +21,7 @@ from matplotlib import cm
 from matplotlib import pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from PIL import Image
-from reg_seg_model import reg_seg
+from .reg_seg_model import reg_seg
 from scipy import signal
 from scipy.interpolate import bisplev, bisplrep
 from scipy.ndimage import distance_transform_edt, filters

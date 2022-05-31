@@ -2,14 +2,14 @@ import copy
 import pickle
 from os import listdir
 
-import contour_class
-import image_warp
+import legacy_utils.contour_class as contour_class
+import legacy_utils.image_warp as image_warp
 import numpy as np
 import pandas as pd
 import scipy.interpolate.fitpack as fitpack
 import scipy.ndimage as ndimage
 import seaborn as sns
-import utils
+import legacy_utils.utils as utils
 from contour_tool import (align_contour_to, align_contours,
                           df_find_contour_points, find_contour_points,
                           generate_contours)

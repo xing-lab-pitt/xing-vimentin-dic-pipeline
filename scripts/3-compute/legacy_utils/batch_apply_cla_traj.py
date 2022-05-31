@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
+# TODO refactor this module
 
 # In[4]:
 
@@ -13,13 +14,13 @@ from os import listdir
 import cv2
 import numpy as np
 import pandas as pd
-from cla_seg_model import cla_seg
+from .cla_seg_model import cla_seg
 from keras import optimizers
 from keras.layers import (Activation, BatchNormalization, Conv2D, Dropout,
                           Input, MaxPooling2D, UpSampling2D)
 from keras.models import Model
 from PIL import Image
-from reg_seg_model import reg_seg
+from .reg_seg_model import reg_seg
 from scipy import signal
 from scipy.ndimage import distance_transform_edt, filters
 from skimage.io import imread, imread_collection

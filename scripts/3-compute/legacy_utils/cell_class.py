@@ -1,4 +1,4 @@
-import contour_class
+import legacy_utils.contour_class as contour_class
 import numpy as np
 
 
