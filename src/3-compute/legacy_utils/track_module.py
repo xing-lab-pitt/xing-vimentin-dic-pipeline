@@ -9,10 +9,10 @@ import cv2
 import numpy as np
 import pandas as pd
 import scipy
-from index import Indexes
+from legacy_utils.index import Indexes
 from matplotlib import pyplot as plt
 from PIL import Image, ImageDraw, ImageFont
-from resnet50 import res_model
+from legacy_utils.resnet50 import res_model
 from scipy import ndimage
 from scipy.optimize import linear_sum_assignment
 from scipy.spatial.distance import cosine, euclidean
