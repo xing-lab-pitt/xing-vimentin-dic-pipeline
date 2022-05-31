@@ -73,7 +73,7 @@ module load cuda/11.1
 echo $img_path
 
 ### cell_profiler ###
-bash run_cp.sh $output_path $tools_dir
+bash slurm_scripts/run_cp.sh $output_path $tools_dir
 echo 'step cell profiler complete'
 
 source activate tf1
