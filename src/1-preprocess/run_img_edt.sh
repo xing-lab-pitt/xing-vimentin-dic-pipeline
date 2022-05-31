@@ -53,7 +53,7 @@ cd /scr/$job_dir
 # define paths & files
 main_path=/net/capricorn/home/xing/tch42/Projects/a549_pcna
 script_dir=${main_path}/src/1_preprocess
-tools_dir=${main_path}/src/memes
+tools_dir=${main_path}/src/3-compute/tools
 
 # initialize
 rsync -ra ${script_dir}/* .

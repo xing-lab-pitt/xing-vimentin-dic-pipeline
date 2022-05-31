@@ -2,7 +2,7 @@
 import sys
 
 sys.path.insert(0, "C:/Users/14432/OneDrive/Research/Projects/A549_HMGA1/src/4_wk_trajectory/")
-sys.path.insert(1, "C:/Users/14432/OneDrive/Research/Projects/A549_HMGA1/src/memes/")
+sys.path.insert(1, "C:/Users/14432/OneDrive/Research/Projects/A549_HMGA1/src/3-compute/tools/")
 
 import copy
 import glob

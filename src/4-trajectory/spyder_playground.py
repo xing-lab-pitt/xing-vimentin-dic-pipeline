@@ -2,7 +2,7 @@
 import sys
 
 sys.path.insert(0, "/home/thomas/research/projects/a549_40x/src/4_wk_trajectory/")
-sys.path.insert(1, "/home/thomas/research/projects/a549_40x/src/memes/")
+sys.path.insert(1, "/home/thomas/research/projects/a549_40x/src/3-compute/tools/")
 
 import pickle
 import sys

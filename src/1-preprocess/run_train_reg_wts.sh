@@ -51,7 +51,7 @@ cd /scr/$job_dir
 
 # define paths & files
 script_dir=/net/capricorn/home/xing/tch42/Projects/a549_pcna/src/1_preprocess
-tools_dir=/net/capricorn/home/xing/tch42/Projects/a549_pcna/src/memes
+tools_dir=/net/capricorn/home/xing/tch42/Projects/a549_pcna/src/3-compute/tools
 dat_dir=/net/capricorn/home/xing/tch42/Projects/a549_pcna/data
 train_path=${dat_dir}/train/reg/patch/purity_thres_40
 wts_path=${dat_dir}/wts/reg

@@ -3,7 +3,7 @@
 # In[1]: import
 import sys
 
-sys.path.insert(1, "/home/thomas/research/projects/emt/src/memes/")
+sys.path.insert(1, "/home/thomas/research/projects/emt/src/3-compute/tools/")
 import warnings
 
 warnings.filterwarnings("ignore")
