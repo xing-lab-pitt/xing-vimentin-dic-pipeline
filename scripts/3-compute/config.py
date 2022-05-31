@@ -105,6 +105,7 @@ def save_hyperparameters(path):
 
 
 def update_globals_by_args(args):
+    """update the global variables passed by argparse arguments here. This function will be invoked in `run_arg_parser`"""
     print(">>>>> updating globals according to the following args:")
     print(args)
     # TODO
