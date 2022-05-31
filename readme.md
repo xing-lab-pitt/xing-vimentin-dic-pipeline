@@ -20,6 +20,9 @@ conda env create -f envs/cp4.yml
 ## Slurm Script Usage
 - Use script paths relative to this repository root
   - submit sample slurm jobs at root directory of this repository
+- hacky tricks on PITT CSB cluster
+  - please submit in conda **base** environment or without conda env activated, or the job conda env will not be activated environment correctly and your job is probably going to **fail**.
+  - in slurm scripts, use **source** instead of **conda** cmd to activate environments. **source** activation method should have been deprecated and **conda** is preferred. However... Anyway this is our cluster status.
 
 
 ## Install Precommit Hook  
