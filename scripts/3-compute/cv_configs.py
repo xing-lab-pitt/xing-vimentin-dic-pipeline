@@ -1,3 +1,5 @@
+import numpy as np
+
 # location of processed info
 # center info will be saved to figure_dir
 center_filename = "centers_data.csv"

@@ -772,7 +772,7 @@ def find_cells_directly_in_prob_map(prob_map):
     # cell_seg_labels = skimage.segmentation.slic(cell_seg.astype(np.double),
     #                                             n_segments=700)
     regions = measure.regionprops(cell_seg_labels, intensity_image=cell_seg)
-    regions = filter_regions_by_area(regions, min_cell_area, max_cell_area)
+    regions = filter_regions_by_area(regions, cv_configs.min_cell_area, cv_configs.max_cell_area)
     return cell_seg_labels, regions
 
 
@@ -913,10 +913,15 @@ def resize_image_to_2_powers(image):
     return resized_img
 
 
-def get_CNN_regression_mask(image, relu_edt=False):
+def get_CNN_regression_mask(image, relu_edt=False, model=None):
+
+    if model is None:
+        model = cv_configs.model
+    
     normalized_image = normalize_images([image])[0]
     resized_img = resize_image_to_2_powers(normalized_image)
-    predicted_mask = config.model.predict(np.array([resized_img[..., np.newaxis]]), batch_size=1)[0]
+    # TODO fix model below
+    predicted_mask = model.predict(np.array([resized_img[..., np.newaxis]]), batch_size=1)[0]
     print("predicted map shape:", predicted_mask.shape)
     predicted_mask = predicted_mask.reshape(predicted_mask.shape[:-1])
     predicted_mask = skimage.transform.resize(predicted_mask, image.shape)
@@ -975,7 +980,7 @@ def find_cells_directly_in_max_projected_nd2(nd2_path, save_dir="./test_figs", r
                 # mask = skimage.segmentation.quickshift(projection)
             tc_masks[t, c] = mask
             regions = skimage.measure.regionprops(mask, intensity_image=projection)
-            regions = filter_regions_by_area(regions, min_cell_area, max_cell_area)
+            regions = filter_regions_by_area(regions, cv_configs.min_cell_area, cv_configs.max_cell_area)
             tc_regions[t, c] = regions
 
             # save masks if needed
