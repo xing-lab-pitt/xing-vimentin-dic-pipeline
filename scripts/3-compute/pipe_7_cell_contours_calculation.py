@@ -6,17 +6,16 @@ import pickle
 import sys
 from os import listdir
 
-import contour_class
-import image_warp as image_warp
+import legacy_utils.contour_class as contour_class
+import legacy_utils.image_warp as image_warp
 import numpy
 import numpy as np
 import pandas as pd
-import pipe_util2
+import legacy_utils.utils as utils
 import scipy.interpolate.fitpack as fitpack
 import scipy.ndimage as ndimage
 import seaborn as sns
-import utils as utils
-from contour_tool import (align_contour_to, align_contours,
+from legacy_utils.contour_tool import (align_contour_to, align_contours,
                           df_find_contour_points, find_contour_points,
                           generate_contours)
 from matplotlib import pyplot as plt
@@ -34,9 +33,9 @@ def cell_contours_calculation(output_path, mean_contour_path):
     :param mean_contour_path: path to the calculated mean_contour.
     :return:
     """
-    output_path = pipe_util2.correct_folder_str(output_path)
+    output_path = utils.correct_folder_str(output_path)
     dir_path = output_path
-    seg_path = pipe_util2.correct_folder_str(output_path + "seg")
+    seg_path = utils.correct_folder_str(output_path + "seg")
     seg_img_list = sorted(listdir(seg_path))
     df = pd.read_csv(dir_path + "Per_Object_relink" + ".csv")
 

@@ -19,12 +19,12 @@ import cv2
 import numpy as np
 import pandas as pd
 import scipy.ndimage as ndi
-import utils
-from cnn_prep_data import keep_aspect_resize, obj_transform
+import legacy_utils.utils as utils
+from legacy_utils.cnn_prep_data import keep_aspect_resize, obj_transform
 from matplotlib import pyplot as plt
 from PIL import Image, ImageDraw, ImageFont
-from pilutil import toimage
-from resnet50 import res_model
+from legacy_utils.pilutil import toimage
+from legacy_utils.resnet50 import res_model
 from scipy import ndimage
 from skimage.color import label2rgb
 from skimage.exposure import equalize_adapthist

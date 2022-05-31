@@ -5,14 +5,14 @@ from os import listdir
 
 import keras.backend as K
 import numpy as np
-import utils as util
-from cnn_prep_data import dic_bg_correction, img_transform, prep_dic_data
-from models import reg_seg, unet
+import legacy_utils.utils as util
+from legacy_utils.cnn_prep_data import dic_bg_correction, img_transform, prep_dic_data
+from legacy_utils.models import reg_seg, unet
 from PIL import Image
 from skimage.io import imread
 from skimage.transform import resize
 from tqdm import tqdm
-from train_rotation_ver import predict_image
+from legacy_utils.train_rotation_ver import predict_image
 
 
 def assemble_model(weight_file, mode="reg_seg"):

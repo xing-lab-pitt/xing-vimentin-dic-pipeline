@@ -16,16 +16,16 @@ from datetime import datetime
 from math import pi
 from os import listdir
 
-import config
+import legacy_utils.config as config
 import cv2
 import numpy as np
 import pandas as pd
-import pipe_util2
+import legacy_utils.utils as utils
 import scipy
-from cnn_prep_data import generate_single_cell_img_edt
+from legacy_utils.cnn_prep_data import generate_single_cell_img_edt
 from matplotlib import pyplot as plt
 from PIL import Image, ImageDraw, ImageFont
-from resnet50 import res_model
+from legacy_utils.resnet50 import res_model
 from scipy import ndimage
 from scipy.optimize import linear_sum_assignment
 from scipy.spatial.distance import cosine, euclidean
@@ -34,7 +34,7 @@ from skimage.color import label2rgb
 from skimage.io import imread
 from skimage.measure import label, regionprops
 from skimage.segmentation import clear_border
-from track_module import (am_obj_info, break_link, cal_cell_fusion,
+from legacy_utils.track_module import (am_obj_info, break_link, cal_cell_fusion,
                           cal_cell_split, calculate_area_penalty, compute_cost,
                           compute_overlap_matrix, compute_overlap_pair,
                           compute_overlap_single, compute_specific_overlap,
@@ -85,15 +85,15 @@ def traj_reconganize1(img_path, output_path, icnn_seg_weights, DIC_channel_label
 
     # preparing paths
     print("processing %s" % (img_path), flush=True)
-    img_path = pipe_util2.correct_folder_str(img_path)
+    img_path = utils.correct_folder_str(img_path)
     img_list = sorted(glob.glob(img_path + "*" + DIC_channel_label + "*"))
     for presplit_cell_index in range(len(img_list)):
         img_list[presplit_cell_index] = os.path.basename(img_list[presplit_cell_index])
 
-    seg_path = pipe_util2.correct_folder_str(output_path) + "seg/"
+    seg_path = utils.correct_folder_str(output_path) + "seg/"
     seg_img_list = sorted(listdir(seg_path))
 
-    dir_path = pipe_util2.correct_folder_str(output_path)
+    dir_path = utils.correct_folder_str(output_path)
 
     # TODO: Per_Object is generated in the current module later, remove following code
     #     df = pd.read_csv(dir_path + 'Per_Object.csv')
@@ -107,7 +107,7 @@ def traj_reconganize1(img_path, output_path, icnn_seg_weights, DIC_channel_label
     am_record = pd.read_csv(os.path.join(dir_path, "am_record.csv"))
     t_span = max(cell_track_db_df["ImageNumber"])
 
-    pipe_util2.print_time()
+    utils.print_time()
 
     # TODO: dangerous operation: semantics of cell_track_db_df is changed, may cause bugs and user confusion.
     # TODO: try using other variable name, e.g. relabel_cell_track_db

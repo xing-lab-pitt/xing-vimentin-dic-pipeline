@@ -10,18 +10,18 @@ import pickle
 import sys
 from os import listdir
 
-import contour_class
-import image_warp as image_warp
+import legacy_utils.contour_class as contour_class
+import legacy_utils.image_warp as image_warp
 import numpy as np
 import pandas as pd
-# from . import pipe_util2
-import pipe_util2
+# from . import utils
+import legacy_utils.utils as utils
 import scipy.interpolate.fitpack as fitpack
 import scipy.ndimage as ndimage
 import seaborn as sns
-import utils as utils
-from cell_class import single_cell
-from contour_tool import (align_contour_to, align_contours,
+
+from legacy_utils.cell_class import single_cell
+from legacy_utils.contour_tool import (align_contour_to, align_contours,
                           df_find_contour_points, find_contour_points,
                           generate_contours)
 from matplotlib import pyplot as plt
@@ -34,8 +34,8 @@ from skimage.segmentation import find_boundaries
 
 # -------------initiate all cells--------------------
 def build_single_cell(output_path):
-    output_path = pipe_util2.correct_folder_str(output_path)
-    cells_path = pipe_util2.create_folder(output_path + "cells")
+    output_path = utils.correct_folder_str(output_path)
+    cells_path = utils.create_folder(output_path + "cells")
     dir_path = output_path
 
     df = pd.read_csv(dir_path + "Per_Object_relink" + ".csv")

@@ -16,10 +16,10 @@ from os import listdir
 import cv2
 import numpy as np
 import pandas as pd
-import pipe_util2
+import legacy_utils.utils as utils
 import scipy.misc
 import scipy.ndimage as ndi
-from cell_class import fluor_single_cell, single_cell
+from legacy_utils.cell_class import fluor_single_cell, single_cell
 from matplotlib import pyplot as plt
 from PIL import Image, ImageDraw, ImageFont
 from skimage import measure
@@ -44,12 +44,12 @@ def vim_haralick_pca(all_datset_path, all_datsets, norm, pattern="XY"):
     """
     for datset_idx in range(len(all_datsets)):
         all_data = np.array([])
-        cur_datset_path = pipe_util2.correct_folder_str(all_datset_path + all_datsets[datset_idx])
-        output_path_list = pipe_util2.count_pattern_in_folder(cur_datset_path, pattern)
+        cur_datset_path = utils.correct_folder_str(all_datset_path + all_datsets[datset_idx])
+        output_path_list = utils.count_pattern_in_folder(cur_datset_path, pattern)
         i = 0
         while i < len(output_path_list):
             output_path = output_path_list[i]
-            output_path = pipe_util2.correct_folder_str(output_path)
+            output_path = utils.correct_folder_str(output_path)
             cells_path = output_path + "cells/"
 
             with open(cells_path + "pcna_cells-02", "rb") as fp:
@@ -105,7 +105,7 @@ def vim_haralick_pca(all_datset_path, all_datsets, norm, pattern="XY"):
             fluor_feature_name = "norm_vimentin_haralick"
 
         for output_path in output_path_list:
-            output_path = pipe_util2.correct_folder_str(output_path)
+            output_path = utils.correct_folder_str(output_path)
             cells_path = output_path + "cells/"
 
             with open(cells_path + "pcna_cells-02", "rb") as fp:

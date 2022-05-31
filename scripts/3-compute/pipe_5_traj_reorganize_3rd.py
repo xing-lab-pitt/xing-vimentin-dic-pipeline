@@ -8,18 +8,18 @@ import pickle
 import sys
 from os import listdir
 
-import config
+import legacy_utils.config as config
 import numpy as np
 import numpy.ma
 import pandas as pd
-import pipe_util2
+import legacy_utils.utils as utils
 import scipy.ndimage
 import scipy.sparse
-from index import Indexes
+from legacy_utils.index import Indexes
 from scipy.ndimage import distance_transform_edt
 from scipy.optimize import linear_sum_assignment
 from skimage.io import imread
-from track_module import (am_obj_info, break_link, cal_cell_fusion,
+from legacy_utils.track_module import (am_obj_info, break_link, cal_cell_fusion,
                           cal_cell_split, calculate_area_penalty, compute_cost,
                           compute_overlap_matrix, compute_overlap_pair,
                           compute_overlap_single, compute_specific_overlap,
@@ -54,9 +54,9 @@ max_gap_score = config.max_gap_score
 
 # TODO: what it recognizes? add docs
 def traj_reconganize3(output_path):
-    output_path = pipe_util2.correct_folder_str(output_path)
+    output_path = utils.correct_folder_str(output_path)
     dir_path = output_path
-    seg_path = pipe_util2.correct_folder_str(output_path + "seg")
+    seg_path = utils.correct_folder_str(output_path + "seg")
     seg_img_list = sorted(listdir(seg_path))
     df = pd.read_csv(dir_path + "Per_Object_mitosis.csv")
     am_record = pd.read_csv(dir_path + "am_record" + ".csv")

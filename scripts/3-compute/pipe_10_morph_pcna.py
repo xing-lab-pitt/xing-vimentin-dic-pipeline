@@ -15,17 +15,16 @@ import pickle
 from math import pi, sqrt
 from os import listdir
 
-import contour_class
+import legacy_utils.contour_class as contour_class
 import cv2
-import image_warp
+import legacy_utils.image_warp as image_waro
 import numpy as np
 import pandas as pd
-import pipe_util2
+import legacy_utils.utils as utils
 import scipy.misc
 import scipy.ndimage as ndi
-import utils
-from cell_class import single_cell
-from contour_tool import (align_contour_to, align_contours,
+from legacy_utils.cell_class import single_cell
+from legacy_utils.contour_tool import (align_contour_to, align_contours,
                           df_find_contour_points, find_contour_points,
                           generate_contours)
 from matplotlib import pyplot as plt
@@ -63,11 +62,11 @@ def morph_pca(all_dataset_path, all_dataset_names, pattern="XY"):
     """
     for dataset_idx in range(len(all_dataset_names)):
         all_data = None
-        cur_dataset_path = pipe_util2.correct_folder_str(all_dataset_path + all_dataset_names[dataset_idx])
-        output_path_list = pipe_util2.count_pattern_in_folder(cur_dataset_path, pattern)
+        cur_dataset_path = utils.correct_folder_str(all_dataset_path + all_dataset_names[dataset_idx])
+        output_path_list = utils.count_pattern_in_folder(cur_dataset_path, pattern)
         for i in range(len(output_path_list)):
             output_path = output_path_list[i]
-            output_path = pipe_util2.correct_folder_str(output_path)
+            output_path = utils.correct_folder_str(output_path)
             cells_path = output_path + "cells/"
 
             with open(cells_path + "cells", "rb") as fp:
@@ -105,7 +104,7 @@ def morph_pca(all_dataset_path, all_dataset_names, pattern="XY"):
         # do not use StandarScaler on cell contour points
         # ----------cal cell_contour pca coordinates-------------------
         for output_path in output_path_list:
-            output_path = pipe_util2.correct_folder_str(output_path)
+            output_path = utils.correct_folder_str(output_path)
             cells_path = output_path + "cells/"
 
             with open(cells_path + "pcna_cells-02", "rb") as fp:

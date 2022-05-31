@@ -13,15 +13,15 @@ from math import ceil, pi, sqrt
 from multiprocessing import Process
 from os import listdir
 
-import config
+import legacy_utils.config as config
 import cv2
 import mahotas.features.texture as mht
 import numpy as np
 import pandas as pd
-import pipe_util2
+import legacy_utils.utils as utils
 import scipy.misc
 import scipy.ndimage as ndi
-from cell_class import fluor_single_cell, single_cell
+from legacy_utils.cell_class import fluor_single_cell, single_cell
 from matplotlib import cm
 from matplotlib import pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
@@ -141,11 +141,11 @@ feature_list = ["histogram_features", "haralick", "norm_haralick"]
 
 def single_folder_run(img_folder, output_path, pcna_chan_label):
 
-    output_path = pipe_util2.correct_folder_str(output_path)
+    output_path = utils.correct_folder_str(output_path)
     cells_path = output_path + "cells/"
     fluor_cells_path = cells_path
     cell_seg_path = output_path + "seg/"
-    pcna_img_path = pipe_util2.correct_folder_str(img_folder)
+    pcna_img_path = utils.correct_folder_str(img_folder)
 
     cell_seg_list = sorted(listdir(cell_seg_path))
     print(pcna_img_path)
