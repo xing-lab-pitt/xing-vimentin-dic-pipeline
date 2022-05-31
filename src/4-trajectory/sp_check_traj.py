@@ -1,8 +1,8 @@
 # In[1]: import
 import sys
 
-sys.path.insert(0, "C:/Users/14432/OneDrive/Research/Projects/A549_HMGA1/scripts/4_wk_trajectory/")
-sys.path.insert(1, "C:/Users/14432/OneDrive/Research/Projects/A549_HMGA1/scripts/memes/")
+sys.path.insert(0, "C:/Users/14432/OneDrive/Research/Projects/A549_HMGA1/src/4_wk_trajectory/")
+sys.path.insert(1, "C:/Users/14432/OneDrive/Research/Projects/A549_HMGA1/src/memes/")
 
 import copy
 import glob

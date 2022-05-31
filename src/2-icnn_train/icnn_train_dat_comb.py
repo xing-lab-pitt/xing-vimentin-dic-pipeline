@@ -1,7 +1,7 @@
 # In[0]: import
 import sys
 
-sys.path.insert(0, "C:/Users/14432/OneDrive/Research/Projects/A549_144hr/scripts/memes/")
+sys.path.insert(0, "C:/Users/14432/OneDrive/Research/Projects/A549_144hr/src/memes/")
 
 import os
 

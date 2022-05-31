@@ -1,7 +1,7 @@
 # In[0]: import
 import sys
 
-sys.path.insert(1, "C:/Users/14432/OneDrive/Research/Projects/a549_pcna/scripts/memes/")
+sys.path.insert(1, "C:/Users/14432/OneDrive/Research/Projects/a549_pcna/src/memes/")
 
 import glob
 import os
@@ -50,7 +50,7 @@ def color_num(labels):
     txt = Image.new("RGBA", base.size, (255, 255, 255, 0))
     # get a font
     fnt = ImageFont.truetype(
-        "/net/capricorn/home/xing/huijing/Segmentation/scripts/vimentin_DIC_segmentation_pipeline/hj_modify_pipe/arial.ttf",
+        "/net/capricorn/home/xing/huijing/Segmentation/src/vimentin_DIC_segmentation_pipeline/hj_modify_pipe/arial.ttf",
         40,
     )
     # get a drawing context

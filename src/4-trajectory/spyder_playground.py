@@ -1,8 +1,8 @@
 # In[0]:load
 import sys
 
-sys.path.insert(0, "/home/thomas/research/projects/a549_40x/scripts/4_wk_trajectory/")
-sys.path.insert(1, "/home/thomas/research/projects/a549_40x/scripts/memes/")
+sys.path.insert(0, "/home/thomas/research/projects/a549_40x/src/4_wk_trajectory/")
+sys.path.insert(1, "/home/thomas/research/projects/a549_40x/src/memes/")
 
 import pickle
 import sys

@@ -1,7 +1,7 @@
 # In[1]: import
 import sys
 
-sys.path.insert(1, "/home/thomas/research/projects/emt/scripts/memes/")
+sys.path.insert(1, "/home/thomas/research/projects/emt/src/memes/")
 
 import copy
 import glob

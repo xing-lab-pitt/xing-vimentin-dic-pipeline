@@ -1,7 +1,7 @@
 # In[0]: import
 import sys
 
-sys.path.insert(1, "/net/capricorn/home/xing/tch42/Projects/a549_pcna/scripts/memes")
+sys.path.insert(1, "/net/capricorn/home/xing/tch42/Projects/a549_pcna/src/memes")
 
 import warnings
 

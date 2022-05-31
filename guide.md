@@ -6,13 +6,13 @@
 
 On cluster:
 ```
-sbatch ./scripts/3-compute/run_pipe_0-2_all_positions.sh
+sbatch ./src/3-compute/run_pipe_0-2_all_positions.sh
 ```
 
 After step0-2 completes, run
 
 ```
-sbatch ./scripts/3-compute/run_pipe_0-2_all_positions.sh
+sbatch ./src/3-compute/run_pipe_0-2_all_positions.sh
 ```
 
 

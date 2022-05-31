@@ -36,7 +36,7 @@
 # example of remove leading zeros: note we need "/" at the end of the path arg
 # bash remove_dir_left_trailing_zero.sh /net/dali/home/mscbio/ken67/weikang_exp_process/2019-06-21_A549_vim_tgf4ng_3d/vimentin/
 # 4. carefully modify move_seg_sample.sh: read the expression of filenames
-# 5. do not forget to modify fluor_interval (base) tch42@cluster:~/Projects/Intro_Segment/scripts/weik_pipe$ cd cd nanolive_mbell-53deb5/
+# 5. do not forget to modify fluor_interval (base) tch42@cluster:~/Projects/Intro_Segment/src/weik_pipe$ cd cd nanolive_mbell-53deb5/
 
 # node
 echo

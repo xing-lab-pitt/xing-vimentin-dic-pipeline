@@ -20,7 +20,7 @@ import tensorflow as tf
 # main_path = '/media/weikang_data/rpe_pcna_p21_72_hr_imaging/tiff_files/c1_raw_tiffs/'
 main_path = "/net/capricorn/home/xing/huijing/Segmentation/data/1-13-Incucyte/"
 # weight_file = (
-#     "/net/capricorn/home/xing/huijing/Segmentation/scripts/vimentin_DIC_segmentation_pipeline/models/dld1.hdf5"
+#     "/net/capricorn/home/xing/huijing/Segmentation/src/vimentin_DIC_segmentation_pipeline/models/dld1.hdf5"
 # )
 weight_file = None
 
