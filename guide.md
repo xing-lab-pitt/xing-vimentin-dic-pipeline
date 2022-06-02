@@ -1,18 +1,41 @@
 ## User guide
 
+### Copy required files into your data folder  
+Note: this is a recommended procedure. Alternatively, you can specify the files used by the pipeline in corresponding bash scripts and skip this section.  
+Assume you have a dataset folder `RPE1_exp0`, which contains XY1, XY2, XY3, etc. We recommend copy resource files into your dataset folder so that you can retrospect and know what resource files you used for a particular pipeline run.
+ - copy `wts` containing weights file for machine learning models into `RPE1_exp0`
+```bash
+test_datasets/sample_test_data/wts/
+├── icnn_am
+│   └── icnn_am_dc_comb_wk.hdf5
+├── icnn_seg
+│   └── icnn_seg_dc_comb_wk.hdf5
+└── reg
+    └── a549_reg_pt25_no-treat.hdf5
+```
+ - copy `stats` containing `mean_cell_contour` into `RPE1_exp0`
+   - there are two versions of mean_cell_contour in our repo: py2 and py3. In newest version, please always use the py3 version, or pipeline mean contour loading is going to compain about an issue mentioned in https://github.com/xing-lab-pitt/xing-vimentin-dic-pipeline/issues/19. 
+   - WARNING: this `stats` part will probably be refactored later because `stats` naming is not appropriate here. Meanwhile it contains some trajectory analysis from Thomas that we may need to understand and refactor later if needed
+```bash
+test_datasets/sample_test_data/stats/
+└──  mean_cell_contour
+```
+
 ### Required script modifications
+- paths of your datasets
+- paths of resource files
 
 ### Sample Usage
 
 On cluster:
 ```
-sbatch ./scripts/3-compute/run_pipe_0-2_all_positions.sh
+sbatch ./src/3-compute/run_pipe_0-2_all_positions.sh
 ```
 
 After step0-2 completes, run
 
 ```
-sbatch ./scripts/3-compute/run_pipe_0-2_all_positions.sh
+sbatch ./src/3-compute/run_pipe_0-2_all_positions.sh
 ```
 
 
