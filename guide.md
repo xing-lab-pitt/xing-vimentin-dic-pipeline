@@ -13,6 +13,7 @@ test_datasets/sample_test_data/wts/
 └── reg
     └── a549_reg_pt25_no-treat.hdf5
 ```
+   - You can download [our pretrained A549 model weights here](https://pitt-my.sharepoint.com/:u:/g/personal/ken67_pitt_edu/Ea2BU-tOkaxPntMDsRNMEu4BqBJyVKXM-14M3zUOf_WZaA?e=8mWnV9)
  - copy `stats` containing `mean_cell_contour` into `RPE1_exp0`
    - there are two versions of mean_cell_contour in our repo: py2 and py3. In newest version, please always use the py3 version, or pipeline mean contour loading is going to compain about an issue mentioned in https://github.com/xing-lab-pitt/xing-vimentin-dic-pipeline/issues/19. 
    - WARNING: this `stats` part will probably be refactored later because `stats` naming is not appropriate here. Meanwhile it contains some trajectory analysis from Thomas that we may need to understand and refactor later if needed
