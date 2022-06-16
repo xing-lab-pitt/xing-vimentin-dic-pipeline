@@ -8,8 +8,8 @@
 #data_dir=/net/capricorn/home/xing/data/sorted_A549-VIM-PCNA_72hr_NoTreat_NA_YY_Ti2e_2022-4-28_complete
 data_dir=/net/capricorn/home/xing/dap182/xing/image_analysis/sample-tutorial
 
-script_dir=./scripts/3-compute
-tools_dir=./scripts/memes
+script_dir=./src/3-compute
+tools_dir=./src/3-compute/tools
 
 out_dir=${data_dir}/out/
 

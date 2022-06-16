@@ -8,7 +8,7 @@
 ### THIS ALSO ASSUMES THAT ALL POSITIONS ARE DONE WITH 0-2 BEFORE RUNNING THE STEPS 3-9. I BELIEVE IT WOULD START ANALZYING IMCOMPLETE SET OF AN XY POSITION
 	### IF RUN BEFORE PREVIOUS STEPS ARE COMPLETE
 
-source scripts/3-compute/slurm_config.sh
+source src/3-compute/slurm_scripts/slurm_config.sh
 
 ####################
 #  SLURM SECTION   #
@@ -54,13 +54,13 @@ for XY_pos in $(ls $data_dir | awk "/.*XY.*/"); do
 
 		mkdir -p $output_path
 
-		echo bash ${script_dir}/run_pipe_0-2_single_position.sh $script_dir $tools_dir $data_dir $img_path $output_path $data_dir $position_label\
+		echo bash ${script_dir}/slurm_scripts/run_pipe_0-2_single_position.sh $script_dir $tools_dir $data_dir $img_path $output_path $data_dir $position_label\
 					$reg_wts_file $icnn_am_wts_file $icnn_seg_wts_file >> $slurm_array_file_path
 
 	elif [[ $pipeline_steps == 3-9 ]]
 	then
 
-		echo bash ${script_dir}/run_pipe_3-9_single_position.sh $script_dir $tools_dir $data_dir $img_path $output_path $icnn_seg_wts_file >> $slurm_array_file_path
+		echo bash ${script_dir}/slurm_scripts/run_pipe_3-9_single_position.sh $script_dir $tools_dir $data_dir $img_path $output_path $icnn_seg_wts_file >> $slurm_array_file_path
 
 	fi
 
@@ -73,5 +73,5 @@ done
 sbatch --output=${slurm_dir}/out/${desc}_${pipeline_steps}_XY%a.out \
        --error=${slurm_dir}/err/${desc}_${pipeline_steps}_XY%a.err \
        --array=${array_length}${max_jobs_at_once} \
-         ${script_dir}/submit_array_job_${pipeline_steps}.sh $slurm_array_file_path
+         ${script_dir}/slurm_scripts/submit_array_job_${pipeline_steps}.sh $slurm_array_file_path
 
