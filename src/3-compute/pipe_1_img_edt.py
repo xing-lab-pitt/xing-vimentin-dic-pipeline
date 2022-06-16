@@ -44,7 +44,7 @@ def patch_predict(input_folder, output_folder, weight_file):
 
     img_list = sorted(glob.glob(input_folder + "*"))
     for i in range(len(img_list)):
-        print(img_list[i])
+        #print(img_list[i])
         img_name = os.path.basename(img_list[i])
         img = imread(img_list[i])
         img = img_transform(img)  # This step normalize and change dimention of images
@@ -112,7 +112,7 @@ def folder_edt_predict(img_path, output_path, reg_seg_wts_path, dic_channel_labe
 
     img_list = sorted(glob.glob(img_path + "*" + dic_channel_label + "*"))
     print("img path:", img_path)
-    print("image list:", img_list)
+    #print("image list:", img_list)
     for i in tqdm(range(len(img_list))):
         img_name = os.path.basename(img_list[i])
         print(img_name)

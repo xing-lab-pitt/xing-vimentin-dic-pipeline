@@ -14,7 +14,7 @@
 #SBATCH --mem=40G
 
 # partition (queue) declaration
-#SBATCH --partition=any_gpu
+#SBATCH --partition=dept_gpu
 
 # number of requested nodes
 #SBATCH --nodes=1
