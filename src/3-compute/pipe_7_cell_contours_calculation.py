@@ -6,6 +6,7 @@ import pickle
 import sys
 from os import listdir
 
+import legacy_utils.contour_class
 import legacy_utils.contour_class as contour_class
 import legacy_utils.image_warp as image_warp
 import numpy
@@ -43,8 +44,7 @@ def cell_contours_calculation(output_path, mean_contour_path):
         cells = pickle.load(fp)
 
     with open(mean_contour_path, "rb") as fp:
-        # mean_contour = pickle.load(fp) # 2-byte values in utf-8, only supported byt python 3?
-        mean_contour = pickle.load(fp, encoding="iso-8859-1")  # 1-byte values range 0-1
+        mean_contour = pickle.load(fp)
 
     cell_contour_points_and_cell = df_find_contour_points(df, seg_path, seg_img_list, contour_value=0.5)
     cell_contours, sort_cell_arr = generate_contours(

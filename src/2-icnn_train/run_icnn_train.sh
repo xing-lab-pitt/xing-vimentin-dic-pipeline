@@ -52,7 +52,7 @@ cd /scr/$job_dir
 
 # define paths & files
 script_dir=/net/capricorn/home/xing/tch42/Projects/A549_144hr/src/2_icnn_train
-tools_dir=/net/capricorn/home/xing/tch42/Projects/A549_144hr/src/memes
+tools_dir=/net/capricorn/home/xing/tch42/Projects/A549_144hr/src/3-compute/tools
 dat_dir=/net/capricorn/home/xing/tch42/Projects/A549_144hr/data
 train_path=${dat_dir}/train/icnn_seg
 wts_path=${dat_dir}/wts/icnn_seg

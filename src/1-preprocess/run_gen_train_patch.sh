@@ -54,7 +54,7 @@ cd /scr/$job_dir
 main_path=/net/capricorn/home/xing/tch42/Projects/a549_pcna
 reg_path=${main_path}/data/train/reg
 script_dir=${main_path}/src/1_preprocess
-tools_dir=${main_path}/src/memes
+tools_dir=${main_path}/src/3-compute/tools
 patch_dir=purity_thres_40
 #patch_copy=5
 #patch_copy=5.2
