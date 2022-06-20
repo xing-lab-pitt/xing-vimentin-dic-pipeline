@@ -4,7 +4,7 @@ desc=72hr_no-treat
 job_outdir=${date}_${desc}
 
 # define paths & files
-script_dir=./src/3-compute
+src_dir=./src/3-compute
 tools_dir=./src/3-compute/tools
 dat_dir=/net/capricorn/home/xing/ken67/xing-vimentin-dic-pipeline/test_datasets/sample_test_data
 out_dir=${dat_dir}/out/
@@ -21,7 +21,7 @@ for i in {1..1} ; do
 	output_path=${out_dir}/XY${i}
 	position_label=XY${i}
 	mkdir -p $output_path
-	sbatch ${script_dir}/slurm_scripts/run_pipe_0-2_single_position.sh $script_dir $tools_dir $dat_dir $img_path $output_path $ori_dir $position_label\
+	sbatch ${src_dir}/slurm_scripts/run_pipe_0-2_single_position.sh $src_dir $tools_dir $dat_dir $img_path $output_path $ori_dir $position_label\
                 $reg_wts_file $icnn_am_wts_file $icnn_seg_wts_file
 done
 

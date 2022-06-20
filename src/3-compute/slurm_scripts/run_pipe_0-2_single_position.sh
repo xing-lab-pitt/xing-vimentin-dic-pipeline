@@ -48,7 +48,7 @@ nvidia-smi -L
 
 
 # define paths & files
-script_dir=$1
+src_dir=$1
 tools_dir=$2
 dat_dir=$3
 img_path=$4
@@ -64,7 +64,7 @@ user=$(whoami)
 job_dir=${user}_${SLURM_JOB_NAME}_${SLURM_JOB_ID}.dcb.private.net
 mkdir /scr/$job_dir
 pwd
-rsync -ra ${script_dir}/* /scr/$job_dir/
+rsync -ra ${src_dir}/* /scr/$job_dir/
 rsync -ra ${tools_dir}/* /scr/$job_dir/
 
 cd /scr/$job_dir

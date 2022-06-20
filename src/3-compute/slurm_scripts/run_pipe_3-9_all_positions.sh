@@ -17,7 +17,7 @@ for i in {1..1} ; do
 #for i in 0{1..3} ; do
 	img_path=${ori_dir}/XY${i}
 	output_path=${out_dir}/XY${i}
-	sbatch ${script_dir}/run_pipe_3-9_single_position.sh $script_dir $tools_dir $dat_dir $img_path $output_path $icnn_seg_wts_file
+	sbatch ${script_dir}/slurm_scripts/run_pipe_3-9_single_position.sh $script_dir $tools_dir $dat_dir $img_path $output_path $icnn_seg_wts_file
 done
 
 
