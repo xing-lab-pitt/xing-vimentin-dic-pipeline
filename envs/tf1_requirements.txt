@@ -36,5 +36,8 @@ tifffile==2020.5.11
 tqdm==4.62.3
 urllib3==1.25.9
 xmltodict==0.12.0
+h5py==2.10.0
+protobuf==3.20.*
+
 opencv-python
 pandas
