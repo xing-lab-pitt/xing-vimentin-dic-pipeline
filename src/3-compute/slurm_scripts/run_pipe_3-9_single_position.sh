@@ -110,7 +110,9 @@ tree $output_path
 #cp /net/capricorn/home/xing/weikang/wwk/210309_2ng_tgf_a549/g1/data/mean_cell_contour ${output_path}/contour
 
 # after calculate mean contours
-mean_contour_path=${dat_dir}/stats/mean_cell_contour
+#mean_contour_path=${dat_dir}/stats/mean_cell_contour
+
+mean_contour_path=py3_a549_mean_cell_contour.pkl
 python pipe_7_cell_contours_calculation.py $output_path $mean_contour_path 
 echo 'step7 complete'
 tree $output_path
