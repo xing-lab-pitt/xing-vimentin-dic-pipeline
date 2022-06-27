@@ -30,13 +30,13 @@ test_datasets/sample_test_data/stats/
 
 On cluster:
 ```
-batch ./src/3-compute/run_pipe_0-2_all_positions.sh
+bash ./src/3-compute/run_pipe_0-2_all_positions.sh
 ```
 
 After step0-2 completes, run
 
 ```
-batch ./src/3-compute/run_pipe_0-2_all_positions.sh
+bash ./src/3-compute/run_pipe_0-2_all_positions.sh
 ```
 
 
