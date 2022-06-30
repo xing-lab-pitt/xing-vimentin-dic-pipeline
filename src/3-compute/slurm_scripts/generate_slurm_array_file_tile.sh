@@ -8,7 +8,7 @@
 ### THIS ALSO ASSUMES THAT ALL POSITIONS ARE DONE WITH 0-2 BEFORE RUNNING THE STEPS 3-9. I BELIEVE IT WOULD START ANALZYING IMCOMPLETE SET OF AN XY POSITION
 	### IF RUN BEFORE PREVIOUS STEPS ARE COMPLETE
 
-source src/3-compute/slurm_scripts/slurm_config_tile.sh
+source src/3-compute/slurm_scripts/slurm_config.sh
 
 ####################
 #  SLURM SECTION   #

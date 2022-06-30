@@ -4,9 +4,9 @@
 #  PYTHON INPUTS  #
 ###################
 
-#data_dir=/net/capricorn/home/xing/data/sorted_A549-VIM-PCNA_144hr_4ng-mL_TGFB_YY_Ti2e_2022-5-6
+data_dir=/net/capricorn/home/xing/data/sorted_A549-VIM-PCNA_144hr_4ng-mL_TGFB_YY_Ti2e_2022-5-6/cropped
 #data_dir=/net/capricorn/home/xing/data/sorted_A549-VIM-PCNA_72hr_NoTreat_NA_YY_Ti2e_2022-4-28_complete
-data_dir=/net/capricorn/home/xing/dap182/xing/image_analysis/sample-tutorial
+#data_dir=/net/capricorn/home/xing/dap182/xing/image_analysis/sample-tutorial
 
 script_dir=./src/3-compute
 tools_dir=./src/3-compute/tools

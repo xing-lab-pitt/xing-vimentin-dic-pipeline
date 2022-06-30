@@ -59,6 +59,8 @@ rsync -ra ${tools_dir}/* /scr/$job_dir
 
 cd /scr/$job_dir
 
+
+
 # experiment settings
 dic_channel_label=C1
 pcna_channel_label=C2
@@ -71,32 +73,32 @@ module load cuda/11.1
 echo $img_path
 
 ### cell_profiler ###
-#bash slurm_scripts/run_cp.sh $output_path $tools_dir
-#echo 'step cell profiler complete'
+bash slurm_scripts/run_cp.sh $output_path $tools_dir
+echo 'step cell profiler complete'
 
 source activate tf1
-#tree $output_path
+tree $output_path
 
 #conda deactivate
 source activate tf1
 
-#python pipe_3_traj_reorganize_1st.py $img_path $output_path $icnn_seg_wts_file $dic_channel_label
-#echo 'step3 complete'
-#tree $output_path
+python pipe_3_traj_reorganize_1st.py $img_path $output_path $icnn_seg_wts_file $dic_channel_label
+echo 'step3 complete'
+tree $output_path
 
-#python pipe_4_traj_reorganize_2nd.py $output_path
-#echo 'step4 complete'
-#tree $output_path
-
-
-#python pipe_5_traj_reorganize_3rd.py $output_path
-#echo 'step5 complete'
-#tree $output_path
+python pipe_4_traj_reorganize_2nd.py $output_path
+echo 'step4 complete'
+tree $output_path
 
 
-#python pipe_6_build_single_cell.py $output_path
-#echo 'step6 complete'
-#tree $output_path
+python pipe_5_traj_reorganize_3rd.py $output_path
+echo 'step5 complete'
+tree $output_path
+
+
+python pipe_6_build_single_cell.py $output_path
+echo 'step6 complete'
+tree $output_path
 
 
 # remember to modify file names in this script
@@ -110,17 +112,17 @@ source activate tf1
 # after calculate mean contours
 #mean_contour_path=${dat_dir}/stats/mean_cell_contour
 
-#mean_contour_path=py3_a549_mean_cell_contour.pkl
-#python pipe_7_cell_contours_calculation.py $output_path $mean_contour_path 
-#echo 'step7 complete'
-#tree $output_path
+mean_contour_path=py3_a549_mean_cell_contour.pkl
+python pipe_7_cell_contours_calculation.py $output_path $mean_contour_path 
+echo 'step7 complete'
+tree $output_path
 
 
 # modify fluor_interval: check visually or in README.md
-#python pipe_8_haralick_calculation.py $img_path $output_path $vim_channel_label
-#echo 'step8 complete'
-#tree $output_path
+python pipe_8_haralick_calculation.py $img_path $output_path $vim_channel_label
+echo 'step8 complete'
+tree $output_path
 
 
- python pipe_9_pcna_calculations.py $img_path $output_path $pcna_channel_label
- echo 'step9 complete'
+# python pipe_9_pcna_calculations.py $img_path $output_path $pcna_channel_label
+# echo 'step9 complete'
