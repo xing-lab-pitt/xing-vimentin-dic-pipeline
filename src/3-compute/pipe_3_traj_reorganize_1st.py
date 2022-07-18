@@ -34,18 +34,36 @@ from skimage.color import label2rgb
 from skimage.io import imread
 from skimage.measure import label, regionprops
 from skimage.segmentation import clear_border
-from legacy_utils.track_module import (am_obj_info, break_link, cal_cell_fusion,
-                          cal_cell_split, calculate_area_penalty, compute_cost,
-                          compute_overlap_matrix, compute_overlap_pair,
-                          compute_overlap_single, compute_specific_overlap,
-                          connect_link, false_seg_mark, find_am_sisters,
-                          find_border_obj, find_fuse_pairs_to_break,
-                          find_mitosis_pairs_to_break,
-                          find_split_pairs_to_break, generate_traj_seri,
-                          judge_apoptosis_tracklet, judge_border,
-                          judge_fuse_type, judge_mol_type, judge_split_type,
-                          judge_traj_am, record_traj_start_end, relabel_traj,
-                          search_false_link, traj_start_end_info)
+from legacy_utils.track_module import (
+    am_obj_info,
+    break_link,
+    cal_cell_fusion,
+    cal_cell_split,
+    calculate_area_penalty,
+    compute_cost,
+    compute_overlap_matrix,
+    compute_overlap_pair,
+    compute_overlap_single,
+    compute_specific_overlap,
+    connect_link,
+    false_seg_mark,
+    find_am_sisters,
+    find_border_obj,
+    find_fuse_pairs_to_break,
+    find_mitosis_pairs_to_break,
+    find_split_pairs_to_break,
+    generate_traj_df,
+    judge_apoptosis_tracklet,
+    judge_border,
+    judge_fuse_type,
+    judge_mol_type,
+    judge_split_type,
+    judge_traj_am,
+    record_traj_start_end,
+    relabel_traj,
+    search_false_link,
+    traj_start_end_info,
+)
 
 # ----parameter setting -----------
 # depend on: cell type, time interval-------

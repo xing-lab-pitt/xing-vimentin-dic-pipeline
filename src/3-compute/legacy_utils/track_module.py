@@ -136,35 +136,37 @@ def relabel_traj(df):
     return df_relabel
 
 
-def generate_traj_seri(df):
+def generate_traj_df(df):
+    """
+    Record img_num and obj_num(or idx_num in Per_Object) in all traj into one table, label=rowIndex+1
+    Returns
+        a tuple of dataframe
+    """
     t_span = max(df["ImageNumber"])
-    # -------------record img_num and obj_num(or idx_num in Per_Object) in all traj into one table
-    # label=row number+1
     traj_label = df["Cell_TrackObjects_Label"].values
     traj_label = np.sort(np.unique(traj_label[traj_label > 0]))
-    traj_quan = len(traj_label)  # the quantity of trajectories
-    print("traj quantity", traj_quan)
+    num_trajectories = len(traj_label)  # the quantity of trajectories
+    print("#trajectories:", num_trajectories)
 
-    t_col = []
-    for i in range(t_span):
-        t_col.append(str(i + 1))
+    t_col = [str(i + 1) for i in range(t_span)]
 
-    # only itself, without any ancestor
-    traj_seri_self = -1 * np.ones((traj_quan, t_span), dtype=np.int)
-    traj_seri_self = pd.DataFrame(traj_seri_self, columns=t_col)
+    # initialize pandas dataframes
+    traj_df = -1 * np.ones((num_trajectories, t_span), dtype=np.int)
+    traj_df = pd.DataFrame(traj_df, columns=t_col)
 
-    traj_idx_seri_self = -1 * np.ones((traj_quan, t_span), dtype=np.int)
-    traj_idx_seri_self = pd.DataFrame(traj_idx_seri_self, columns=t_col)
+    traj_to_row_idx_df = -1 * np.ones((num_trajectories, t_span), dtype=np.int)
+    traj_to_row_idx_df = pd.DataFrame(traj_to_row_idx_df, columns=t_col)
 
-    for traj_i in range(traj_quan):
+    for traj_i in range(num_trajectories):
         cur_traj_label = traj_label[traj_i]
         # ----find all the index that have the same label(in the same trajectory)
-        traj_idx_list = df[df["Cell_TrackObjects_Label"] == int(cur_traj_label)].index.tolist()
-        for obj_idx in traj_idx_list:
-            time_i = df["ImageNumber"][obj_idx]
-            traj_seri_self[str(time_i)][traj_i] = df["ObjectNumber"][obj_idx]
-            traj_idx_seri_self[str(time_i)][traj_i] = obj_idx
-    return traj_seri_self, traj_idx_seri_self
+        same_traj_label_indices = df["Cell_TrackObjects_Label"] == int(cur_traj_label)
+        row_idx_list = df[same_traj_label_indices].index.tolist()
+        for row_idx in row_idx_list:
+            time_index = df["ImageNumber"][row_idx]
+            traj_df[str(time_index)][traj_i] = df["ObjectNumber"][row_idx]
+            traj_to_row_idx_df[str(time_index)][traj_i] = row_idx
+    return traj_df, traj_to_row_idx_df
 
 
 # return numpy record of each traj start and traj end. [img_num obj_num]
