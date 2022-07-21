@@ -159,7 +159,7 @@ def generate_traj_df(df):
 
     for traj_i in range(num_trajectories):
         cur_traj_label = traj_label[traj_i]
-        # ----find all the index that have the same label(in the same trajectory)
+        # find all the index that have the same label(in the same trajectory)
         same_traj_label_indices = df["Cell_TrackObjects_Label"] == int(cur_traj_label)
         row_idx_list = df[same_traj_label_indices].index.tolist()
         for row_idx in row_idx_list:

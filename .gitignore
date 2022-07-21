@@ -1,7 +1,13 @@
+*.json
+*.png
+*.tif
+*.gif
+*.tiff
 
 .vscode
 test_data/
 test_datasets/
+datasets/
 
 *.swp
 *.stdout
