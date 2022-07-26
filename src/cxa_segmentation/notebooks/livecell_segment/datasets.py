@@ -18,28 +18,32 @@ import glob
 import os.path
 from pathlib import Path
 from PIL import Image
+from collections import deque
 
 
 class LiveCellImageDataset(torch.utils.data.Dataset):
     """Dataset that reads in various features"""
 
-    def __init__(self, dir_path, ext="tif"):
-
-        dir_path = Path(
-            "D:\\xing-vimentin-dic-pipeline\\src\\cxa_segmentation\\cxa-data\\june_2022_data\\day0_Notreat_Group1_wellA1_RI_MIP_stitched"
-        )
+    def __init__(self, dir_path, ext="tif", max_cache_size=100):
         self.img_path_list = sorted(glob.glob(str(dir_path / "*tif")))
-        self.img_cache = {}
+        self.img_idx2img = {}
+        self.max_cache_size = max_cache_size
+        self.img_idx_queue = deque()
         print("%d %s img file paths loaded: " % (len(self.img_path_list), ext))
 
     def __len__(self):
         return len(self.img_path_list)
 
-    def __getitem__(self, idx):
-        if idx in self.img_cache:
-            return self.img_cache[idx]
+    def insert_cache(self, img, idx):
+        if len(self.img_idx2img) >= self.max_cache_size:
+            self.img_idx2img.pop(self.img_idx_queue.popleft())
+        self.img_idx2img[idx] = img
+        self.img_idx_queue.append(idx)
 
+    def __getitem__(self, idx):
+        if idx in self.img_idx2img:
+            return self.img_idx2img[idx]
         img = Image.open(self.img_path_list[idx])
         img = np.array(img)
-        self.img_cache[idx] = img
+        self.img_idx2img[idx] = img
         return img
