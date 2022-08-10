@@ -4,7 +4,7 @@
 #                     Slurm Construction Section
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-#SBATCH --account=tch42
+#SBATCH --account=yak53
 
 #SBATCH --job-name=CP_PIPELINE
 
@@ -12,7 +12,7 @@
 
 #SBATCH --ntasks=1
 
-#SBATCH --mail-user=tch42@pitt.edu
+#SBATCH --mail-user=yak53@pitt.edu
 #SBATCH --mail-type=ALL
 
 #SBATCH --output=${1}/cp_slurm_out.o

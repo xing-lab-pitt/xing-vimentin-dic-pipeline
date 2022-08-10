@@ -63,6 +63,7 @@ icnn_seg_wts_file=${10}
 user=$(whoami)
 job_dir=${user}_${SLURM_JOB_NAME}_${SLURM_JOB_ID}.dcb.private.net
 mkdir /scr/$job_dir
+
 pwd
 rsync -ra ${script_dir}/* /scr/$job_dir/
 rsync -ra ${tools_dir}/* /scr/$job_dir/
