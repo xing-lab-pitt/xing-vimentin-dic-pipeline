@@ -36,14 +36,18 @@ class LiveCellImageDataset(torch.utils.data.Dataset):
 
     def insert_cache(self, img, idx):
         if len(self.img_idx2img) >= self.max_cache_size:
-            self.img_idx2img.pop(self.img_idx_queue.popleft())
+            pop_index = self.img_idx_queue.popleft()
+            self.img_idx2img.pop(pop_index)
         self.img_idx2img[idx] = img
         self.img_idx_queue.append(idx)
+
+    def get_img_path(self, idx):
+        return self.img_path_list[idx]
 
     def __getitem__(self, idx):
         if idx in self.img_idx2img:
             return self.img_idx2img[idx]
         img = Image.open(self.img_path_list[idx])
         img = np.array(img)
-        self.img_idx2img[idx] = img
+        self.insert_cache(img, idx)
         return img
