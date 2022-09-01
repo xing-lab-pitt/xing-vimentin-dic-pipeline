@@ -31,7 +31,6 @@ def normalize_img_by_zscore(img: np.array):
 
 def livetracker_standard_normalize(img):
     img = normalize_img_by_zscore(img)
-
     return img
 
 
