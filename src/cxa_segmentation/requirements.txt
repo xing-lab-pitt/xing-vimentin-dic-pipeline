@@ -1,1 +1,5 @@
 ipympl
+
+# labelme2coco requirements below
+sahi>=0.8.19
+jsonschema>=2.6.0
