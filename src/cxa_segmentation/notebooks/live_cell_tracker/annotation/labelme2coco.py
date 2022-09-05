@@ -12,6 +12,10 @@ from PIL import Image
 from sahi.utils.coco import Coco, CocoAnnotation, CocoCategory, CocoImage
 from sahi.utils.file import list_files_recursively, load_json, save_json
 from tqdm import tqdm
+import logging
+
+
+logger = logging.getLogger(__name__)
 
 
 class labelme2coco:
@@ -19,7 +23,9 @@ class labelme2coco:
         raise RuntimeError("Use labelme2coco.convert() or labelme2coco.get_coco_from_labelme_folder() instead.")
 
 
-def get_coco_from_labelme_folder(labelme_folder: str, coco_category_list: List = None) -> Coco:
+def get_coco_from_labelme_folder(
+    labelme_folder: str, coco_category_list: List = None, is_image_file_the_same_for_json=True, image_file_ext="*.tif"
+) -> Coco:
     """
     Args:
         labelme_folder: folder that contains labelme annotations and image files
@@ -41,7 +47,9 @@ def get_coco_from_labelme_folder(labelme_folder: str, coco_category_list: List =
         data = load_json(json_path)
         # get image size
         image_path = str(Path(labelme_folder) / data["imagePath"])
-        width, height = Image.open(image_path).size
+        image = Image.open(image_path)
+        width, height = image.size
+
         # init coco image
         coco_image = CocoImage(file_name=data["imagePath"], height=height, width=width)
         # iterate over annotations
@@ -85,6 +93,34 @@ def get_coco_from_labelme_folder(labelme_folder: str, coco_category_list: List =
         coco.add_image(coco_image)
 
     return coco
+
+
+def convert(
+    labelme_folder: str,
+    export_dir: str = "runs/labelme2coco/",
+    train_split_rate: float = 1,
+):
+    """
+    Args:
+        labelme_folder: folder that contains labelme annotations and image files
+        export_dir: path for coco jsons to be exported
+        train_split_rate: ration fo train split
+    """
+    coco = get_coco_from_labelme_folder(labelme_folder)
+    if train_split_rate < 1:
+        result = coco.split_coco_as_train_val(train_split_rate)
+        # export train split
+        save_path = str(Path(export_dir) / "train.json")
+        save_json(result["train_coco"].json, save_path)
+        logger.info(f"Training split in COCO format is exported to {save_path}")
+        # export val split
+        save_path = str(Path(export_dir) / "val.json")
+        save_json(result["val_coco"].json, save_path)
+        logger.info(f"Validation split in COCO format is exported to {save_path}")
+    else:
+        save_path = str(Path(export_dir) / "dataset.json")
+        save_json(coco.json, save_path)
+        logger.info(f"Converted annotations in COCO format is exported to {save_path}")
 
 
 if __name__ == "__main__":
