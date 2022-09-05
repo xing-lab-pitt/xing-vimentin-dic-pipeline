@@ -1,3 +1,5 @@
+**/cxa-data/**
+*.jpg
 *.avi
 *.json
 *.png

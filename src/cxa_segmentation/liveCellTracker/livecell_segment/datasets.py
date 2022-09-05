@@ -25,6 +25,9 @@ class LiveCellImageDataset(torch.utils.data.Dataset):
     """Dataset that reads in various features"""
 
     def __init__(self, dir_path, ext="tif", max_cache_size=100):
+        if isinstance(dir_path, str):
+            dir_path = Path(dir_path)
+
         self.img_path_list = sorted(glob.glob(str(dir_path / "*tif")))
         self.img_idx2img = {}
         self.max_cache_size = max_cache_size
