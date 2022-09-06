@@ -24,7 +24,7 @@ class labelme2coco:
 
 
 def get_coco_from_labelme_folder(
-    labelme_folder: str, coco_category_list: List = None, is_image_file_the_same_for_json=True, image_file_ext="*.tif"
+    labelme_folder: str, coco_category_list: List = None, is_image_filename_same_as_json=True, image_file_ext="tif"
 ) -> Coco:
     """
     Args:
@@ -41,17 +41,27 @@ def get_coco_from_labelme_folder(
     if coco_category_list is not None:
         coco.add_categories_from_coco_category_list(coco_category_list)
 
+    def _load_image(json_path, labelme_data):
+        """load an image
+        1) if is_image_filename_same_as_json is True, then load image from the same folder as json, with extension replaced by image_file_ext
+        2) if is_image_filename_same_as_json is False, load from labelme's json data['imagePath']
+        """
+        image_path = str(Path(labelme_folder) / labelme_data["imagePath"])
+        if is_image_filename_same_as_json:
+            image_path = json_path.replace(".json", "." + image_file_ext)
+        print("loading image from:", image_path)
+        return Image.open(image_path), image_path
+
     # parse labelme annotations
     category_ind = 0
     for json_path in tqdm(labelme_json_list, "Converting labelme annotations to COCO format"):
         data = load_json(json_path)
         # get image size
-        image_path = str(Path(labelme_folder) / data["imagePath"])
-        image = Image.open(image_path)
+        image, image_path = _load_image(json_path, data)
         width, height = image.size
 
         # init coco image
-        coco_image = CocoImage(file_name=data["imagePath"], height=height, width=width)
+        coco_image = CocoImage(file_name=image_path, height=height, width=width)
         # iterate over annotations
         for shape in data["shapes"]:
             # set category name and id
@@ -99,6 +109,8 @@ def convert(
     labelme_folder: str,
     export_dir: str = "runs/labelme2coco/",
     train_split_rate: float = 1,
+    is_image_filename_same_as_json=True,
+    image_file_ext="tif",
 ):
     """
     Args:
@@ -106,7 +118,9 @@ def convert(
         export_dir: path for coco jsons to be exported
         train_split_rate: ration fo train split
     """
-    coco = get_coco_from_labelme_folder(labelme_folder)
+    coco = get_coco_from_labelme_folder(
+        labelme_folder, is_image_filename_same_as_json=is_image_filename_same_as_json, image_file_ext=image_file_ext
+    )
     if train_split_rate < 1:
         result = coco.split_coco_as_train_val(train_split_rate)
         # export train split
