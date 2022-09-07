@@ -13,7 +13,7 @@ from sahi.utils.coco import Coco, CocoAnnotation, CocoCategory, CocoImage
 from sahi.utils.file import list_files_recursively, load_json, save_json
 from tqdm import tqdm
 import logging
-
+import os
 
 logger = logging.getLogger(__name__)
 
@@ -24,13 +24,26 @@ class labelme2coco:
 
 
 def get_coco_from_labelme_folder(
-    labelme_folder: str, coco_category_list: List = None, is_image_filename_same_as_json=True, image_file_ext="tif"
+    labelme_folder: str,
+    coco_category_list: List = None,
+    is_image_image_in_json_folder=False,
+    image_file_ext="tif",
+    dataset_folder_path=None,
 ) -> Coco:
     """
+    generate coco object from labelme annotations
+    load images according to the following rules in order:
+        1) if dataset_folder_path is provided, load images from datasets there
+        2) if is_image_image_in_json_folder is True, then load image from the same folder as json, with extension replaced by image_file_ext
+        3) if is_image_image_in_json_folder is False, load from labelme's json data['imagePath']
     Args:
         labelme_folder: folder that contains labelme annotations and image files
         coco_category_list: start from a predefined coco cateory list
+        is_image_image_in_json_folder: if True, image files are in the same folder as json files
+        dataset_folder_path: this is the path to the dataset folder
+
     """
+
     # get json list
     _, abs_json_path_list = list_files_recursively(labelme_folder, contains=[".json"])
     labelme_json_list = abs_json_path_list
@@ -42,12 +55,16 @@ def get_coco_from_labelme_folder(
         coco.add_categories_from_coco_category_list(coco_category_list)
 
     def _load_image(json_path, labelme_data):
-        """load an image
-        1) if is_image_filename_same_as_json is True, then load image from the same folder as json, with extension replaced by image_file_ext
-        2) if is_image_filename_same_as_json is False, load from labelme's json data['imagePath']
-        """
+        """load an image"""
+        print("dataset_folder_path: ", dataset_folder_path)
         image_path = str(Path(labelme_folder) / labelme_data["imagePath"])
-        if is_image_filename_same_as_json:
+        if not (dataset_folder_path is None):
+            image_filename = os.path.basename(json_path.replace(".json", "." + image_file_ext))
+            dataset_name = Path(json_path).parent.name
+            print("dataset_name: ", dataset_name)
+            image_path = str(Path(dataset_folder_path) / dataset_name / image_filename)
+            print("temp: ", image_path)
+        elif is_image_image_in_json_folder:
             image_path = json_path.replace(".json", "." + image_file_ext)
         print("loading image from:", image_path)
         return Image.open(image_path), image_path
@@ -109,7 +126,8 @@ def convert(
     labelme_folder: str,
     export_dir: str = "runs/labelme2coco/",
     train_split_rate: float = 1,
-    is_image_filename_same_as_json=True,
+    is_image_image_in_json_folder=False,
+    dataset_folder_path=None,
     image_file_ext="tif",
 ):
     """
@@ -119,7 +137,10 @@ def convert(
         train_split_rate: ration fo train split
     """
     coco = get_coco_from_labelme_folder(
-        labelme_folder, is_image_filename_same_as_json=is_image_filename_same_as_json, image_file_ext=image_file_ext
+        labelme_folder,
+        is_image_image_in_json_folder=is_image_image_in_json_folder,
+        image_file_ext=image_file_ext,
+        dataset_folder_path=dataset_folder_path,
     )
     if train_split_rate < 1:
         result = coco.split_coco_as_train_val(train_split_rate)
