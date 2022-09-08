@@ -24,7 +24,7 @@ from collections import deque
 class LiveCellImageDataset(torch.utils.data.Dataset):
     """Dataset that reads in various features"""
 
-    def __init__(self, dir_path, ext="tif", max_cache_size=100):
+    def __init__(self, dir_path, ext="tif", max_cache_size=200):
         if isinstance(dir_path, str):
             dir_path = Path(dir_path)
 
