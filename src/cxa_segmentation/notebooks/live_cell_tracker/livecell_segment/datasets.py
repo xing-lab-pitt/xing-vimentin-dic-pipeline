@@ -28,7 +28,7 @@ class LiveCellImageDataset(torch.utils.data.Dataset):
         if isinstance(dir_path, str):
             dir_path = Path(dir_path)
 
-        self.img_path_list = sorted(glob.glob(str(dir_path / "*tif")))
+        self.img_path_list = sorted(glob.glob(str(dir_path / ("*.%s" % (ext)))))
         self.img_idx2img = {}
         self.max_cache_size = max_cache_size
         self.img_idx_queue = deque()
