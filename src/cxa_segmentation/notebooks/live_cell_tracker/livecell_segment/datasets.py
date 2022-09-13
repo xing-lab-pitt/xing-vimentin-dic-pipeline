@@ -24,7 +24,7 @@ from collections import deque
 class LiveCellImageDataset(torch.utils.data.Dataset):
     """Dataset that reads in various features"""
 
-    def __init__(self, dir_path, ext="tif", max_cache_size=200):
+    def __init__(self, dir_path, ext="tif", max_cache_size=50):
         if isinstance(dir_path, str):
             dir_path = Path(dir_path)
 
@@ -40,7 +40,9 @@ class LiveCellImageDataset(torch.utils.data.Dataset):
     def insert_cache(self, img, idx):
         if len(self.img_idx2img) >= self.max_cache_size:
             pop_index = self.img_idx_queue.popleft()
+            pop_img = self.img_idx2img[pop_index]
             self.img_idx2img.pop(pop_index)
+            del pop_img
         self.img_idx2img[idx] = img
         self.img_idx_queue.append(idx)
 
