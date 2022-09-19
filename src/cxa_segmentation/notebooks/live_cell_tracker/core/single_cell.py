@@ -27,6 +27,16 @@ class SingleCellTrajectory:
         self.raw_img_dataset = raw_img_dataset
         self.raw_total_timeframe = len(raw_img_dataset)
 
-    def append_timeframe_data(self, timeframe, cell: SingleCellStatic):
+    def add_timeframe_data(self, timeframe, cell: SingleCellStatic):
         self.timeframe2singleCell[timeframe] = cell
         self.timeframe_set.add(timeframe)
+
+    def get_img(self, timeframe):
+        return self.raw_img_dataset[timeframe]
+
+    def get_timeframe_span(self):
+        return (min(self.timeframe_set), max(self.timeframe_set))
+
+    def get_timeframe_span_length(self):
+        min_t, max_t = self.get_timeframe_span()
+        return max_t - min_t
