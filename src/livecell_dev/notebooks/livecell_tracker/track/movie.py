@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 from matplotlib.animation import FuncAnimation
-from live_cell_tracker.core.single_cell import SingleCellTrajectory
+from livecell_tracker.core.single_cell import SingleCellTrajectory
 
 
 def generate_single_trajectory_movie(
