@@ -1,3 +1,4 @@
+from typing import Callable
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
@@ -95,6 +96,7 @@ class SingleCellTrajectory:
         min_length=None,
         ax=None,
         fig=None,
+        ani_update_func: Callable = None,  # how you draw each frame
     ):
         if min_length is not None:
             if self.get_timeframe_span_length() < min_length:
@@ -106,7 +108,7 @@ class SingleCellTrajectory:
         def init():
             return []
 
-        def update(sc_tp: SingleCellStatic):
+        def default_update(sc_tp: SingleCellStatic):
             frame_idx, raw_img, bbox, img_crop = sc_tp.timeframe, sc_tp.raw_img, sc_tp.bbox, sc_tp.img_crop
             ax.cla()
             frame_text = ax.text(
@@ -121,6 +123,9 @@ class SingleCellTrajectory:
             ax.imshow(img_crop)
             return []
 
+        if ani_update_func is None:
+            ani_update_func = default_update
+
         frame_data = []
         for frame_idx in self.timeframe_to_single_cell:
             sc_timepoint = self.get_single_cell(frame_idx)
@@ -128,6 +133,10 @@ class SingleCellTrajectory:
             bbox = sc_timepoint.get_bbox()
             frame_data.append(sc_timepoint)
 
-        ani = FuncAnimation(fig, update, frames=frame_data, init_func=init, blit=True)
+        ani = FuncAnimation(fig, default_update, frames=frame_data, init_func=init, blit=True)
         print("saving to: %s..." % save_path)
         ani.save(save_path)
+
+
+class SingleCellTrajectoryCollection:
+    pass
