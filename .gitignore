@@ -1,7 +1,20 @@
+**/train_log/**
+*.html
+
+*.pth
+**/cxa-data/**
+*.jpg
+*.avi
+*.json
+*.png
+*.tif
+*.gif
+*.tiff
 
 .vscode
 test_data/
 test_datasets/
+datasets/
 
 *.swp
 *.stdout
@@ -135,6 +148,8 @@ venv.bak/
 # mkdocs documentation
 /site
 
+*.db
+*.properties
 # mypy
 .mypy_cache/
 .dmypy.json

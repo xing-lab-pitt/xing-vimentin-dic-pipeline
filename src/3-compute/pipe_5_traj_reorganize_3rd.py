@@ -19,20 +19,39 @@ from legacy_utils.index import Indexes
 from scipy.ndimage import distance_transform_edt
 from scipy.optimize import linear_sum_assignment
 from skimage.io import imread
-from legacy_utils.track_module import (am_obj_info, break_link, cal_cell_fusion,
-                          cal_cell_split, calculate_area_penalty, compute_cost,
-                          compute_overlap_matrix, compute_overlap_pair,
-                          compute_overlap_single, compute_specific_overlap,
-                          connect_link, false_seg_mark, find_am_sisters,
-                          find_border_obj, find_fuse_pairs_to_break,
-                          find_mitosis_pairs_to_break,
-                          find_split_pairs_to_break, find_uni,
-                          generate_traj_seri, get_gap_pair_scores,
-                          get_mitotic_triple_scores, judge_apoptosis_tracklet,
-                          judge_border, judge_fuse_type, judge_mol_type,
-                          judge_split_type, judge_traj_am,
-                          record_traj_start_end, relabel_traj,
-                          search_false_link, traj_start_end_info)
+from legacy_utils.track_module import (
+    am_obj_info,
+    break_link,
+    cal_cell_fusion,
+    cal_cell_split,
+    calculate_area_penalty,
+    compute_cost,
+    compute_overlap_matrix,
+    compute_overlap_pair,
+    compute_overlap_single,
+    compute_specific_overlap,
+    connect_link,
+    false_seg_mark,
+    find_am_sisters,
+    find_border_obj,
+    find_fuse_pairs_to_break,
+    find_mitosis_pairs_to_break,
+    find_split_pairs_to_break,
+    find_uni,
+    generate_traj_df,
+    get_gap_pair_scores,
+    get_mitotic_triple_scores,
+    judge_apoptosis_tracklet,
+    judge_border,
+    judge_fuse_type,
+    judge_mol_type,
+    judge_split_type,
+    judge_traj_am,
+    record_traj_start_end,
+    relabel_traj,
+    search_false_link,
+    traj_start_end_info,
+)
 
 # ----parameter setting -----------
 # depend on: cell type, time interval-------
@@ -136,7 +155,7 @@ def traj_reconganize3(output_path):
     df = false_seg_mark(df, border_obj)
     df = relabel_traj(df)
     df.to_csv(dir_path + "Per_Object_relink" + ".csv", index=False, encoding="utf-8")
-    traj_seri_self, traj_idx_seri_self = generate_traj_seri(df)
+    traj_seri_self, traj_idx_seri_self = generate_traj_df(df)
     traj_start, traj_end = record_traj_start_end(df)
     traj_label = df["Cell_TrackObjects_Label"].values
     traj_label = np.unique(traj_label[traj_label > 0])
