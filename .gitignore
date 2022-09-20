@@ -1,3 +1,6 @@
+**/train_log/**
+*.html
+
 *.pth
 **/cxa-data/**
 *.jpg
