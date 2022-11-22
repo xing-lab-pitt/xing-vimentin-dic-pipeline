@@ -41,6 +41,8 @@ test_datasets/sample_test_data/stats/
 ### Required script modifications
 - paths of your datasets
 - paths of resource files
+- number of datasets (folders)
+- names of the microscope channels
 
 ### Sample Usage
 
