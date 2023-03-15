@@ -117,11 +117,11 @@ def folder_edt_predict(img_path, output_path, reg_seg_wts_path, dic_channel_labe
         img_name = os.path.basename(img_list[i])
         print(img_name)
         img = imread(img_list[i])
-
-        #        img0 = np.array(imread(img_list[0]))
-        #        bg0 = dic_bg_correction(img0, ordr=1)
-        #        bg = bg0 - np.mean(bg0)
-        #        img = img - bg
+# uncommented line 121-124
+        # img0 = np.array(imread(img_list[0]))
+        # bg0 = dic_bg_correction(img0, ordr=1)
+        # bg = bg0 - np.mean(bg0)
+        # img = img - bg
 
         x_adjust = int(round(img.shape[0] / 32.0) * 32)
         y_adjust = int(round(img.shape[1] / 32.0) * 32)
@@ -137,12 +137,12 @@ def folder_edt_predict(img_path, output_path, reg_seg_wts_path, dic_channel_labe
         )  # restore to original size
         pred = Image.fromarray(output)
         pred.save(edt_folder + "reg_" + img_name)
-
-    #    bg0 = Image.fromarray(bg0)
-    #    bg = Image.fromarray(bg)
-    #
-    #    bg0.save(edt_folder + 'bg0.tif')
-    #    bg.save(edt_folder + 'bg.tif')
+# uncommented line 141-145
+        # bg0 = Image.fromarray(bg0)
+        # bg = Image.fromarray(bg)
+        
+        # bg0.save(edt_folder + 'bg0.tif')
+        # bg.save(edt_folder + 'bg.tif')
     K.clear_session()
 
 

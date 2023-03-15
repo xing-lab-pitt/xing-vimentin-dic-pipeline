@@ -306,8 +306,8 @@ def simple_edt_watershed(img_path, out_path, chan_label, small_obj_thres):
     rgb_num_path = out_path + "rgb_num/"
     utils.create_folder(rgb_num_path)  # the folder will be re-created every time.
 
-    am_record = pd.DataFrame(columns=["ImageNumber", "ObjectNumber", "am_flag"])
-    all_am_count = 0
+    # am_record = pd.DataFrame(columns=["ImageNumber", "ObjectNumber", "am_flag"])
+    # all_am_count = 0
 
     for i in range(len(img_list)):
 
@@ -321,7 +321,8 @@ def simple_edt_watershed(img_path, out_path, chan_label, small_obj_thres):
         reg_flat = reg[reg != 0.0].reshape(-1)
 
         # TODO refactor: threshold percentage as hyperparam
-        THRESHOLDS = np.quantile(reg_flat, [0.35, 0.97])
+        # print('Reg_flat shape', reg_flat.shape)
+        THRESHOLDS = np.quantile(reg_flat, [0.25, 0.97])
 
         mask_h = 0.02
         low_h = THRESHOLDS[0]
@@ -333,56 +334,66 @@ def simple_edt_watershed(img_path, out_path, chan_label, small_obj_thres):
 
         high_h_seg, high_h_markers = hmax_watershed(reg, high_h, asp_rat_thres, mask_thres=mask_h)
 
-        seg_overlap = compute_overlap_matrix(low_h_seg, high_h_seg)
-        fuse_cells, fuse_group = cal_cell_fusion(seg_overlap)
+#         seg_overlap = compute_overlap_matrix(low_h_seg, high_h_seg)
+#         fuse_cells, fuse_group = cal_cell_fusion(seg_overlap)
 
-        for m in range(len(fuse_cells)):
+#         for m in range(len(fuse_cells)):
 
-            fc_obj = generate_single_cell_img_edt(img, high_h_seg, obj_h, obj_w, fuse_cells[m])
-            fc_prob = icnn_seg.predict(fc_obj)[0]
-            fp_group_prob = []
+#             fc_obj = generate_single_cell_img_edt(img, high_h_seg, obj_h, obj_w, fuse_cells[m])
+#             fc_prob = icnn_seg.predict(fc_obj)[0]
+#             fp_group_prob = []
 
-            for n in range(len(fuse_group[m])):
+#             for n in range(len(fuse_group[m])):
 
-                fp_obj = generate_single_cell_img_edt(img, low_h_seg, obj_h, obj_w, fuse_group[m][n])
-                fp_prob = icnn_seg.predict(fp_obj)[0]
-                fp_group_prob.append(fp_prob)
+#                 fp_obj = generate_single_cell_img_edt(img, low_h_seg, obj_h, obj_w, fuse_group[m][n])
+#                 fp_prob = icnn_seg.predict(fp_obj)[0]
+#                 fp_group_prob.append(fp_prob)
 
-            low_h_markers = judge_fuse_type(
-                low_h_markers, high_h_markers, fuse_cells[m], fuse_group[m], fc_prob, fp_group_prob
-            )
+#             low_h_markers = judge_fuse_type(
+#                 low_h_markers, high_h_markers, fuse_cells[m], fuse_group[m], fc_prob, fp_group_prob
+#             )
 
-        labels = watershed(-reg, low_h_markers, mask=reg > mask_h)
-        labels, low_h_markers = remove_thin_objects(labels, low_h_markers, asp_rat_thres)
-        labels = remove_small_objects(labels, small_obj_thres)
-        labels = clear_border(labels)
-        labels = label(labels, connectivity=2)
+#         labels = watershed(-reg, low_h_markers, mask=reg > mask_h)
+#         labels, low_h_markers = remove_thin_objects(labels, low_h_markers, asp_rat_thres)
+#         labels = remove_small_objects(labels, small_obj_thres)
+#         labels = clear_border(labels)
+#         labels = label(labels, connectivity=2)
 
-        rps = regionprops(labels)
-        candi_labels = [
-            r.label
-            for r in rps
-            if r.area < size_thres1 or (4 * pi * r.area / r.perimeter ** 2 > roundness_thres and r.area < size_thres2)
-        ]
+#         rps = regionprops(labels)
+#         candi_labels = [
+#             r.label
+#             for r in rps
+#             if r.area < size_thres1 or (4 * pi * r.area / r.perimeter ** 2 > roundness_thres and r.area < size_thres2)
+#         ]
+# # MITOSIS STUFF
+#         for candi_label in candi_labels:
 
-        for candi_label in candi_labels:
+#             candi_obj = generate_single_cell_img_env(img, rps, obj_h, obj_w, candi_label)
+#             output = icnn_am.predict(candi_obj)
+#             am_flag = np.argmax(output)
 
-            candi_obj = generate_single_cell_img_env(img, rps, obj_h, obj_w, candi_label)
-            output = icnn_am.predict(candi_obj)
-            am_flag = np.argmax(output)
-
-            if am_flag > 0:
-                all_am_count += 1
-                am_record.loc[all_am_count] = [i + 1, candi_label, am_flag]
+#             if am_flag > 0:
+#                 all_am_count += 1
+#                 am_record.loc[all_am_count] = [i + 1, candi_label, am_flag]
 
         # should use np.uint32,could be save correctly
-        img_seg = Image.fromarray(labels.astype(np.uint32), "I")
-        img_seg.save(seg_path + "seg_" + img_name + ".png")
 
-        rgb_num = color_num(labels)
-        rgb_num.save(rgb_num_path + "rgb_" + img_name + ".png")
+        low_h_seg = remove_small_objects(low_h_seg, small_obj_thres)
+        low_h_seg = clear_border(low_h_seg)
+        low_h_seg = label(low_h_seg, connectivity=2)
+        img_seg = Image.fromarray(low_h_seg.astype(np.uint32), "I")
+        img_seg.save(seg_path + "seg_" + img_name + "h_val" + high_h + ".png")
 
-    am_record.to_csv(out_path + "am_record.csv", index=False, encoding="utf-8")
+        high_h_seg = remove_small_objects(high_h_seg, small_obj_thres)
+        high_h_seg = clear_border(high_h_seg)
+        high_h_seg = label(high_h_seg, connectivity=2)
+        img_seg = Image.fromarray(high_h_seg.astype(np.uint32), "I")
+        img_seg.save(seg_path + "seg_" + img_name + "h_val" + high_h + ".png")
+
+        # rgb_num = color_num(labels)
+        # rgb_num.save(rgb_num_path + "rgb_" + img_name + ".png")
+
+    # am_record.to_csv(out_path + "am_record.csv", index=False, encoding="utf-8")
 
 
 if __name__ == "__main__":

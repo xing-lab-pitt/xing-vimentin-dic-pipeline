@@ -8,7 +8,7 @@
 #SBATCH --job-name=xing-pipeline-segs
 
 #SBATCH --gres=gpu:1
-#SBATCH --exclude=g019,g102,g104,g122,g012,g013,g131
+##SBATCH --exclude=g019,g102,g104,g122,g012,g013,g131
 #SBATCH --cpus-per-task=16
 
 #SBATCH --mem=40G
@@ -72,9 +72,9 @@ cd /scr/$job_dir
 
 
 # experiment settings
-dic_channel_label=C1
+dic_channel_label=DIC
 pcna_chan_label=C2
-vim_chan_label=C3
+vim_chan_label=TRITC
 
 # initialize
 module load anaconda/3-cluster
@@ -96,7 +96,7 @@ tree $output_path
 ### 2_edt_watershed ###
 model_obj_d=128
 small_obj_thres=1500
-python pipe_2_edt_watershed.py $img_path $output_path $icnn_am_wts_file $icnn_seg_wts_file $dic_channel_label $model_obj_d $small_obj_thres
+python pipe_2_edt_watershed_ori.py $img_path $output_path $icnn_am_wts_file $icnn_seg_wts_file $dic_channel_label $model_obj_d $small_obj_thres
 echo 'step2 complete'
 tree $output_path
 

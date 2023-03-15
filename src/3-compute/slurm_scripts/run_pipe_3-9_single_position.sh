@@ -62,9 +62,9 @@ cd /scr/$job_dir
 
 
 # experiment settings
-dic_channel_label=C1
+dic_channel_label=DIC
 pcna_channel_label=C2
-vim_channel_label=C3
+vim_channel_label=TRITC
 
 # initialize
 module load anaconda/3-cluster
@@ -85,7 +85,7 @@ source activate tf1
 python pipe_3_traj_reorganize_1st.py $img_path $output_path $icnn_seg_wts_file $dic_channel_label
 echo 'step3 complete'
 tree $output_path
-
+# commented 89-101
 python pipe_4_traj_reorganize_2nd.py $output_path
 echo 'step4 complete'
 tree $output_path
@@ -108,7 +108,7 @@ tree $output_path
 #python pipe_meancontour_and_pcamodes.py $output_path
 #mkdir -p ${output_path}/contour
 #cp /net/capricorn/home/xing/weikang/wwk/210309_2ng_tgf_a549/g1/data/mean_cell_contour ${output_path}/contour
-
+# commented 113-122
 # after calculate mean contours
 mean_contour_path=${dat_dir}/stats/mean_cell_contour
 python pipe_7_cell_contours_calculation.py $output_path $mean_contour_path 

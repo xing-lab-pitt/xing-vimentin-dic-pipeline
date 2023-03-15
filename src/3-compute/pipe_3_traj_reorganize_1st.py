@@ -154,7 +154,7 @@ def traj_reconganize1(img_path, output_path, icnn_seg_weights, DIC_channel_label
         # TODO: why do we need segpath and rely on path again here?
         # TODO: modularize: read/use image input directly here, compute* functions should just COMPUTE
         frame_overlap = compute_overlap_matrix(seg_path, seg_img_list, img_num_cur, img_num_next)
-
+        # print('frame overlap', frame_overlap)
         # TODO: too many indentations and logics. modularize the following function: write a wrapper
         # find false link with max_overlap relation
         target_idx_list = cell_track_db_df[cell_track_db_df["ImageNumber"] == img_num_next].index.tolist()
@@ -198,7 +198,15 @@ def traj_reconganize1(img_path, output_path, icnn_seg_weights, DIC_channel_label
 
     np.save(os.path.join(dir_path, "border_obj.npy"), np.array(border_obj))
     np.save(os.path.join(dir_path, "false_link.npy"), np.array(false_link))
+    print('prefuse cells', prefuse_cells)
+    print('prefuse group', prefuse_group)  # each element is a list include all prefuse cells in a fuse event, corresponding to postfuse_cells
+    print('postfuse cells', postfuse_cells)  # include: img_num,obj_num
+    print('presplit cells', presplit_cells)
+    print('postsplit group', postsplit_group)  # each element is a list include all postsplit cells in a split event
+    print('postsplit cells', postsplit_cells)
 
+    print( 'false link', false_link)
+    print('border object', border_obj)
     # break false link and relabel traj
     cell_track_db_df, relation_df = break_link(cell_track_db_df, relation_df, false_link)
 
